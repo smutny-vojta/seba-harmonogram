@@ -1,4 +1,4 @@
-# Online harmonogram (Seba26)
+# Online harmonogram 2 (REFARKTORIZOVANÝ)
 
 > Před vpuštěním do produkce zkontrolovat `//!` komentáře v kódu a na produkci pustit `docker compose exec app npm run db:push` a `docker compose exec app npm run db:seed`.
 
