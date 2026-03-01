@@ -2,11 +2,7 @@
   "compilerOptions": {
     "forceConsistentCasingInFileNames": true,
     "target": "esnext",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -26,38 +22,18 @@
     "baseUrl": ".",
     "paths": {
       // Obecný alias pro celou složku src
-      "@/*": [
-        "src/*"
-      ],
+      "@/*": ["src/*"],
       // Alias pro Next.js app složku
-      "@app/*": [
-        "src/app/*"
-      ],
+      "@app/*": ["src/app/*"],
       // Specifické aliasy pro hlavní domény
-      "@components/*": [
-        "src/components/*"
-      ],
-      "@dal/*": [
-        "src/dal/*"
-      ],
-      "@hooks/*": [
-        "src/hooks/*"
-      ],
-      "@lib/*": [
-        "src/lib/*"
-      ],
-      "@schemas/*": [
-        "src/schemas/*"
-      ],
-      "@services/*": [
-        "src/services/*"
-      ],
-      "@types/*": [
-        "src/types/*"
-      ],
-      "@utils/*": [
-        "src/utils/*"
-      ]
+      "@components/*": ["src/components/*"],
+      "@dal/*": ["src/dal/*"],
+      "@hooks/*": ["src/hooks/*"],
+      "@lib/*": ["src/lib/*"],
+      "@schemas/*": ["src/schemas/*"],
+      "@services/*": ["src/services/*"],
+      "@types/*": ["src/types/*"],
+      "@utils/*": ["src/utils/*"]
     }
   },
   "include": [
@@ -68,7 +44,5 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts"
   ],
-  "exclude": [
-    "node_modules"
-  ]
+  "exclude": ["node_modules"]
 }
