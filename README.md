@@ -1,36 +1,42 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Online harmonogram (Seba26)
 
-## Getting Started
+> Před vpuštěním do produkce zkontrolovat `//!` komentáře v kódu a na produkci pustit `docker compose exec app npm run db:push` a `docker compose exec app npm run db:seed`.
 
-First, run the development server:
+## Popis projektu
+Tento projekt je web(ová aplikace) pro správu harmonogramu a dalších provozních záležitostí (Seba 2026). Slouží instruktorům k získávání informací o harmonogramu, službách, jídelníčku a dalších provozních záležitostech. Programákům a hlavnímu vedoucímu slouží jako administrační nástroj pro správu těchto dat a plánování harmonogramu.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Technologie
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Core
+- **Runtime:** Node.js
+- **Framework:** [Next.js 16](https://nextjs.org/) (App Router, Server Actions)
+- **Language:** TypeScript
+- **Styling:** [Tailwind CSS v4](https://tailwindcss.com/), [shadcn/ui](https://ui.shadcn.com/) (Radix UI)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Databáze
+- **DB Engine:** SQLite (`better-sqlite3`)
+- **ORM:** [Drizzle ORM](https://orm.drizzle.team/)
+- **Migration Tool:** Drizzle Kit
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Struktura aplikace
 
-## Learn More
+### Role a Přístupy
+Aplikace rozlišuje uživatelské role (uloženo v DB), primárně:
+- **Instruktor:** Je uživatelem s přístupem k informacím, harmonogramu, službách, jídelníčku a dalším provozním záležitostem.
+- **Programák / Hlavní vedoucí:** Je správcem webu, který má přístup k administračnímu rozhraní pro správu dat a plánování harmonogramu.
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Adresářová struktura (`/app`)
+- `(auth)`: Přihlašování a registrace.
+  - `/prihlaseni`: Uživatel zadá telefonní číslo pro přihlášení.
+    - Pokud je uživatel registrován, zadává heslo.
+    - Pokud není registrován, vytváří si heslo a registruje se.
+  - `/odhlaseni`: Odhlášení uživatele.
+- `(instruktori)`: Frontend pro instruktory.
+  - `/`: Hlavní stránka s informacemi a aktuálními zprávami.
+  - `/harmonogram`: Zobrazení denního programu.
+  - `/instruktori`: Seznam instruktorů a jejich kontaktů.
+  - `/jidelnicek`: Zobrazení jídelníčku.
+  - `/sluzby`: Přehled ranních, odpoledních a večerních služeb.
+- `(programaci)/admin`: Administrační rozhraní.
+  - Správa entit: Aktivity, Instruktoři, Jídelníček, Oddíly, Role, Služby, Turnusy.
+  - `(harmonogram)`: Editor harmonogramu.
