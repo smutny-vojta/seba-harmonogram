@@ -40,7 +40,8 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# db folder
-/db
+# db/data folder
+/data
+/drizzle
 
 TODO.md
