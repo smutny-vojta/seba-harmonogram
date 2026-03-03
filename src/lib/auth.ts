@@ -32,5 +32,15 @@ export const auth = betterAuth({
         },
         disableSessionRefresh: true,
         expiresIn: 60 * 60 * 24 * 10
-    }
+    },
+    user: {
+        additionalFields: {
+            role: {
+                type: ["instr", "programak", "hlavni_programak", "hlavas"],
+                required: true,
+                defaultValue: "instr",
+                input: false, // don't allow user to set role
+            },
+        },
+    },
 });

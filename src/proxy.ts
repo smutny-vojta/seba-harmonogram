@@ -1,10 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSessionCookie } from "better-auth/cookies";
 
+
 export default async function proxy(request: NextRequest) {
+    const isPath = (path: string) => request.nextUrl.pathname.startsWith(path);
+    
     const sessionCookie = getSessionCookie(request);
 
-    if (!sessionCookie) {
+    if (!sessionCookie && !isPath("/login")) {
         // checking only if cookie exists, not if it's valid
         return NextResponse.redirect(new URL("/login", request.url));
     }
