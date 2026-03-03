@@ -63,9 +63,9 @@ export default function LoginPhase1({
               aria-invalid={formPhone.length > 0 && !phoneRegex.test(formPhone)}
             />
             <FieldDescription className="text-xs">
-              {formPhone.length === 0 ? null : !phoneRegex.test(formPhone) ? (
+              {formPhone.length > 0 && !phoneRegex.test(formPhone) ? (
                 <span className="text-destructive">
-                  Telefonní číslo musí být ve tvaru "123456789".
+                  Telefonní číslo musí být ve formátu "123456789".
                 </span>
               ) : (
                 <span>

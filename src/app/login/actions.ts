@@ -1,10 +1,13 @@
 "use server";
 
+import userDal from "@/dal/user.dal";
 import { auth } from "@/lib/auth";
 
 export async function sendOtpCode(_previousState: unknown, formData: FormData) {
-  const phoneNumber = formData.get("phone") as string;
-  const phoneRegex = /^\d{9}$/;
+  const formPhoneNumber = formData.get("phone") as string;
+  const phoneRegex = /^\+420\d{9}$/;
+
+  const phoneNumber = "+420" + formPhoneNumber;
 
   if (!phoneNumber) {
     throw new Error("Chybí telefonní číslo");
@@ -16,9 +19,17 @@ export async function sendOtpCode(_previousState: unknown, formData: FormData) {
 
   const data = await auth.api.sendPhoneNumberOTP({
     body: {
-      phoneNumber: `+420${phoneNumber}`,
+      phoneNumber: phoneNumber,
     },
   });
+
+  const users = await userDal.listUsers();
+
+  const user = users.find((user) => user.phoneNumber === phoneNumber);
+
+  if (!user) {
+    throw new Error("Uživatel nenalezen");
+  }
 
   console.log(data);
 
