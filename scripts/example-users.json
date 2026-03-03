@@ -1,0 +1,5 @@
+[
+  { "name": "Jan Novák", "phoneNumber": "+420111222333", "role": "instr" },
+  { "name": "Petr Svoboda", "phoneNumber": "+420444555666", "role": "programak" },
+  { "name": "Marie Dvořáková", "phoneNumber": "+420777888999", "role": "hlavni_programak" }
+]
