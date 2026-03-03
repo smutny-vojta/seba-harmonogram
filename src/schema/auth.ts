@@ -6,13 +6,17 @@ import { message } from "./message";
 export const user = sqliteTable("user", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
-  email: text("email").notNull().unique(),
   role: text("role", {
     enum: ["instr", "programak", "hlavni_programak", "hlavas"],
   })
-    .default("instr")
-    .notNull(),
+  .default("instr")
+  .notNull(),
+  email: text("email").unique(),
   emailVerified: integer("email_verified", { mode: "boolean" })
+    .default(false)
+    .notNull(),
+  phoneNumber: text("phone_number"),
+	phoneNumberVerified: integer("phone_number_verified", { mode: "boolean" })
     .default(false)
     .notNull(),
   image: text("image"),
