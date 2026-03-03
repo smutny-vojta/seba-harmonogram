@@ -1,10 +1,17 @@
 import { relations, sql } from "drizzle-orm";
 import { sqliteTable, text, integer, index } from "drizzle-orm/sqlite-core";
+import { instructorAssignment, campCategoryManager } from "./assignment";
+import { message } from "./message";
 
 export const user = sqliteTable("user", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
   email: text("email").notNull().unique(),
+  role: text("role", {
+    enum: ["instr", "programak", "hlavni_programak", "hlavas"],
+  })
+    .default("instr")
+    .notNull(),
   emailVerified: integer("email_verified", { mode: "boolean" })
     .default(false)
     .notNull(),
@@ -90,6 +97,9 @@ export const verification = sqliteTable(
 export const userRelations = relations(user, ({ many }) => ({
   sessions: many(session),
   accounts: many(account),
+  instructorAssignments: many(instructorAssignment),
+  campCategoryManagers: many(campCategoryManager),
+  messages: many(message),
 }));
 
 export const sessionRelations = relations(session, ({ one }) => ({
