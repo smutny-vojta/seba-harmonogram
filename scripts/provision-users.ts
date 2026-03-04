@@ -23,7 +23,12 @@ import { eq } from "drizzle-orm";
 // Types
 // ---------------------------------------------------------------------------
 
-const VALID_ROLES = ["instr", "programak", "hlavni_programak", "hlavas"] as const;
+const VALID_ROLES = [
+  "instr",
+  "programak",
+  "hlavni_programak",
+  "hlavas",
+] as const;
 type Role = (typeof VALID_ROLES)[number];
 
 interface UserInput {
@@ -66,20 +71,26 @@ function validateUsers(data: unknown): UserInput[] {
 
     if (!entry.role || !VALID_ROLES.includes(entry.role as Role)) {
       errors.push(
-        `${prefix}: "role" must be one of: ${VALID_ROLES.join(", ")}. Got: "${entry.role}".`
+        `${prefix}: "role" must be one of: ${VALID_ROLES.join(", ")}. Got: "${entry.role}".`,
       );
     }
   }
 
   if (errors.length > 0) {
-    throw new Error(`Validation failed:\n${errors.map((e) => `  - ${e}`).join("\n")}`);
+    throw new Error(
+      `Validation failed:\n${errors.map((e) => `  - ${e}`).join("\n")}`,
+    );
   }
 
   // Check for duplicate phone numbers
   const phones = data.map((u: UserInput) => u.phoneNumber);
-  const duplicates = phones.filter((p: string, i: number) => phones.indexOf(p) !== i);
+  const duplicates = phones.filter(
+    (p: string, i: number) => phones.indexOf(p) !== i,
+  );
   if (duplicates.length > 0) {
-    throw new Error(`Duplicate phone numbers found: ${[...new Set(duplicates)].join(", ")}`);
+    throw new Error(
+      `Duplicate phone numbers found: ${[...new Set(duplicates)].join(", ")}`,
+    );
   }
 
   return data as UserInput[];
@@ -89,11 +100,13 @@ function validateUsers(data: unknown): UserInput[] {
 // Main
 // ---------------------------------------------------------------------------
 
-async function main() {
+export async function main() {
   const inputPath = process.argv[2];
 
   if (!inputPath) {
-    console.error("Usage: npx tsx scripts/provision-users.ts <path-to-users.json>");
+    console.error(
+      "Usage: npx tsx scripts/provision-users.ts <path-to-users.json>",
+    );
     process.exit(1);
   }
 
@@ -131,7 +144,9 @@ async function main() {
         })
         .where(eq(user.id, existing.id));
 
-      console.log(`  ↻ Updated: ${input.name} (${input.phoneNumber}) — role: ${input.role}`);
+      console.log(
+        `  ↻ Updated: ${input.name} (${input.phoneNumber}) — role: ${input.role}`,
+      );
       updated++;
     } else {
       // Create new user
@@ -143,7 +158,9 @@ async function main() {
         role: input.role,
       });
 
-      console.log(`  ✓ Created: ${input.name} (${input.phoneNumber}) — role: ${input.role}`);
+      console.log(
+        `  ✓ Created: ${input.name} (${input.phoneNumber}) — role: ${input.role}`,
+      );
       created++;
     }
   }
