@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { sendOtp } from "@/app/login/actions";
+import { CZECH_PHONE_REGEX } from "@/lib/consts";
 import { useActionState, useEffect, useState } from "react";
 
 interface LoginPhase1Props {
@@ -22,11 +23,8 @@ export default function LoginPhase1({
 }: LoginPhase1Props) {
   const [formPhone, setFormPhone] = useState<string>("");
 
-  // phone regex 777666555
-  const phoneRegex = /^\d{9}$/;
-
   const handleSubmit = async (previousState: unknown, formData: FormData) => {
-    if (!phoneRegex.test(formPhone)) {
+    if (!CZECH_PHONE_REGEX.test(formPhone)) {
       return null;
     }
 
@@ -60,10 +58,12 @@ export default function LoginPhase1({
               required
               value={formPhone}
               onChange={(e) => setFormPhone(e.target.value)}
-              aria-invalid={formPhone.length > 0 && !phoneRegex.test(formPhone)}
+              aria-invalid={
+                formPhone.length > 0 && !CZECH_PHONE_REGEX.test(formPhone)
+              }
             />
             <FieldDescription className="text-xs">
-              {formPhone.length > 0 && !phoneRegex.test(formPhone) ? (
+              {formPhone.length > 0 && !CZECH_PHONE_REGEX.test(formPhone) ? (
                 <span className="text-destructive">
                   Telefonní číslo musí být ve formátu "123456789".
                 </span>

@@ -2,10 +2,13 @@
 
 import userDal from "@/dal/user.dal";
 import { auth } from "@/lib/auth";
+import { CZECH_PHONE_REGEX, CZECH_PHONE_PREFIX } from "@/lib/consts";
 import { z } from "zod/v4";
 
 const sendOtpSchema = z.object({
-  phone: z.string().regex(/^\d{9}$/, "Telefonní číslo musí mít 9 číslic"),
+  phone: z
+    .string()
+    .regex(CZECH_PHONE_REGEX, "Telefonní číslo musí mít 9 číslic"),
 });
 
 export async function sendOtp(_previousState: unknown, formData: FormData) {
@@ -15,7 +18,7 @@ export async function sendOtp(_previousState: unknown, formData: FormData) {
     return { error: z.treeifyError(result.error) };
   }
 
-  const phoneNumber = "+420" + result.data.phone;
+  const phoneNumber = CZECH_PHONE_PREFIX + result.data.phone;
 
   const users = await userDal.listUsers();
 
