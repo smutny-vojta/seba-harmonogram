@@ -2,6 +2,11 @@ import { relations, sql } from "drizzle-orm";
 import { sqliteTable, text, integer, index } from "drizzle-orm/sqlite-core";
 import { user } from "./auth";
 import { group, term } from "./camp";
+import {
+  createInsertSchema,
+  createSelectSchema,
+  createUpdateSchema,
+} from "drizzle-zod";
 
 // ---------------------------------------------------------------------------
 // Message (Zpráva)
@@ -47,6 +52,10 @@ export const message = sqliteTable(
     index("message_publishAt_idx").on(table.publishAt),
   ],
 );
+
+export const messageSelectSchema = createSelectSchema(message);
+export const messageInsertSchema = createInsertSchema(message);
+export const messageUpdateSchema = createUpdateSchema(message);
 
 // ---------------------------------------------------------------------------
 // Relations

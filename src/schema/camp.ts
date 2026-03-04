@@ -10,6 +10,11 @@ import { instructorAssignment } from "./assignment";
 import { scheduleEntry } from "./schedule";
 import { meal } from "./meal";
 import { message } from "./message";
+import {
+  createInsertSchema,
+  createSelectSchema,
+  createUpdateSchema,
+} from "drizzle-zod";
 
 // ---------------------------------------------------------------------------
 // Camp Category (Kategorie tábora)
@@ -27,6 +32,10 @@ export const campCategory = sqliteTable("camp_category", {
     .$onUpdate(() => /* @__PURE__ */ new Date())
     .notNull(),
 });
+
+export const campCategorySelectSchema = createSelectSchema(campCategory);
+export const campCategoryInsertSchema = createInsertSchema(campCategory);
+export const campCategoryUpdateSchema = createUpdateSchema(campCategory);
 
 // ---------------------------------------------------------------------------
 // Term (Turnus)
@@ -46,6 +55,10 @@ export const term = sqliteTable("term", {
     .$onUpdate(() => /* @__PURE__ */ new Date())
     .notNull(),
 });
+
+export const termSelectSchema = createSelectSchema(term);
+export const termInsertSchema = createInsertSchema(term);
+export const termUpdateSchema = createUpdateSchema(term);
 
 // ---------------------------------------------------------------------------
 // Term ↔ Camp Category (Aktivní kategorie v turnusu)
@@ -68,6 +81,13 @@ export const termCampCategory = sqliteTable(
   ],
 );
 
+export const termCampCategorySelectSchema =
+  createSelectSchema(termCampCategory);
+export const termCampCategoryInsertSchema =
+  createInsertSchema(termCampCategory);
+export const termCampCategoryUpdateSchema =
+  createUpdateSchema(termCampCategory);
+
 // ---------------------------------------------------------------------------
 // Group (Oddíl)
 // ---------------------------------------------------------------------------
@@ -80,10 +100,9 @@ export const group = sqliteTable(
     termId: text("term_id")
       .notNull()
       .references(() => term.id, { onDelete: "cascade" }),
-    campCategoryId: text("camp_category_id").references(
-      () => campCategory.id,
-      { onDelete: "set null" },
-    ),
+    campCategoryId: text("camp_category_id").references(() => campCategory.id, {
+      onDelete: "set null",
+    }),
     isOffice: integer("is_office", { mode: "boolean" })
       .default(false)
       .notNull(),
@@ -100,6 +119,10 @@ export const group = sqliteTable(
     index("group_campCategoryId_idx").on(table.campCategoryId),
   ],
 );
+
+export const groupSelectSchema = createSelectSchema(group);
+export const groupInsertSchema = createInsertSchema(group);
+export const groupUpdateSchema = createUpdateSchema(group);
 
 // ---------------------------------------------------------------------------
 // Relations

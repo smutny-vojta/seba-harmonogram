@@ -1,6 +1,11 @@
 import { relations, sql } from "drizzle-orm";
 import { sqliteTable, text, integer, index } from "drizzle-orm/sqlite-core";
 import { group } from "./camp";
+import {
+  createInsertSchema,
+  createSelectSchema,
+  createUpdateSchema,
+} from "drizzle-zod";
 
 // ---------------------------------------------------------------------------
 // Activity Template (Šablona aktivity)
@@ -24,6 +29,13 @@ export const activityTemplate = sqliteTable("activity_template", {
     .$onUpdate(() => /* @__PURE__ */ new Date())
     .notNull(),
 });
+
+export const activityTemplateSelectSchema =
+  createSelectSchema(activityTemplate);
+export const activityTemplateInsertSchema =
+  createInsertSchema(activityTemplate);
+export const activityTemplateUpdateSchema =
+  createUpdateSchema(activityTemplate);
 
 // ---------------------------------------------------------------------------
 // Schedule Entry (Naplánovaná aktivita v harmonogramu)
@@ -61,6 +73,10 @@ export const scheduleEntry = sqliteTable(
     index("schedule_entry_groupId_date_idx").on(table.groupId, table.date),
   ],
 );
+
+export const scheduleEntrySelectSchema = createSelectSchema(scheduleEntry);
+export const scheduleEntryInsertSchema = createInsertSchema(scheduleEntry);
+export const scheduleEntryUpdateSchema = createUpdateSchema(scheduleEntry);
 
 // ---------------------------------------------------------------------------
 // Relations

@@ -8,7 +8,7 @@ import {
   FieldSet,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { sendOtpCode } from "@/app/login/actions";
+import { sendOtp } from "@/app/login/actions";
 import { useActionState, useEffect, useState } from "react";
 
 interface LoginPhase1Props {
@@ -30,7 +30,7 @@ export default function LoginPhase1({
       return null;
     }
 
-    return sendOtpCode(previousState, formData);
+    return sendOtp(previousState, formData);
   };
 
   const [state, formAction] = useActionState(handleSubmit, null);

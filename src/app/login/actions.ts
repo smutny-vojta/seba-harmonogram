@@ -2,19 +2,27 @@
 
 import userDal from "@/dal/user.dal";
 import { auth } from "@/lib/auth";
+import { z } from "zod/v4";
 
-export async function sendOtpCode(_previousState: unknown, formData: FormData) {
-  const formPhoneNumber = formData.get("phone") as string;
-  const phoneRegex = /^\+420\d{9}$/;
+const sendOtpSchema = z.object({
+  phone: z.string().regex(/^\d{9}$/, "Telefonní číslo musí mít 9 číslic"),
+});
 
-  const phoneNumber = "+420" + formPhoneNumber;
+export async function sendOtp(_previousState: unknown, formData: FormData) {
+  const result = sendOtpSchema.safeParse(Object.fromEntries(formData));
 
-  if (!phoneNumber) {
-    throw new Error("Chybí telefonní číslo");
+  if (!result.success) {
+    return { error: z.treeifyError(result.error) };
   }
 
-  if (!phoneRegex.test(phoneNumber)) {
-    throw new Error("Neplatné telefonní číslo");
+  const phoneNumber = "+420" + result.data.phone;
+
+  const users = await userDal.listUsers();
+
+  const user = users.find((user) => user.phoneNumber === phoneNumber);
+
+  if (!user) {
+    throw new Error("S tímto telefonním číslem se nelze přihlásit.");
   }
 
   const data = await auth.api.sendPhoneNumberOTP({
@@ -22,14 +30,6 @@ export async function sendOtpCode(_previousState: unknown, formData: FormData) {
       phoneNumber: phoneNumber,
     },
   });
-
-  const users = await userDal.listUsers();
-
-  const user = users.find((user) => user.phoneNumber === phoneNumber);
-
-  if (!user) {
-    throw new Error("Uživatel nenalezen");
-  }
 
   console.log(data);
 

@@ -8,6 +8,11 @@ import {
 } from "drizzle-orm/sqlite-core";
 import { user } from "./auth";
 import { campCategory, group, term } from "./camp";
+import {
+  createInsertSchema,
+  createSelectSchema,
+  createUpdateSchema,
+} from "drizzle-zod";
 
 // ---------------------------------------------------------------------------
 // Instructor Assignment (Přiřazení instruktora k oddílu)
@@ -37,6 +42,13 @@ export const instructorAssignment = sqliteTable(
     index("instructor_assignment_groupId_idx").on(table.groupId),
   ],
 );
+
+export const instructorAssignmentSelectSchema =
+  createSelectSchema(instructorAssignment);
+export const instructorAssignmentInsertSchema =
+  createInsertSchema(instructorAssignment);
+export const instructorAssignmentUpdateSchema =
+  createUpdateSchema(instructorAssignment);
 
 // ---------------------------------------------------------------------------
 // Camp Category Manager (Přiřazení programového vedoucího ke kategorii)
@@ -73,6 +85,13 @@ export const campCategoryManager = sqliteTable(
     index("camp_category_manager_termId_idx").on(table.termId),
   ],
 );
+
+export const campCategoryManagerSelectSchema =
+  createSelectSchema(campCategoryManager);
+export const campCategoryManagerInsertSchema =
+  createInsertSchema(campCategoryManager);
+export const campCategoryManagerUpdateSchema =
+  createUpdateSchema(campCategoryManager);
 
 // ---------------------------------------------------------------------------
 // Relations

@@ -9,14 +9,14 @@ export const user = sqliteTable("user", {
   role: text("role", {
     enum: ["instr", "programak", "hlavni_programak", "hlavas"],
   })
-  .default("instr")
-  .notNull(),
+    .default("instr")
+    .notNull(),
   email: text("email").unique(),
   emailVerified: integer("email_verified", { mode: "boolean" })
     .default(false)
     .notNull(),
   phoneNumber: text("phone_number"),
-	phoneNumberVerified: integer("phone_number_verified", { mode: "boolean" })
+  phoneNumberVerified: integer("phone_number_verified", { mode: "boolean" })
     .default(false)
     .notNull(),
   image: text("image"),

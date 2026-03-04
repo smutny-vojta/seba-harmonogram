@@ -1,6 +1,11 @@
 import { relations, sql } from "drizzle-orm";
 import { sqliteTable, text, integer, index } from "drizzle-orm/sqlite-core";
 import { group } from "./camp";
+import {
+  createInsertSchema,
+  createSelectSchema,
+  createUpdateSchema,
+} from "drizzle-zod";
 
 // ---------------------------------------------------------------------------
 // Meal (Jídlo)
@@ -39,6 +44,10 @@ export const meal = sqliteTable(
     index("meal_groupId_date_idx").on(table.groupId, table.date),
   ],
 );
+
+export const mealSelectSchema = createSelectSchema(meal);
+export const mealInsertSchema = createInsertSchema(meal);
+export const mealUpdateSchema = createUpdateSchema(meal);
 
 // ---------------------------------------------------------------------------
 // Relations
