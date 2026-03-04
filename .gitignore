@@ -40,9 +40,11 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# db/data folder
+# my gitignores
 /data
 /drizzle
+/scripts
 
 TODO.md
 bun.lock
+.prettierrc
