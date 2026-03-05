@@ -1,22 +1,13 @@
 import { relations, sql } from "drizzle-orm";
 import { sqliteTable, text, integer, index } from "drizzle-orm/sqlite-core";
-import { instructorAssignment, campCategoryManager } from "./assignment";
+import { campCategoryManager, instructorAssignment } from "./assignment";
 import { message } from "./message";
 
 export const user = sqliteTable("user", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
-  role: text("role", {
-    enum: ["instr", "programak", "hlavni_programak", "hlavas"],
-  })
-    .default("instr")
-    .notNull(),
   email: text("email").unique(),
   emailVerified: integer("email_verified", { mode: "boolean" })
-    .default(false)
-    .notNull(),
-  phoneNumber: text("phone_number"),
-  phoneNumberVerified: integer("phone_number_verified", { mode: "boolean" })
     .default(false)
     .notNull(),
   image: text("image"),
@@ -27,6 +18,12 @@ export const user = sqliteTable("user", {
     .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
     .$onUpdate(() => /* @__PURE__ */ new Date())
     .notNull(),
+  role: text("role"),
+  banned: integer("banned", { mode: "boolean" }).default(false),
+  banReason: text("ban_reason"),
+  banExpires: integer("ban_expires", { mode: "timestamp_ms" }),
+  phoneNumber: text("phone_number").unique(),
+  phoneNumberVerified: integer("phone_number_verified", { mode: "boolean" }),
 });
 
 export const session = sqliteTable(
@@ -46,6 +43,7 @@ export const session = sqliteTable(
     userId: text("user_id")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
+    impersonatedBy: text("impersonated_by"),
   },
   (table) => [index("session_userId_idx").on(table.userId)],
 );
