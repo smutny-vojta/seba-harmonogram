@@ -34,7 +34,5 @@ export async function sendOtp(_previousState: unknown, formData: FormData) {
     },
   });
 
-  console.log(data);
-
   return { phoneNumber };
 }

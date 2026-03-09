@@ -13,7 +13,7 @@ export default function LoginComponent() {
   const [phoneNumber, setPhoneNumber] = useState<string>("");
 
   return (
-    <ErrorBoundary fallback={<div>Nastala chyba, zkus to prosím později.</div>}>
+    <ErrorBoundary>
       <Card className="w-full max-w-sm">
         <CardContent>
           {phase === "send-otp" && (

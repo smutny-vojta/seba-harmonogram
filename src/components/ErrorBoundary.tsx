@@ -3,7 +3,6 @@ import { Card, CardDescription, CardHeader, CardTitle } from "./ui/card";
 import ErrorComponent from "./ErrorComponent";
 
 class ErrorBoundary extends React.Component<{
-  fallback: React.ReactNode;
   children: React.ReactNode;
 }> {
   state = { hasError: false, error: { message: "" } };
