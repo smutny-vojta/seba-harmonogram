@@ -1,13 +1,8 @@
 import { createAuthClient } from "better-auth/react";
 import { phoneNumberClient } from "better-auth/client/plugins";
 import { adminClient } from "better-auth/client/plugins";
-import {
-  ac,
-  instructor,
-  programManager,
-  headProgramManager,
-  headManager,
-} from "./permissions";
+import { ac } from "./permissions";
+import { ROLES } from "./consts";
 
 export const authClient = createAuthClient({
   baseURL: process.env.NEXT_PUBLIC_APP_URL,
@@ -15,12 +10,7 @@ export const authClient = createAuthClient({
     phoneNumberClient(),
     adminClient({
       ac,
-      roles: {
-        instructor,
-        programManager,
-        headProgramManager,
-        headManager,
-      },
+      roles: ROLES.OBJECTS,
     }),
   ],
 });
