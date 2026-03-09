@@ -1,4 +1,5 @@
 import { createAccessControl } from "better-auth/plugins/access";
+import { adminAc } from "better-auth/plugins/admin/access";
 
 export const statement = {
   scheduleEntry: ["create", "read", "update", "delete"],
@@ -16,8 +17,10 @@ export const programManager = ac.newRole({
 
 export const headProgramManager = ac.newRole({
   scheduleEntry: ["create", "read", "update", "delete"],
+  ...adminAc.statements,
 });
 
 export const headManager = ac.newRole({
   scheduleEntry: ["create", "read", "update", "delete"],
+  ...adminAc.statements,
 });

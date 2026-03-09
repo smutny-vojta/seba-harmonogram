@@ -1,27 +1,26 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSessionCookie } from "better-auth/cookies";
 
-
 export default async function proxy(request: NextRequest) {
-    const isPath = (path: string) => request.nextUrl.pathname.startsWith(path);
-    
-    const sessionCookie = getSessionCookie(request);
+  const isPath = (path: string) => request.nextUrl.pathname.startsWith(path);
 
-    if (!sessionCookie && !isPath("/login")) {
-        // checking only if cookie exists, not if it's valid
-        return NextResponse.redirect(new URL("/login", request.url));
-    }
+  const sessionCookie = getSessionCookie(request);
 
-    return NextResponse.next();
+  if (!sessionCookie && !isPath("/login")) {
+    // checking only if cookie exists, not if it's valid
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
+
+  return NextResponse.next();
 }
 
 export const config = {
-    /*
-    * Match all request paths except for the ones that start with:
-    * - /api
-    * - /_next/static
-    * - /_next/image
-    * - /favicon.ico
-    */
-    matcher: "/((?!api|_next/static|_next/image|favicon.ico).*)",
+  /*
+   * Match all request paths except for the ones that start with:
+   * - /api
+   * - /_next/static
+   * - /_next/image
+   * - /favicon.ico
+   */
+  matcher: "/((?!api|_next/static|_next/image|favicon.ico).*)",
 };

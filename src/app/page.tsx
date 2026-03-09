@@ -1,4 +1,4 @@
-import { getServerSession, hasMinRole } from "@/lib/auth-utils";
+import { getServerSession } from "@/lib/auth-utils";
 import { redirect } from "next/navigation";
 
 export default async function Page() {
