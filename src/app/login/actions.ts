@@ -22,6 +22,8 @@ export async function sendOtp(_previousState: unknown, formData: FormData) {
 
   const users = await userDal.listUsers();
 
+  console.log(users);
+
   const user = users.find((user) => user.phoneNumber === phoneNumber);
 
   if (!user) {

@@ -1,13 +1,13 @@
 "use client";
 
-import LoginPhase1 from "./LoginPhase1";
+import LoginPhase1 from "./LoginPhaseSendOTP";
 import { Card, CardContent } from "@/components/ui/card";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { useState } from "react";
-import LoginPhase2 from "./LoginPhase2";
+import LoginPhase2 from "./LoginPhaseVerifyOTP";
 
 export default function LoginComponent() {
-  type Phase = "send-otp" | "verify-otp" | "login";
+  type Phase = "send-otp" | "verify-otp" | "create-password" | "login";
 
   const [phase, setPhase] = useState<Phase>("send-otp");
   const [phoneNumber, setPhoneNumber] = useState<string>("");
