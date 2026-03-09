@@ -39,6 +39,11 @@ export const auth = betterAuth({
         // Implement sending OTP code via SMS
         console.log(phoneNumber, code);
       },
+      signUpOnVerification: {
+        getTempEmail: (phoneNumber) => {
+          return `${phoneNumber}@ckrobinson.cz`;
+        },
+      },
     }),
   ],
   session: {
@@ -49,5 +54,13 @@ export const auth = betterAuth({
     },
     disableSessionRefresh: true,
     expiresIn: 60 * 60 * 24 * 10,
+  },
+  user: {
+    additionalFields: {
+      phoneNumber: {
+        type: "string",
+        required: true,
+      },
+    },
   },
 });
