@@ -3,13 +3,8 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "@lib/db";
 import { admin as adminPlugin, phoneNumber } from "better-auth/plugins";
 import { nextCookies } from "better-auth/next-js";
-import {
-  ac,
-  instructor,
-  programManager,
-  headProgramManager,
-  headManager,
-} from "./permissions";
+import { ac } from "./permissions";
+import { ROLES } from "./consts";
 
 export const auth = betterAuth({
   advanced: {
@@ -25,12 +20,7 @@ export const auth = betterAuth({
     adminPlugin({
       defaultRole: "instructor",
       ac,
-      roles: {
-        instructor,
-        programManager,
-        headProgramManager,
-        headManager,
-      },
+      roles: ROLES.OBJECTS,
     }),
     nextCookies(),
     phoneNumber({

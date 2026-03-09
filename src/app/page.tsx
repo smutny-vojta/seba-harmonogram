@@ -1,4 +1,4 @@
-import { getServerSession } from "@/lib/auth-utils";
+import { getServerSession, hasRole } from "@/lib/auth-utils";
 import { redirect } from "next/navigation";
 
 export default async function Page() {
@@ -8,9 +8,9 @@ export default async function Page() {
     redirect("/login");
   }
 
-  if (hasMinRole(session.user.role, "programak")) {
-    redirect("/dashboard");
-  }
+  // if (hasRole(session.user.role!, "programManager")) {
+  //   redirect("/dashboard");
+  // }
 
   return <div>Logged in as {session.user.email}</div>;
 }

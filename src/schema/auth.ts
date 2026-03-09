@@ -2,6 +2,7 @@ import { relations, sql } from "drizzle-orm";
 import { sqliteTable, text, integer, index } from "drizzle-orm/sqlite-core";
 import { campCategoryManager, instructorAssignment } from "./assignment";
 import { message } from "./message";
+import { ROLES } from "@/lib/consts";
 
 export const user = sqliteTable("user", {
   id: text("id").primaryKey(),
@@ -18,7 +19,7 @@ export const user = sqliteTable("user", {
     .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
     .$onUpdate(() => /* @__PURE__ */ new Date())
     .notNull(),
-  role: text("role").notNull().default("instructor"),
+  role: text("role", { enum: ROLES.STRINGS }).notNull().default("instructor"),
   banned: integer("banned", { mode: "boolean" }).default(false),
   banReason: text("ban_reason"),
   banExpires: integer("ban_expires", { mode: "timestamp_ms" }),
