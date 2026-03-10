@@ -8,7 +8,7 @@ export async function createUser({
 }: {
   phoneNumber: string;
   name: string;
-  role?: (typeof ROLES.STRINGS)[number];
+  role?: (typeof ROLES.STRINGS)[number] | (typeof ROLES.STRINGS)[number][];
 }) {
   const newUser = await auth.api.createUser({
     body: {

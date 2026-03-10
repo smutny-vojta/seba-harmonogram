@@ -1,10 +1,12 @@
 "use client";
 
-import LoginPhase1 from "./LoginPhaseSendOTP";
+import Phase0GetPhoneNumber from "./Phase0GetPhoneNumber";
 import { Card, CardContent } from "@/components/ui/card";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { useState } from "react";
-import LoginPhase2 from "./LoginPhaseVerifyOTP";
+import Phase1VerifyOTP from "./Phase1VerifyOTP";
+import Phase2CreatePassword from "./Phase2CreatePassword";
+import Phase3Login from "./Phase3Login";
 
 export default function LoginComponent() {
   type Phase = "send-otp" | "verify-otp" | "create-password" | "login";
@@ -17,10 +19,21 @@ export default function LoginComponent() {
       <Card className="w-full max-w-sm">
         <CardContent>
           {phase === "send-otp" && (
-            <LoginPhase1 setPhoneNumber={setPhoneNumber} setPhase={setPhase} />
+            <Phase0GetPhoneNumber
+              setPhoneNumber={setPhoneNumber}
+              setPhase={setPhase}
+            />
           )}
-          {phase === "verify-otp" && <LoginPhase2 phoneNumber={phoneNumber} />}
-          {phase === "login" && <div>Login</div>}
+          {phase === "verify-otp" && (
+            <Phase1VerifyOTP phoneNumber={phoneNumber} setPhase={setPhase} />
+          )}
+          {phase === "create-password" && (
+            <Phase2CreatePassword
+              phoneNumber={phoneNumber}
+              setPhase={setPhase}
+            />
+          )}
+          {phase === "login" && <Phase3Login phoneNumber={phoneNumber} />}
         </CardContent>
       </Card>
     </ErrorBoundary>
