@@ -9,7 +9,7 @@ import {
 import { Input } from "@/components/ui/input";
 
 import { useActionState, useEffect, useState } from "react";
-import { loginAction } from "../actions";
+import { loginAction } from "../../actions/auth";
 import { toast } from "sonner";
 import { Eye, EyeOff } from "lucide-react";
 import { CZECH_PHONE_REGEX_WITH_PREFIX } from "@/lib/consts";

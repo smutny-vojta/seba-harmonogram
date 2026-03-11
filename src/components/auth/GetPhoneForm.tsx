@@ -7,7 +7,7 @@ import {
   FieldSet,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { redirectUserOrSendOtpAction } from "@/app/login/actions";
+import { redirectUserOrSendOtpAction } from "@/actions/auth";
 import { CZECH_PHONE_REGEX } from "@/lib/consts";
 import { useActionState, useEffect, useState } from "react";
 import { toast } from "sonner";

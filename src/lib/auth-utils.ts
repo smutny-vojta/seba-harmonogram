@@ -4,10 +4,23 @@ import { ROLES } from "./consts";
 
 export type Role = (typeof ROLES.STRINGS)[number];
 
-export async function getServerSession() {
-  return auth.api.getSession({ headers: await headers() });
+export async function getServerSession({
+  disableCookieCache = true,
+}: {
+  disableCookieCache?: boolean;
+}) {
+  return auth.api.getSession({
+    query: {
+      disableCookieCache,
+    },
+    headers: await headers(),
+  });
 }
 
-export function hasRole(userRoles: string, role: Role): boolean {
-  return userRoles.includes(role);
+export function hasRole(
+  userRoles: string | null | undefined,
+  role: Role,
+): boolean {
+  if (!userRoles) return false;
+  return userRoles.split(",").includes(role);
 }

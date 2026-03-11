@@ -9,7 +9,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { OTP_REGEX } from "@/lib/consts";
 import { useActionState, useEffect, useState } from "react";
-import { verifyOtpAction } from "../actions";
+import { verifyOtpAction } from "../../actions/auth";
 import { toast } from "sonner";
 
 interface VerifyOTPFormProps {

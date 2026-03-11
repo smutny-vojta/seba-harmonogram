@@ -1,22 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "./lib/auth";
-import { getCookieCache } from "better-auth/cookies";
 
 export default async function proxy(request: NextRequest) {
-  const isPath = (path: string) => request.nextUrl.pathname.startsWith(path);
+  const isPath = (path: string) => request.nextUrl.pathname === path;
 
   // this checks if cookie exists and is valid
-  // const sessionCookie = await auth.api.getSession(request);
+  const sessionCookie = await auth.api.getSession({
+    headers: request.headers,
+    query: {
+      disableCookieCache: true,
+    },
+  });
+  const hasBeenVerified = sessionCookie?.user.emailVerified;
 
-  // checking only if cookie exists, not if it's valid
-  const sessionCookie = await getCookieCache(request);
-  const hasBeenVerified = sessionCookie?.user.emailVerified === true;
-
-  if ((!sessionCookie || !hasBeenVerified) && !isPath("/login")) {
-    return NextResponse.redirect(new URL("/login", request.url));
-  }
-
-  if (sessionCookie && hasBeenVerified && isPath("/login")) {
+  if ((!sessionCookie || !hasBeenVerified) && !isPath("/")) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 

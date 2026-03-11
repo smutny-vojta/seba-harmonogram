@@ -9,7 +9,7 @@ import {
 import { Input } from "@/components/ui/input";
 
 import { useActionState, useEffect, useState } from "react";
-import { setPasswordAction as setPasswordAction } from "../actions";
+import { setPasswordAction as setPasswordAction } from "../../actions/auth";
 import { toast } from "sonner";
 import { Check, Eye, EyeOff, X } from "lucide-react";
 

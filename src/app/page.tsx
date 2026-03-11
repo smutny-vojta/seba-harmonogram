@@ -1,16 +1,23 @@
+import LoginComponent from "@/components/auth/LoginContainer";
+import LogoutButton from "@/components/auth/LogoutButton";
 import { getServerSession, hasRole } from "@/lib/auth-utils";
 import { redirect } from "next/navigation";
 
 export default async function Page() {
-  const session = await getServerSession();
+  const session = await getServerSession({ disableCookieCache: true });
 
-  if (!session) {
-    redirect("/login");
+  if (!session || !session.user.emailVerified) {
+    return <LoginComponent />;
   }
 
-  // if (hasRole(session.user.role!, "programManager")) {
-  //   redirect("/dashboard");
-  // }
+  if (hasRole(session.user.role, "programManager")) {
+    redirect("/program");
+  }
 
-  return <div>Logged in as {session.user.email}</div>;
+  return (
+    <div>
+      Logged in as {session.user.email}
+      <LogoutButton />
+    </div>
+  );
 }

@@ -2,7 +2,6 @@
 
 import userDal from "@/dal/user.dal";
 import { auth } from "@/lib/auth";
-import { getServerSession } from "@/lib/auth-utils";
 import {
   CZECH_PHONE_REGEX,
   CZECH_PHONE_PREFIX,
@@ -13,6 +12,12 @@ import {
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { z } from "zod/v4";
+
+// ######################################################################
+// #
+// #    PHASE 1 - SEND OTP
+// #
+// ######################################################################
 
 const sendOtpSchema = z.object({
   phone: z
@@ -58,7 +63,7 @@ export async function redirectUserOrSendOtpAction(
 
 // ######################################################################
 // #
-// #
+// #    PHASE 2 - VERIFY OTP
 // #
 // ######################################################################
 
@@ -98,7 +103,7 @@ export async function verifyOtpAction(
 
 // ######################################################################
 // #
-// #
+// #    PHASE 3 - SET PASSWORD
 // #
 // ######################################################################
 
@@ -156,14 +161,10 @@ export async function setPasswordAction(
       query: {
         disableCookieCache: true,
       },
-      headers: await headers(),
-    });
-    await userDal.updateEmailVerified(session!.user.id, true);
-
-    await auth.api.revokeSession({
-      body: { token: session!.session.id },
       headers: userHeaders,
     });
+
+    await userDal.updateEmailVerified(session!.user.id, true);
 
     return { success: true, phoneNumber: result.data.phoneNumber };
   } catch (error) {
@@ -173,7 +174,7 @@ export async function setPasswordAction(
 
 // ######################################################################
 // #
-// #
+// #    PHASE 4 - LOGIN
 // #
 // ######################################################################
 
@@ -213,5 +214,38 @@ export async function loginAction(
   } catch (error) {
     return { success: false, error: (error as Error).message };
   }
+  redirect("/");
+}
+
+// ######################################################################
+// #
+// #    LOGOUT
+// #
+// ######################################################################
+
+export async function logoutAction() {
+  const data = await auth.api.getSession({
+    query: {
+      disableCookieCache: true,
+    },
+    headers: await headers(),
+  });
+
+  if (!data) {
+    return;
+  }
+
+  await auth.api.revokeSession({
+    body: { token: data.session.token },
+    headers: await headers(),
+  });
+
+  await auth.api.signOut({
+    query: {
+      disableCookieCache: true,
+    },
+    headers: await headers(),
+  });
+
   redirect("/");
 }
