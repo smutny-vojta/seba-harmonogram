@@ -12,7 +12,7 @@ import { useActionState, useEffect, useState } from "react";
 import { verifyOtpAction } from "../actions";
 import { toast } from "sonner";
 
-interface Phase1VerifyOTPProps {
+interface VerifyOTPFormProps {
   phoneNumber: string;
   setPhase: (phase: "create-password") => void;
 }
@@ -21,10 +21,10 @@ const markInvalid = (formOtp: string) => {
   return formOtp.length > 0 && !OTP_REGEX.test(formOtp);
 };
 
-export default function Phase1VerifyOTP({
+export default function VerifyOTPForm({
   phoneNumber,
   setPhase,
-}: Phase1VerifyOTPProps) {
+}: VerifyOTPFormProps) {
   const [formOtp, setFormOtp] = useState<string>("");
 
   const handleSubmit = async (previousState: unknown, formData: FormData) => {

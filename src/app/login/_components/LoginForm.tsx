@@ -14,7 +14,7 @@ import { toast } from "sonner";
 import { Eye, EyeOff } from "lucide-react";
 import { CZECH_PHONE_REGEX_WITH_PREFIX } from "@/lib/consts";
 
-export default function Phase3Login({ phoneNumber }: { phoneNumber?: string }) {
+export default function LoginForm({ phoneNumber }: { phoneNumber?: string }) {
   const [formPhoneNumber, setFormPhoneNumber] = useState<string>(
     phoneNumber ?? "",
   );

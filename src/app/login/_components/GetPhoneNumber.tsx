@@ -12,15 +12,15 @@ import { CZECH_PHONE_REGEX } from "@/lib/consts";
 import { useActionState, useEffect, useState } from "react";
 import { toast } from "sonner";
 
-interface Phase0GetPhoneNumberProps {
+interface GetPhoneFormProps {
   setPhoneNumber: (phoneNumber: string) => void;
   setPhase: (phase: "verify-otp" | "login") => void;
 }
 
-export default function Phase0GetPhoneNumber({
+export default function GetPhoneForm({
   setPhoneNumber,
   setPhase,
-}: Phase0GetPhoneNumberProps) {
+}: GetPhoneFormProps) {
   const [formPhone, setFormPhone] = useState<string>("");
 
   const handleSubmit = async (previousState: unknown, formData: FormData) => {

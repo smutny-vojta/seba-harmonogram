@@ -13,7 +13,7 @@ import { setPasswordAction as setPasswordAction } from "../actions";
 import { toast } from "sonner";
 import { Check, Eye, EyeOff, X } from "lucide-react";
 
-interface Phase2CreatePasswordProps {
+interface CreatePasswordFormProps {
   phoneNumber: string;
   setPhase: (phase: "login") => void;
 }
@@ -24,10 +24,10 @@ const PASSWORD_RULES = [
   { label: "Alespoň 1 číslo", regex: /[0-9]/ },
 ];
 
-export default function Phase2CreatePassword({
+export default function CreatePasswordForm({
   phoneNumber,
   setPhase,
-}: Phase2CreatePasswordProps) {
+}: CreatePasswordFormProps) {
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
   const [showPasswords, setShowPasswords] = useState<boolean>(false);
