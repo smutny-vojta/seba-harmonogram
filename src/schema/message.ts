@@ -16,7 +16,7 @@ export const message = sqliteTable(
   "message",
   {
     id: text("id").primaryKey(),
-    termId: text("term_id")
+    termId: integer("term_id")
       .notNull()
       .references(() => term.id, { onDelete: "cascade" }),
     groupId: text("group_id").references(() => group.id, {

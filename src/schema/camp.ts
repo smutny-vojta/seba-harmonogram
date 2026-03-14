@@ -4,7 +4,6 @@ import {
   text,
   integer,
   index,
-  unique,
 } from "drizzle-orm/sqlite-core";
 import { instructorAssignment } from "./assignment";
 import { scheduleEntry } from "./schedule";
@@ -23,7 +22,7 @@ import {
 export const campCategory = sqliteTable("camp_category", {
   id: text("id").primaryKey(),
   name: text("name").notNull().unique(),
-  color: text("color"),
+  color: text("color").notNull(),
   isOffice: integer("is_office", { mode: "boolean" }).default(false).notNull(),
   createdAt: integer("created_at", { mode: "timestamp_ms" })
     .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
@@ -43,11 +42,9 @@ export const campCategoryUpdateSchema = createUpdateSchema(campCategory);
 // ---------------------------------------------------------------------------
 
 export const term = sqliteTable("term", {
-  id: text("id").primaryKey(),
-  number: integer("number").notNull(),
+  id: integer("id").primaryKey(),
   startDate: text("start_date").notNull(),
   endDate: text("end_date").notNull(),
-  year: integer("year").notNull(),
   createdAt: integer("created_at", { mode: "timestamp_ms" })
     .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
     .notNull(),
@@ -62,34 +59,6 @@ export const termInsertSchema = createInsertSchema(term);
 export const termUpdateSchema = createUpdateSchema(term);
 
 // ---------------------------------------------------------------------------
-// Term ↔ Camp Category (Aktivní kategorie v turnusu)
-// ---------------------------------------------------------------------------
-
-export const termCampCategory = sqliteTable(
-  "term_camp_category",
-  {
-    id: text("id").primaryKey(),
-    termId: text("term_id")
-      .notNull()
-      .references(() => term.id, { onDelete: "cascade" }),
-    campCategoryId: text("camp_category_id")
-      .notNull()
-      .references(() => campCategory.id, { onDelete: "cascade" }),
-  },
-  (table) => [
-    unique("term_camp_category_uniq").on(table.termId, table.campCategoryId),
-    index("term_camp_category_termId_idx").on(table.termId),
-  ],
-);
-
-export const termCampCategorySelectSchema =
-  createSelectSchema(termCampCategory);
-export const termCampCategoryInsertSchema =
-  createInsertSchema(termCampCategory);
-export const termCampCategoryUpdateSchema =
-  createUpdateSchema(termCampCategory);
-
-// ---------------------------------------------------------------------------
 // Group (Oddíl)
 // ---------------------------------------------------------------------------
 
@@ -98,12 +67,12 @@ export const group = sqliteTable(
   {
     id: text("id").primaryKey(),
     name: text("name").notNull(),
-    termId: text("term_id")
+    termId: integer("term_id")
       .notNull()
       .references(() => term.id, { onDelete: "cascade" }),
-    campCategoryId: text("camp_category_id").references(() => campCategory.id, {
-      onDelete: "set null",
-    }),
+    campCategoryId: text("camp_category_id")
+      .notNull()
+      .references(() => campCategory.id, { onDelete: "cascade" }),
     createdAt: integer("created_at", { mode: "timestamp_ms" })
       .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
       .notNull(),
@@ -127,29 +96,13 @@ export const groupUpdateSchema = createUpdateSchema(group);
 // ---------------------------------------------------------------------------
 
 export const campCategoryRelations = relations(campCategory, ({ many }) => ({
-  termCampCategories: many(termCampCategory),
   groups: many(group),
 }));
 
 export const termRelations = relations(term, ({ many }) => ({
-  termCampCategories: many(termCampCategory),
   groups: many(group),
   messages: many(message),
 }));
-
-export const termCampCategoryRelations = relations(
-  termCampCategory,
-  ({ one }) => ({
-    term: one(term, {
-      fields: [termCampCategory.termId],
-      references: [term.id],
-    }),
-    campCategory: one(campCategory, {
-      fields: [termCampCategory.campCategoryId],
-      references: [campCategory.id],
-    }),
-  }),
-);
 
 export const groupRelations = relations(group, ({ one, many }) => ({
   term: one(term, {

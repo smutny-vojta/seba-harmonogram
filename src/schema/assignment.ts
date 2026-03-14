@@ -64,7 +64,7 @@ export const campCategoryManager = sqliteTable(
     campCategoryId: text("camp_category_id")
       .notNull()
       .references(() => campCategory.id, { onDelete: "cascade" }),
-    termId: text("term_id")
+    termId: integer("term_id")
       .notNull()
       .references(() => term.id, { onDelete: "cascade" }),
     createdAt: integer("created_at", { mode: "timestamp_ms" })
