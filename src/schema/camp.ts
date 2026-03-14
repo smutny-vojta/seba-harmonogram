@@ -24,6 +24,7 @@ export const campCategory = sqliteTable("camp_category", {
   id: text("id").primaryKey(),
   name: text("name").notNull().unique(),
   color: text("color"),
+  isOffice: integer("is_office", { mode: "boolean" }).default(false).notNull(),
   createdAt: integer("created_at", { mode: "timestamp_ms" })
     .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
     .notNull(),
@@ -103,9 +104,6 @@ export const group = sqliteTable(
     campCategoryId: text("camp_category_id").references(() => campCategory.id, {
       onDelete: "set null",
     }),
-    isOffice: integer("is_office", { mode: "boolean" })
-      .default(false)
-      .notNull(),
     createdAt: integer("created_at", { mode: "timestamp_ms" })
       .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
       .notNull(),
