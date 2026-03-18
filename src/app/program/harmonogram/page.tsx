@@ -1,4 +1,4 @@
-import { scheduleDal } from "@/dal/schedule.dal";
+import { scheduleDal } from "@/features/schedule/dal";
 
 export default async function HarmonogramPage() {
   const entries = await scheduleDal.listScheduleEntries();

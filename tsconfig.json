@@ -23,17 +23,9 @@
     "paths": {
       // Obecný alias pro celou složku src
       "@/*": ["src/*"],
-      // Alias pro Next.js app složku
-      "@app/*": ["src/app/*"],
-      // Specifické aliasy pro hlavní domény
-      "@components/*": ["src/components/*"],
-      "@dal/*": ["src/dal/*"],
-      "@hooks/*": ["src/hooks/*"],
-      "@lib/*": ["src/lib/*"],
-      "@schemas/*": ["src/schemas/*"],
-      "@services/*": ["src/services/*"],
-      "@types/*": ["src/types/*"],
-      "@utils/*": ["src/utils/*"]
+      // Feature-based aliases
+      "@features/*": ["src/features/*"],
+      "@shared/*": ["src/shared/*"]
     }
   },
   "include": [

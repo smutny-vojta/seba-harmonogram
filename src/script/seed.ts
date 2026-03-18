@@ -1,4 +1,4 @@
-import { db } from "@/lib/db";
+import { db } from "@/shared/lib/db";
 import { campCategory, term } from "@/schema/camp";
 import { activityTemplate } from "@/schema/schedule";
 

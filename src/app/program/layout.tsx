@@ -1,9 +1,9 @@
-import Sidebar from "@/components/layout/Sidebar";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { TooltipProvider } from "@/components/ui/tooltip";
+import Sidebar from "@/shared/components/layout/Sidebar";
+import { SidebarProvider, SidebarTrigger } from "@/shared/components/ui/sidebar";
+import { TooltipProvider } from "@/shared/components/ui/tooltip";
 
-import PageHeader from "@/components/layout/PageHeader";
-import { getServerSession, hasRole } from "@/lib/auth-utils";
+import PageHeader from "@/shared/components/layout/PageHeader";
+import { getServerSession, hasRole } from "@/features/auth/auth";
 import { redirect } from "next/navigation";
 
 export default async function Layout({

@@ -1,4 +1,4 @@
-import { groupDal } from "@/dal/group.dal";
+import { groupDal } from "@/features/camp/dal";
 
 export default async function OddilyPage() {
   const groups = await groupDal.listGroups();

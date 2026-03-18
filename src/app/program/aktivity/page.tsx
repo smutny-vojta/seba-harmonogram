@@ -1,8 +1,8 @@
-import { activityDal } from "@/dal/activity.dal";
+import { activityDal } from "@/features/activities/dal";
 
-import { CreateActivityDialog } from "@/components/program/CreateActivityDialog";
-import { UpdateActivityDialog } from "@/components/program/UpdateActivityDialog";
-import { DeleteActivityDialog } from "@/components/program/DeleteActivityDialog";
+import { CreateActivityDialog } from "@/features/activities/components/CreateActivityDialog";
+import { UpdateActivityDialog } from "@/features/activities/components/UpdateActivityDialog";
+import { DeleteActivityDialog } from "@/features/activities/components/DeleteActivityDialog";
 
 const activityTypeMap = {
   game: "Hra",

@@ -1,5 +1,5 @@
-import { userDal } from "@/dal/user.dal";
-import { getHighestRoleLabel } from "@/lib/auth-utils";
+import { userDal } from "@/features/auth/dal";
+import { getHighestRoleLabel } from "@/features/auth/auth";
 
 export default async function UzivatelePage() {
   const usersList = await userDal.listUsersWithDetails();

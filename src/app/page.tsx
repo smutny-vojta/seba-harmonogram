@@ -1,6 +1,6 @@
-import LoginComponent from "@/components/auth/LoginContainer";
-import LogoutButton from "@/components/auth/LogoutButton";
-import { getServerSession, hasRole } from "@/lib/auth-utils";
+import LoginComponent from "@/features/auth/components/LoginContainer";
+import LogoutButton from "@/features/auth/components/LogoutButton";
+import { getServerSession, hasRole } from "@/features/auth/auth";
 import { redirect } from "next/navigation";
 
 export default async function Page() {

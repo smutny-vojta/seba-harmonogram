@@ -1,4 +1,4 @@
-import { createUser } from "@/service/user.service";
+import { createUser } from "@/features/auth/dal";
 
 (async () => {
   const createdUser = await createUser({

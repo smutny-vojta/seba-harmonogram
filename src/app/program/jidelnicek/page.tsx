@@ -1,4 +1,4 @@
-import { mealDal } from "@/dal/meal.dal";
+import { mealDal } from "@/features/meals/dal";
 
 export default async function JidelnicekPage() {
   const meals = await mealDal.listMeals();
