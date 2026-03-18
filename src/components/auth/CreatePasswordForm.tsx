@@ -8,8 +8,9 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 
-import { useActionState, useEffect, useState } from "react";
-import { setPasswordAction as setPasswordAction } from "../../actions/auth";
+import { useAction } from "next-safe-action/hooks";
+import { useState } from "react";
+import { setPasswordAction } from "../../actions/auth";
 import { toast } from "sonner";
 import { Check, Eye, EyeOff, X } from "lucide-react";
 
@@ -35,30 +36,28 @@ export default function CreatePasswordForm({
   const passwordValid = PASSWORD_RULES.every((r) => r.regex.test(password));
   const passwordsMatch = password === confirmPassword && password.length > 0;
 
-  const handleSubmit = async (previousState: unknown, formData: FormData) => {
-    if (!passwordValid) {
-      return null;
-    }
-
-    return setPasswordAction(previousState, formData);
-  };
-
-  const [state, formAction] = useActionState(handleSubmit, null);
-
-  useEffect(() => {
-    if (!state) {
-      return;
-    }
-
-    if (!state.success) {
-      toast.error(state.error);
-    } else {
-      setPhase("login");
-    }
-  }, [state]);
+  const { execute, isExecuting } = useAction(setPasswordAction, {
+    onSuccess: ({ data }) => {
+      if (data?.success) {
+        setPhase("login");
+      }
+    },
+    onError: ({ error }) => {
+      toast.error(error.serverError || error.validationErrors?._errors?.[0] || "Uložení hesla se nepovedlo");
+    },
+  });
 
   return (
-    <form action={formAction} className="w-full max-w-sm">
+    <form 
+      action={(formData) => {
+        if (!passwordValid) {
+          toast.error("Heslo nesplňuje požadavky.");
+          return;
+        }
+        execute(Object.fromEntries(formData) as any);
+      }} 
+      className="w-full max-w-sm"
+    >
       <FieldSet>
         <FieldLegend>Vytvoření hesla</FieldLegend>
         <Field className="gap-1">
@@ -75,6 +74,7 @@ export default function CreatePasswordForm({
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              disabled={isExecuting}
               aria-invalid={password.length > 0 && !passwordValid}
               className={`${
                 confirmPassword.length === 0
@@ -90,6 +90,7 @@ export default function CreatePasswordForm({
               size="icon"
               onClick={() => setShowPasswords(!showPasswords)}
               className="absolute top-0 right-0"
+              disabled={isExecuting}
             >
               {showPasswords ? <EyeOff /> : <Eye />}
             </Button>
@@ -134,6 +135,7 @@ export default function CreatePasswordForm({
             required
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
+            disabled={isExecuting}
             aria-invalid={confirmPassword.length > 0 && !passwordsMatch}
             className={`${
               confirmPassword.length === 0
@@ -155,7 +157,9 @@ export default function CreatePasswordForm({
           type="hidden"
           value={phoneNumber}
         />
-        <Button type="submit">Vytvořit heslo</Button>
+        <Button type="submit" disabled={isExecuting}>
+          {isExecuting ? "Ukládám..." : "Vytvořit heslo"}
+        </Button>
       </FieldSet>
     </form>
   );

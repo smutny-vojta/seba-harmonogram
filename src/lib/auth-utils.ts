@@ -1,6 +1,6 @@
 import { auth } from "@lib/auth";
 import { headers } from "next/headers";
-import { ROLES } from "./consts";
+import { ROLE_LABELS, ROLES } from "./consts";
 
 export type Role = (typeof ROLES.STRINGS)[number];
 
@@ -23,4 +23,18 @@ export function hasRole(
 ): boolean {
   if (!userRoles) return false;
   return userRoles.split(",").includes(role);
+}
+
+/**
+ * Vezme roles string ("instructor,programManager,..."),
+ * rozdělí ho na pole, vezme poslední (nejvyšší) roli
+ * a přeloží ji na český název.
+ */
+export function getHighestRoleLabel(
+  roleString: string | null | undefined,
+): string {
+  if (!roleString) return "Neznámá role";
+  const roles = roleString.split(",");
+  const highest = roles[roles.length - 1];
+  return ROLE_LABELS[highest] ?? highest;
 }

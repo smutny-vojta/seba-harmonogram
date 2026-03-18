@@ -1,6 +1,6 @@
 "use server";
 
-import userDal from "@/dal/user.dal";
+import { userDal } from "@/dal/user.dal";
 import { auth } from "@/lib/auth";
 import {
   CZECH_PHONE_REGEX,
@@ -12,6 +12,7 @@ import {
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { z } from "zod/v4";
+import { actionClient } from "@/lib/safe-action";
 
 // ######################################################################
 // #
@@ -25,41 +26,29 @@ const sendOtpSchema = z.object({
     .regex(CZECH_PHONE_REGEX, "Telefonní číslo musí mít 9 číslic"),
 });
 
-export async function redirectUserOrSendOtpAction(
-  _previousState: unknown,
-  formData: FormData,
-): Promise<
-  | { success: false; error: string }
-  | { success: true; phoneNumber: string; verified: boolean }
-> {
-  const result = sendOtpSchema.safeParse(Object.fromEntries(formData));
+export const redirectUserOrSendOtpAction = actionClient
+  .inputSchema(sendOtpSchema)
+  .action(async ({ parsedInput }) => {
+    const phoneNumber = CZECH_PHONE_PREFIX + parsedInput.phone;
+    const users = await userDal.listUsers();
+    const user = users.find((user) => user.phoneNumber === phoneNumber);
 
-  if (!result.success) {
-    return { success: false, error: result.error.message };
-  }
+    if (!user) {
+      throw new Error("S tímto telefonním číslem se nelze přihlásit.");
+    }
 
-  const phoneNumber = CZECH_PHONE_PREFIX + result.data.phone;
+    if (user.phoneNumberVerified) {
+      return { phoneNumber, verified: true };
+    }
 
-  const users = await userDal.listUsers();
+    await auth.api.sendPhoneNumberOTP({
+      body: {
+        phoneNumber: phoneNumber,
+      },
+    });
 
-  const user = users.find((user) => user.phoneNumber === phoneNumber);
-
-  if (!user) {
-    throw new Error("S tímto telefonním číslem se nelze přihlásit.");
-  }
-
-  if (user.phoneNumberVerified) {
-    return { success: true, phoneNumber, verified: true };
-  }
-
-  await auth.api.sendPhoneNumberOTP({
-    body: {
-      phoneNumber: phoneNumber,
-    },
+    return { phoneNumber, verified: false };
   });
-
-  return { success: true, phoneNumber, verified: false };
-}
 
 // ######################################################################
 // #
@@ -77,29 +66,22 @@ const verifyOtpSchema = z.object({
   otp: z.string().regex(OTP_REGEX, "Kód musí mít 6 číslic"),
 });
 
-export async function verifyOtpAction(
-  _previousState: unknown,
-  formData: FormData,
-): Promise<{ success: false; error: string } | { success: true }> {
-  const result = verifyOtpSchema.safeParse(Object.fromEntries(formData));
+export const verifyOtpAction = actionClient
+  .inputSchema(verifyOtpSchema)
+  .action(async ({ parsedInput }) => {
+    try {
+      await auth.api.verifyPhoneNumber({
+        body: {
+          phoneNumber: parsedInput.phoneNumber,
+          code: parsedInput.otp,
+        },
+      });
 
-  if (!result.success) {
-    return { success: false, error: result.error.message };
-  }
-
-  try {
-    await auth.api.verifyPhoneNumber({
-      body: {
-        phoneNumber: result.data.phoneNumber,
-        code: result.data.otp,
-      },
-    });
-
-    return { success: true };
-  } catch (error) {
-    return { success: false, error: (error as Error).message };
-  }
-}
+      return { success: true };
+    } catch (error) {
+      throw new Error((error as Error).message);
+    }
+  });
 
 // ######################################################################
 // #
@@ -133,44 +115,33 @@ const verifySetPasswordSchema = z
     path: ["confirmPassword"],
   });
 
-export async function setPasswordAction(
-  _previousState: unknown,
-  formData: FormData,
-): Promise<
-  { success: false; error: string } | { success: true; phoneNumber: string }
-> {
-  const result = verifySetPasswordSchema.safeParse(
-    Object.fromEntries(formData),
-  );
+export const setPasswordAction = actionClient
+  .inputSchema(verifySetPasswordSchema)
+  .action(async ({ parsedInput }) => {
+    const userHeaders = await headers();
 
-  if (!result.success) {
-    return { success: false, error: result.error.message };
-  }
+    try {
+      await auth.api.setPassword({
+        body: {
+          newPassword: parsedInput.password,
+        },
+        headers: userHeaders,
+      });
 
-  const userHeaders = await headers();
+      const session = await auth.api.getSession({
+        query: {
+          disableCookieCache: true,
+        },
+        headers: userHeaders,
+      });
 
-  try {
-    await auth.api.setPassword({
-      body: {
-        newPassword: result.data.password,
-      },
-      headers: userHeaders,
-    });
+      await userDal.updateEmailVerified(session!.user.id, true);
 
-    const session = await auth.api.getSession({
-      query: {
-        disableCookieCache: true,
-      },
-      headers: userHeaders,
-    });
-
-    await userDal.updateEmailVerified(session!.user.id, true);
-
-    return { success: true, phoneNumber: result.data.phoneNumber };
-  } catch (error) {
-    return { success: false, error: (error as Error).message };
-  }
-}
+      return { success: true, phoneNumber: parsedInput.phoneNumber };
+    } catch (error) {
+      throw new Error((error as Error).message);
+    }
+  });
 
 // ######################################################################
 // #
@@ -193,29 +164,23 @@ const verifyLoginSchema = z.object({
     ),
 });
 
-export async function loginAction(
-  _previousState: unknown,
-  formData: FormData,
-): Promise<{ success: false; error: string } | { success: true }> {
-  const result = verifyLoginSchema.safeParse(Object.fromEntries(formData));
+export const loginAction = actionClient
+  .inputSchema(verifyLoginSchema)
+  .action(async ({ parsedInput }) => {
+    try {
+      await auth.api.signInPhoneNumber({
+        body: {
+          phoneNumber: parsedInput.phoneNumber,
+          password: parsedInput.password,
+          rememberMe: true,
+        },
+      });
+    } catch (error) {
+      throw new Error((error as Error).message);
+    }
 
-  if (!result.success) {
-    return { success: false, error: result.error.message };
-  }
-
-  try {
-    await auth.api.signInPhoneNumber({
-      body: {
-        phoneNumber: result.data.phoneNumber,
-        password: result.data.password,
-        rememberMe: true,
-      },
-    });
-  } catch (error) {
-    return { success: false, error: (error as Error).message };
-  }
-  redirect("/");
-}
+    redirect("/");
+  });
 
 // ######################################################################
 // #
@@ -223,7 +188,7 @@ export async function loginAction(
 // #
 // ######################################################################
 
-export async function logoutAction() {
+export const logoutAction = actionClient.action(async () => {
   const data = await auth.api.getSession({
     query: {
       disableCookieCache: true,
@@ -248,4 +213,4 @@ export async function logoutAction() {
   });
 
   redirect("/");
-}
+});

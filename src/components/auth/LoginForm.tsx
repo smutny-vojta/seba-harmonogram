@@ -8,7 +8,8 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 
-import { useActionState, useEffect, useState } from "react";
+import { useAction } from "next-safe-action/hooks";
+import { useState } from "react";
 import { loginAction } from "../../actions/auth";
 import { toast } from "sonner";
 import { Eye, EyeOff } from "lucide-react";
@@ -21,24 +22,17 @@ export default function LoginForm({ phoneNumber }: { phoneNumber?: string }) {
   const [password, setPassword] = useState<string>("");
   const [showPasswords, setShowPasswords] = useState<boolean>(false);
 
-  const handleSubmit = async (previousState: unknown, formData: FormData) => {
-    return loginAction(previousState, formData);
-  };
-
-  const [state, formAction] = useActionState(handleSubmit, null);
-
-  useEffect(() => {
-    if (!state) {
-      return;
-    }
-
-    if (!state.success) {
-      toast.error(state.error);
-    }
-  }, [state]);
+  const { execute, isExecuting } = useAction(loginAction, {
+    onError: ({ error }) => {
+      toast.error(error.serverError || error.validationErrors?._errors?.[0] || "Přihlášení se nepovedlo");
+    },
+  });
 
   return (
-    <form action={formAction} className="w-full max-w-sm">
+    <form 
+      action={(formData) => execute(Object.fromEntries(formData) as any)} 
+      className="w-full max-w-sm"
+    >
       <FieldSet>
         <FieldLegend>Přihlášení instruktora</FieldLegend>
         <Field className="gap-1">
@@ -55,6 +49,7 @@ export default function LoginForm({ phoneNumber }: { phoneNumber?: string }) {
             required
             value={formPhoneNumber}
             onChange={(e) => setFormPhoneNumber(e.target.value)}
+            disabled={isExecuting}
             aria-invalid={
               formPhoneNumber.length > 0 &&
               !CZECH_PHONE_REGEX_WITH_PREFIX.test(formPhoneNumber)
@@ -75,6 +70,7 @@ export default function LoginForm({ phoneNumber }: { phoneNumber?: string }) {
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              disabled={isExecuting}
             />
             <Button
               type="button"
@@ -82,12 +78,15 @@ export default function LoginForm({ phoneNumber }: { phoneNumber?: string }) {
               size="icon"
               onClick={() => setShowPasswords(!showPasswords)}
               className="absolute top-0 right-0"
+              disabled={isExecuting}
             >
               {showPasswords ? <EyeOff /> : <Eye />}
             </Button>
           </div>
         </Field>
-        <Button type="submit">Přihlásit se</Button>
+        <Button type="submit" disabled={isExecuting}>
+          {isExecuting ? "Přihlašuji..." : "Přihlásit se"}
+        </Button>
       </FieldSet>
     </form>
   );

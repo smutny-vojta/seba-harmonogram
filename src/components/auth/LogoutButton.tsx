@@ -1,11 +1,14 @@
 "use client";
 
+import { useAction } from "next-safe-action/hooks";
 import { logoutAction } from "@/actions/auth";
 
 export default function LogoutButton() {
-  const handleLogout = async () => {
-    await logoutAction();
-  };
+  const { execute, isExecuting } = useAction(logoutAction);
 
-  return <button onClick={handleLogout}>Odhlásit se</button>;
+  return (
+    <button onClick={() => execute()} disabled={isExecuting}>
+      {isExecuting ? "Odhlašování..." : "Odhlásit se"}
+    </button>
+  );
 }

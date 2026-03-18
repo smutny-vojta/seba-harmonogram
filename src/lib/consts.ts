@@ -40,3 +40,11 @@ export const ROLES = {
     headManager,
   },
 };
+
+/** Mapa rolí na české názvy pro zobrazení na frontendu */
+export const ROLE_LABELS: Record<string, string> = {
+  instructor: "Instruktor",
+  programManager: "Programák",
+  headProgramManager: "Hlavní programák",
+  headManager: "Hlavas",
+};

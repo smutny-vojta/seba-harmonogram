@@ -1,11 +1,31 @@
 import { db } from "@/lib/db";
-import { user } from "@/schema";
-import { eq } from "drizzle-orm";
+import { user } from "@/schema/auth";
+import { desc, eq } from "drizzle-orm";
 
-const userDal = {
+export const userDal = {
   listUsers: async () => {
     return await db.query.user.findMany();
   },
+
+  listUsersWithDetails: async () => {
+    return await db.query.user.findMany({
+      with: {
+        instructorAssignments: {
+          with: {
+            group: true,
+          },
+        },
+        campCategoryManagers: {
+          with: {
+            campCategory: true,
+            term: true,
+          },
+        },
+      },
+      orderBy: [desc(user.createdAt)],
+    });
+  },
+
   updateEmailVerified: async (userId: string, value: boolean) => {
     return await db
       .update(user)
@@ -14,4 +34,3 @@ const userDal = {
   },
 };
 
-export default userDal;

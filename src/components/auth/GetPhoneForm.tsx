@@ -9,7 +9,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { redirectUserOrSendOtpAction } from "@/actions/auth";
 import { CZECH_PHONE_REGEX } from "@/lib/consts";
-import { useActionState, useEffect, useState } from "react";
+import { useState } from "react";
+import { useAction } from "next-safe-action/hooks";
 import { toast } from "sonner";
 
 interface GetPhoneFormProps {
@@ -23,35 +24,27 @@ export default function GetPhoneForm({
 }: GetPhoneFormProps) {
   const [formPhone, setFormPhone] = useState<string>("");
 
-  const handleSubmit = async (previousState: unknown, formData: FormData) => {
-    if (!CZECH_PHONE_REGEX.test(formPhone)) {
-      return null;
-    }
-
-    return redirectUserOrSendOtpAction(previousState, formData);
-  };
-
-  const [state, formAction] = useActionState(handleSubmit, null);
-
-  useEffect(() => {
-    if (!state) {
-      return;
-    }
-
-    if (!state.success) {
-      toast.error(state.error);
-    } else {
-      setPhoneNumber(state.phoneNumber);
-      if (state.verified) {
-        setPhase("login");
-      } else {
-        setPhase("verify-otp");
+  const { execute, isExecuting } = useAction(redirectUserOrSendOtpAction, {
+    onSuccess: ({ data }) => {
+      if (data) {
+        setPhoneNumber(data.phoneNumber);
+        if (data.verified) {
+          setPhase("login");
+        } else {
+          setPhase("verify-otp");
+        }
       }
-    }
-  }, [state]);
+    },
+    onError: ({ error }) => {
+      toast.error(error.serverError || error.validationErrors?._errors?.[0] || "Něco se nepovedlo");
+    },
+  });
 
   return (
-    <form action={formAction} className="w-full max-w-sm">
+    <form 
+      action={(formData) => execute(Object.fromEntries(formData) as any)} 
+      className="w-full max-w-sm"
+    >
       <FieldSet>
         <FieldLegend>Přihlášení instruktora</FieldLegend>
         <Field className="gap-1">
@@ -67,6 +60,7 @@ export default function GetPhoneForm({
             required
             value={formPhone}
             onChange={(e) => setFormPhone(e.target.value)}
+            disabled={isExecuting}
             aria-invalid={
               formPhone.length > 0 && !CZECH_PHONE_REGEX.test(formPhone)
             }
@@ -83,7 +77,9 @@ export default function GetPhoneForm({
             )}
           </FieldDescription>
         </Field>
-        <Button type="submit">Odeslat</Button>
+        <Button type="submit" disabled={isExecuting}>
+          {isExecuting ? "Odesílám..." : "Odeslat"}
+        </Button>
       </FieldSet>
     </form>
   );
