@@ -4,6 +4,8 @@ import { auth } from "./features/auth/auth";
 export default async function proxy(request: NextRequest) {
   const isPath = (path: string) => request.nextUrl.pathname === path;
 
+  // !TODO: kontrolovat pouze, zda session cookie existuje, at je to rychlejsi
+
   // this checks if cookie exists and is valid
   const sessionCookie = await auth.api.getSession({
     headers: request.headers,

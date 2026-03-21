@@ -3,7 +3,7 @@ import LogoutButton from "@/features/auth/components/LogoutButton";
 export default function Page() {
   return (
     <>
-      {/* title - collapsible nebo horizont arrows */}
+      {/* // TODO: title - collapsible nebo horizont arrows */}
       {/* na otevreni se ukazou links a user profile */}
       {/* nerozdelovat veci na instr a program, vyuzit conditional rendering podle role */}
       <header>

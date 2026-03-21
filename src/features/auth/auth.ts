@@ -1,7 +1,7 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "@/shared/lib/db";
-import { admin as adminPlugin, phoneNumber } from "better-auth/plugins";
+import { admin } from "better-auth/plugins";
 import { nextCookies } from "better-auth/next-js";
 import { ac, ROLES, ROLE_LABELS } from "./consts";
 import { headers } from "next/headers";
@@ -18,19 +18,12 @@ export const auth = betterAuth({
     enabled: false,
   },
   plugins: [
-    adminPlugin({
+    admin({
       defaultRole: "instructor",
       ac,
       roles: ROLES.OBJECTS,
     }),
     nextCookies(),
-    phoneNumber({
-      otpLength: 6,
-      sendOTP: ({ phoneNumber, code }, ctx) => {
-        // Implement sending OTP code via SMS
-        console.log(phoneNumber, code);
-      },
-    }),
   ],
   session: {
     cookieCache: {

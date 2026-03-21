@@ -3,6 +3,8 @@ import { drizzle } from "drizzle-orm/better-sqlite3";
 import { schema } from "@/schema";
 import { env } from "./env";
 
+// !TODO: predelat na pripojeni k mongodb
+
 const dbPath = env.DATABASE_URL;
 
 // In development, Next.js clears the module cache often causing multiple active connections.

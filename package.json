@@ -8,7 +8,10 @@
     "start": "next start",
     "lint": "biome check",
     "format": "biome format --write",
-    "db:reset": "rm -rf data && mkdir data && npx drizzle-kit push && npx tsx src/script/seed.ts && npx tsx src/script/adminCreateUser.ts"
+    "db:start": "docker compose up -d",
+    "db:stop": "docker compose stop",
+    "db:reset": "docker compose down -v && docker compose up -d",
+    "dev:all": "npm run db:start && npm run dev"
   },
   "dependencies": {
     "@base-ui/react": "^1.2.0",

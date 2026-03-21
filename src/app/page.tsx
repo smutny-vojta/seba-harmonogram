@@ -11,7 +11,7 @@ export default async function Page() {
   }
 
   if (hasRole(session.user.role, "programManager")) {
-    redirect("/program");
+    redirect("/dashboard");
   }
 
   return (
