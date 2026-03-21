@@ -1,10 +1,10 @@
 import LoginComponent from "@/features/auth/components/LoginContainer";
 import LogoutButton from "@/features/auth/components/LogoutButton";
-import { getServerSession, hasRole } from "@/features/auth/auth";
+import { getSessionUncached, hasRole } from "@/features/auth/utils";
 import { redirect } from "next/navigation";
 
 export default async function Page() {
-  const session = await getServerSession({ disableCookieCache: true });
+  const session = await getSessionUncached();
 
   if (!session || !session.user.emailVerified) {
     return <LoginComponent />;

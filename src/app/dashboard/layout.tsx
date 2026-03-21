@@ -1,5 +1,8 @@
 import Sidebar from "@/shared/components/layout/Sidebar";
-import { SidebarProvider, SidebarTrigger } from "@/shared/components/ui/sidebar";
+import {
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/shared/components/ui/sidebar";
 import { TooltipProvider } from "@/shared/components/ui/tooltip";
 
 import PageHeader from "@/shared/components/layout/PageHeader";

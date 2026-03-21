@@ -1,21 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "./features/auth/auth";
+import { getCookieCache } from "better-auth/cookies";
 
 export default async function proxy(request: NextRequest) {
   const isPath = (path: string) => request.nextUrl.pathname === path;
 
-  // !TODO: kontrolovat pouze, zda session cookie existuje, at je to rychlejsi
+  // CHECKS IF SESSION COOKIE EXISTS, THIS DOES NOT VALIDATE IT
+  // reason: to make proxy faster, validation is done in api routes
+  const sessionCookie = await getCookieCache(request);
 
-  // this checks if cookie exists and is valid
-  const sessionCookie = await auth.api.getSession({
-    headers: request.headers,
-    query: {
-      disableCookieCache: true,
-    },
-  });
-  const hasBeenVerified = sessionCookie?.user.emailVerified;
-
-  if ((!sessionCookie || !hasBeenVerified) && !isPath("/")) {
+  if (!sessionCookie && !isPath("/")) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 

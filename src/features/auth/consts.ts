@@ -1,34 +1,3 @@
-import { createAccessControl } from "better-auth/plugins/access";
-import { adminAc } from "better-auth/plugins/admin/access";
-
-// ---------------------------------------------------------------------------
-// Access Control
-// ---------------------------------------------------------------------------
-
-export const statement = {
-  scheduleEntry: ["create", "read", "update", "delete"],
-} as const;
-
-export const ac = createAccessControl(statement);
-
-export const instructor = ac.newRole({
-  scheduleEntry: ["read"],
-});
-
-export const programManager = ac.newRole({
-  scheduleEntry: ["create", "read", "update", "delete"],
-});
-
-export const headProgramManager = ac.newRole({
-  scheduleEntry: ["create", "read", "update", "delete"],
-  ...adminAc.statements,
-});
-
-export const headManager = ac.newRole({
-  scheduleEntry: ["create", "read", "update", "delete"],
-  ...adminAc.statements,
-});
-
 // ---------------------------------------------------------------------------
 // Constants
 // ---------------------------------------------------------------------------
@@ -53,26 +22,3 @@ export const OTP_REGEX = /^\d{6}$/;
 
 /** Regex pro heslo (alespoň 1 velké písmeno, 1 číslo, 8 znaků) */
 export const PASSWORD_REGEX = /^(?=.*[A-Z])(?=.*[0-9]).{8,}$/;
-
-export const ROLES = {
-  STRINGS: [
-    "instructor",
-    "programManager",
-    "headProgramManager",
-    "headManager",
-  ] as const,
-  OBJECTS: {
-    instructor,
-    programManager,
-    headProgramManager,
-    headManager,
-  },
-};
-
-/** Mapa rolí na české názvy pro zobrazení na frontendu */
-export const ROLE_LABELS: Record<string, string> = {
-  instructor: "Instruktor",
-  programManager: "Programák",
-  headProgramManager: "Hlavní programák",
-  headManager: "Hlavas",
-};

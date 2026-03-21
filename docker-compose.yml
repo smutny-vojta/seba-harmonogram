@@ -4,14 +4,18 @@ services:
     container_name: ${MONGO_DB_NAME}
     restart: unless-stopped
     environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INIT_USER}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INIT_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_DB_NAME}
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_DB_ADMIN_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_DB_ADMIN_PASSWORD}
+      MONGO_DB_USER: ${MONGO_DB_USER}
+      MONGO_DB_PASSWORD: ${MONGO_DB_PASSWORD}
     ports:
       - "${MONGO_DB_PORT}:${MONGO_DB_PORT}"
     networks:
       - seba_mongo_network
     volumes:
       - seba_mongo_data:/data/db
+      - ./docker/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
     healthcheck:
       test:
         [
@@ -35,11 +39,20 @@ services:
       mongoDB:
         condition: service_healthy
     ports:
-      - "${MONGO_EXPRESS_PORT}:${MONGO_EXPRESS_PORT}"
+      - "${MONGO_UI_PORT}:${MONGO_UI_PORT}"
     environment:
-      ME_CONFIG_BASICAUTH_USERNAME: ${MONGO_INIT_USER}
-      ME_CONFIG_BASICAUTH_PASSWORD: ${MONGO_INIT_PASSWORD}
-      ME_CONFIG_MONGODB_URL: mongodb://${MONGO_INIT_USER}:${MONGO_INIT_PASSWORD}@mongoDB:${MONGO_DB_PORT}/
+      # zakazuje prihlaseni admina
+      ME_CONFIG_MONGODB_ENABLE_ADMIN: false
+      # login do mongoUI
+      ME_CONFIG_BASICAUTH_USERNAME: ${MONGO_DB_USER}
+      ME_CONFIG_BASICAUTH_PASSWORD: ${MONGO_DB_PASSWORD}
+      # databaze, do ktery se prihlasujeme
+      ME_CONFIG_MONGODB_AUTH_DATABASE: ${MONGO_DB_NAME}
+      # login do mongoDB
+      ME_CONFIG_MONGODB_AUTH_USERNAME: ${MONGO_DB_USER}
+      ME_CONFIG_MONGODB_AUTH_PASSWORD: ${MONGO_DB_PASSWORD}
+      # connection string do mongoDB
+      ME_CONFIG_MONGODB_URL: mongodb://${MONGO_DB_USER}:${MONGO_DB_PASSWORD}@mongoDB:${MONGO_DB_PORT}/${MONGO_DB_NAME}?authSource=${MONGO_DB_NAME}
     networks:
       - seba_mongo_network
 
