@@ -7,42 +7,54 @@ export const statement = {
 
 export const ac = createAccessControl(statement);
 
-export const instructor = ac.newRole({
-  scheduleEntry: ["read"],
-});
+export const APP_ROLES = {
+  instructor: {
+    id: "instructor",
+    label: "Instruktor",
+    acRole: ac.newRole({ scheduleEntry: ["read"] }),
+  },
+  programManager: {
+    id: "programManager",
+    label: "Programák",
+    acRole: ac.newRole({
+      scheduleEntry: ["create", "read", "update", "delete"],
+    }),
+  },
+  headProgramManager: {
+    id: "headProgramManager",
+    label: "Hlavní programák",
+    acRole: ac.newRole({
+      scheduleEntry: ["create", "read", "update", "delete"],
+      ...adminAc.statements,
+    }),
+  },
+  headManager: {
+    id: "headManager",
+    label: "Hlavas",
+    acRole: ac.newRole({
+      scheduleEntry: ["create", "read", "update", "delete"],
+      ...adminAc.statements,
+    }),
+  },
+} as const;
 
-export const programManager = ac.newRole({
-  scheduleEntry: ["create", "read", "update", "delete"],
-});
+// ---------------------------------------------------------------------------
+// Extrahované formáty - zachovávají původní strukturu, aby zbytek aplikace fungoval
+// ---------------------------------------------------------------------------
 
-export const headProgramManager = ac.newRole({
-  scheduleEntry: ["create", "read", "update", "delete"],
-  ...adminAc.statements,
-});
-
-export const headManager = ac.newRole({
-  scheduleEntry: ["create", "read", "update", "delete"],
-  ...adminAc.statements,
-});
-
-export const ROLES = [
-  "instructor",
-  "programManager",
-  "headProgramManager",
-  "headManager",
-] as const;
+export const ROLES = Object.keys(APP_ROLES) as readonly (keyof typeof APP_ROLES)[];
 
 export const ROLES_OBJECTS = {
-  instructor,
-  programManager,
-  headProgramManager,
-  headManager,
+  instructor: APP_ROLES.instructor.acRole,
+  programManager: APP_ROLES.programManager.acRole,
+  headProgramManager: APP_ROLES.headProgramManager.acRole,
+  headManager: APP_ROLES.headManager.acRole,
 };
 
 /** Mapa rolí na české názvy pro zobrazení na frontendu */
 export const ROLE_LABELS: Record<string, string> = {
-  instructor: "Instruktor",
-  programManager: "Programák",
-  headProgramManager: "Hlavní programák",
-  headManager: "Hlavas",
+  instructor: APP_ROLES.instructor.label,
+  programManager: APP_ROLES.programManager.label,
+  headProgramManager: APP_ROLES.headProgramManager.label,
+  headManager: APP_ROLES.headManager.label,
 };

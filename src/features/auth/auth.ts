@@ -34,13 +34,13 @@ export const auth = betterAuth({
         type: "string",
         required: true,
       },
-      turnusId: {
+      activeTurnusId: {
         type: "string",
-        required: true,
+        required: false,
       },
-      oddilId: {
+      activeOddilId: {
         type: "string",
-        required: true,
+        required: false,
       },
     },
   },
