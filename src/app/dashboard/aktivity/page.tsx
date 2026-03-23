@@ -1,5 +1,6 @@
 import {
   createActivityLocation,
+  getActivityLocationById,
   listActivityLocations,
   updateActivityLocation,
 } from "@/features/activities/dal";
@@ -68,6 +69,11 @@ export default async function AktivityPage() {
           </div>
         )),
       )}
+      <pre>
+        {JSON.stringify(
+          await getActivityLocationById("69c0e4480d0aee498cff8f85"),
+        )}
+      </pre>
     </div>
   );
 }

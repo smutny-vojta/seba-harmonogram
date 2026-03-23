@@ -2,8 +2,10 @@ import { ObjectId } from "mongodb";
 import {
   ActivityLocationCollection,
   NewActivityLocationSchema,
+  ActivityCollection,
+  NewActivitySchema,
 } from "./schema";
-import { NewActivityLocationType } from "./types";
+import { NewActivityLocationType, NewActivityType } from "./types";
 
 export async function getActivityLocationById(id: string) {
   const location = await ActivityLocationCollection.findOne({
@@ -53,4 +55,58 @@ export async function updateActivityLocation({
 
 export async function deleteActivityLocation(id: string) {
   return ActivityLocationCollection.deleteOne({ _id: new ObjectId(id) });
+}
+
+export async function getActivityById(id: string) {
+  const activity = await ActivityCollection.findOne({
+    _id: new ObjectId(id),
+  });
+
+  if (!activity) {
+    return null;
+  }
+
+  const { _id, ...rest } = activity;
+  return { ...rest, id: _id.toString() };
+}
+
+export async function listActivities() {
+  const activities = await ActivityCollection.find().toArray();
+
+  return activities.map((activity) => {
+    const { _id, ...rest } = activity;
+    return { ...rest, id: _id.toString() };
+  });
+}
+
+export async function createActivity(data: NewActivityType) {
+  const validatedData = NewActivitySchema.parse(data);
+
+  const now = new Date();
+
+  return ActivityCollection.insertOne({
+    ...validatedData,
+    _id: new ObjectId(),
+    createdAt: now,
+    updatedAt: now,
+  });
+}
+
+export async function updateActivity({
+  id,
+  data,
+}: {
+  id: string;
+  data: NewActivityType;
+}) {
+  const validatedData = NewActivitySchema.parse(data);
+
+  return ActivityCollection.updateOne(
+    { _id: new ObjectId(id) },
+    { $set: { ...validatedData, updatedAt: new Date() } },
+  );
+}
+
+export async function deleteActivity(id: string) {
+  return ActivityCollection.deleteOne({ _id: new ObjectId(id) });
 }

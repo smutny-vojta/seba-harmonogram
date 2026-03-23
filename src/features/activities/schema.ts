@@ -2,7 +2,7 @@ import { z } from "zod";
 import { Collection, ObjectId } from "mongodb";
 import { ACTIVITY_CATEGORIES_ARRAY } from "./consts";
 import { db } from "@/shared/lib/db";
-import { ActivityLocationType } from "./types";
+import { ActivityLocationType, ActivityType } from "./types";
 
 export const ActivityCategoryEnum = z.enum(ACTIVITY_CATEGORIES_ARRAY);
 
@@ -20,7 +20,7 @@ export const NewActivityLocationSchema = ActivityLocationSchema.omit({
 export const ActivityLocationCollection: Collection<ActivityLocationType> =
   db.collection("activityLocations");
 
-const ActivitySchema = z.object({
+export const ActivitySchema = z.object({
   _id: z.instanceof(ObjectId),
   title: z.string().min(1, "Název je povinný"),
   description: z.string().optional(),
@@ -31,18 +31,11 @@ const ActivitySchema = z.object({
   updatedAt: z.date().optional(),
 });
 
-export const Activity = {
-  collection: db.collection<z.infer<typeof ActivitySchema>>("activities"),
-  schema: ActivitySchema,
-  createSchema: ActivitySchema.omit({
-    _id: true,
-    createdAt: true,
-    updatedAt: true,
-  }),
-  updateSchema: ActivitySchema.omit({
-    _id: true,
-    createdAt: true,
-    updatedAt: true,
-  }),
-  deleteSchema: ActivitySchema.pick({ _id: true }),
-};
+export const NewActivitySchema = ActivitySchema.omit({
+  _id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const ActivityCollection: Collection<ActivityType> =
+  db.collection("activities");
