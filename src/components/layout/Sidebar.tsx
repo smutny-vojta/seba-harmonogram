@@ -18,29 +18,9 @@ import {
   SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { Calendar, Map, Stars } from "lucide-react";
+import { NAVIGATION } from "@/config/navigation";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-
-const PAGES = [
-  {
-    title: "Harmonogram",
-    href: "/dashboard/harmonogram",
-    icon: Calendar,
-    subPages: [
-      {
-        title: "Aktivity",
-        href: "/dashboard/aktivity",
-        icon: Stars,
-      },
-      {
-        title: "Lokace",
-        href: "/dashboard/lokace",
-        icon: Map,
-      },
-    ],
-  },
-];
 
 export function AppSidebar() {
   const pathname = usePathname();
@@ -53,7 +33,7 @@ export function AppSidebar() {
           <SidebarGroupLabel>Program</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {PAGES.map((page) => (
+              {NAVIGATION.map((page) => (
                 <SidebarMenuItem key={page.href}>
                   <SidebarMenuButton asChild isActive={pathname === page.href}>
                     <Link href={page.href}>
