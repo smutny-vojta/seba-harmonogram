@@ -1,4 +1,4 @@
-import { db } from "@/shared/lib/db";
+import { db } from "@/lib/db";
 import { campCategory } from "@/schema/camp";
 import { desc } from "drizzle-orm";
 

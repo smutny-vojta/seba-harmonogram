@@ -2,7 +2,7 @@ import { betterAuth } from "better-auth/minimal";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { admin } from "better-auth/plugins";
 import { nextCookies } from "better-auth/next-js";
-import { db, client } from "@/shared/lib/db";
+import { db, client } from "@/lib/db";
 import { ac, ROLES_OBJECTS } from "./roles";
 
 export const auth = betterAuth({

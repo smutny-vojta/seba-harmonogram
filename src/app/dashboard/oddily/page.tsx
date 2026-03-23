@@ -17,20 +17,22 @@ export default async function OddilyPage() {
           <tbody>
             {groups.length === 0 ? (
               <tr>
-                <td colSpan={3} className="p-4 text-center text-muted-foreground">
+                <td
+                  colSpan={3}
+                  className="p-4 text-center text-muted-foreground"
+                >
                   Žádné oddíly
                 </td>
               </tr>
             ) : (
               groups.map((g) => (
-                <tr key={g.id} className="border-b last:border-0 hover:bg-muted/50">
+                <tr
+                  key={g.id}
+                  className="border-b last:border-0 hover:bg-muted/50"
+                >
                   <td className="p-4 font-medium">{g.name}</td>
-                  <td className="p-4">
-                    {g.campCategory.name}
-                  </td>
-                  <td className="p-4">
-                    {g.term.id}. turnus
-                  </td>
+                  <td className="p-4">{g.campCategory.name}</td>
+                  <td className="p-4">{g.term.id}. turnus</td>
                 </tr>
               ))
             )}

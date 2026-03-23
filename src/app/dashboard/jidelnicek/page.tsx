@@ -5,12 +5,18 @@ export default async function JidelnicekPage() {
 
   const translateMealType = (type: string) => {
     switch (type) {
-      case "breakfast": return "Snídaně";
-      case "morning_snack": return "Dopolední svačina";
-      case "lunch": return "Oběd";
-      case "afternoon_snack": return "Odpolední svačina";
-      case "dinner": return "Večeře";
-      default: return type;
+      case "breakfast":
+        return "Snídaně";
+      case "morning_snack":
+        return "Dopolední svačina";
+      case "lunch":
+        return "Oběd";
+      case "afternoon_snack":
+        return "Odpolední svačina";
+      case "dinner":
+        return "Večeře";
+      default:
+        return type;
     }
   };
 
@@ -30,15 +36,23 @@ export default async function JidelnicekPage() {
           <tbody>
             {meals.length === 0 ? (
               <tr>
-                <td colSpan={5} className="p-4 text-center text-muted-foreground">
+                <td
+                  colSpan={5}
+                  className="p-4 text-center text-muted-foreground"
+                >
                   Žádný jídelníček
                 </td>
               </tr>
             ) : (
               meals.map((m) => (
-                <tr key={m.id} className="border-b last:border-0 hover:bg-muted/50">
+                <tr
+                  key={m.id}
+                  className="border-b last:border-0 hover:bg-muted/50"
+                >
                   <td className="p-4">{m.group.name}</td>
-                  <td className="p-4">{new Date(m.date).toLocaleDateString("cs-CZ")}</td>
+                  <td className="p-4">
+                    {new Date(m.date).toLocaleDateString("cs-CZ")}
+                  </td>
                   <td className="p-4">{translateMealType(m.mealType)}</td>
                   <td className="p-4">{m.startTime}</td>
                   <td className="p-4">{m.endTime}</td>

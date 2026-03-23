@@ -1,6 +1,6 @@
 "use server";
 
-import { actionClient } from "@/shared/lib/safe-action";
+import { actionClient } from "@/lib/safe-action";
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
 

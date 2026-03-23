@@ -2,11 +2,7 @@
   "compilerOptions": {
     "forceConsistentCasingInFileNames": true,
     "target": "esnext",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -26,16 +22,12 @@
     "baseUrl": ".",
     "paths": {
       // Obecný alias pro celou složku src
-      "@/*": [
-        "src/*"
-      ],
+      "@/*": ["src/*"],
       // Feature-based aliases
-      "@features/*": [
-        "src/features/*"
-      ],
-      "@shared/*": [
-        "src/shared/*"
-      ]
+      "@features/*": ["src/features/*"],
+      "@components/*": ["src/components/*"],
+      "@hooks/*": ["src/hooks/*"],
+      "@lib/*": ["src/lib/*"]
     }
   },
   "include": [
@@ -46,7 +38,5 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts"
   ],
-  "exclude": [
-    "node_modules"
-  ]
+  "exclude": ["node_modules"]
 }
