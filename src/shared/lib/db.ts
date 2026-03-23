@@ -14,4 +14,4 @@ if (process.env.NODE_ENV !== "production") {
   globalForDb.mongoClient = client;
 }
 
-export const db = client.db();
+export const db = client.db(process.env.MONGO_DB_NAME!);

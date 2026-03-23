@@ -6,7 +6,6 @@ import {
 import { TooltipProvider } from "@/shared/components/ui/tooltip";
 
 import PageHeader from "@/shared/components/layout/PageHeader";
-import { getServerSession, hasRole } from "@/features/auth/auth";
 import { redirect } from "next/navigation";
 
 export default async function Layout({
@@ -14,22 +13,22 @@ export default async function Layout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await getServerSession({ disableCookieCache: true });
+  // const session = await getServerSession({ disableCookieCache: true });
 
-  if (!session || !hasRole(session.user.role, "programManager")) {
-    redirect("/");
-  }
+  // if (!session || !hasRole(session.user.role, "programManager")) {
+  //   redirect("/");
+  // }
 
   return (
-    <TooltipProvider>
-      <SidebarProvider>
-        <Sidebar />
-        <SidebarTrigger className="fixed bottom-4 left-[calc(var(--sidebar-width)+0.5rem)] z-20 transition-all duration-200 ease-linear peer-data-[state=collapsed]:left-[calc(var(--sidebar-width-icon)+0.5rem)]" />
-        <main className="relative flex min-h-svh flex-1 flex-col">
-          <PageHeader />
-          <section className="flex-1 p-4">{children}</section>
-        </main>
-      </SidebarProvider>
-    </TooltipProvider>
+    //   <TooltipProvider>
+    //     <SidebarProvider>
+    //       <Sidebar />
+    //       <SidebarTrigger className="fixed bottom-4 left-[calc(var(--sidebar-width)+0.5rem)] z-20 transition-all duration-200 ease-linear peer-data-[state=collapsed]:left-[calc(var(--sidebar-width-icon)+0.5rem)]" />
+    //       <main className="relative flex min-h-svh flex-1 flex-col">
+    //         <PageHeader />
+    <section className="flex-1 p-4">{children}</section>
+    //     </main>
+    //   </SidebarProvider>
+    // </TooltipProvider>
   );
 }
