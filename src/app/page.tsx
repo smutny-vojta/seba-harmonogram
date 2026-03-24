@@ -12,5 +12,21 @@ export default async function Page() {
   //   redirect("/dashboard");
   // }
 
-  return <div>{/* Logged in as {session.user.email} */}</div>;
+  return (
+    <div>
+      {/* Logged in as {session.user.email} */}
+      <div>
+        <a href="/dashboard">Dashboard</a>
+      </div>
+      <div>
+        <a href="/dashboard/harmonogram">Harmonogram</a>
+      </div>
+      <div>
+        <a href="/dashboard/harmonogram/aktivity">Aktivity</a>
+      </div>
+      <div>
+        <a href="/dashboard/harmonogram/lokace">Lokace</a>
+      </div>
+    </div>
+  );
 }
