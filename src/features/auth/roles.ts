@@ -39,14 +39,14 @@ export const APP_ROLES = {
 } as const;
 
 // ---------------------------------------------------------------------------
-// Extrahované formáty - zachovávají původní strukturu, aby zbytek aplikace fungoval
+// Extrahované formáty
 // ---------------------------------------------------------------------------
 
 export const ROLES = Object.keys(
   APP_ROLES,
 ) as readonly (keyof typeof APP_ROLES)[];
 
-export const ROLES_OBJECTS = {
+export const ROLE_OBJECTS = {
   instructor: APP_ROLES.instructor.acRole,
   programManager: APP_ROLES.programManager.acRole,
   headProgramManager: APP_ROLES.headProgramManager.acRole,

@@ -27,10 +27,12 @@ export function AppSidebar() {
 
   return (
     <Sidebar collapsible="icon">
-      <SidebarHeaderContent />
+      <SidebarHeader className="h-16 flex-row items-center justify-between border-b">
+        <h1 className="text-3xl font-bold">SiS</h1>
+        <SidebarTrigger />
+      </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Program</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {NAVIGATION.map((page) => (
@@ -62,26 +64,24 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter className="flex-row justify-end">
-        <SidebarTrigger />
-      </SidebarFooter>
+      <SidebarFooterContent />
     </Sidebar>
   );
 }
 
-const SidebarHeaderContent = () => {
+const SidebarFooterContent = () => {
   const { open } = useSidebar();
 
   return (
-    <SidebarHeader className="h-16">
+    <SidebarFooter className="h-16">
       <div className="my-auto flex items-center gap-2">
         <div
-          className="bg-primary text-secondary grid shrink-0 place-items-center rounded font-bold transition-all duration-200 select-none"
+          className="bg-primary text-primary-foreground grid shrink-0 place-items-center rounded font-bold transition-all duration-200 select-none"
           style={{
             width: open ? "48px" : "32px",
             height: open ? "48px" : "32px",
             padding: open ? "0.5rem" : "0",
-            fontSize: open ? "24px" : "18px",
+            fontSize: open ? "32px" : "24px",
             lineHeight: open ? "24px" : "18px",
           }}
         >
@@ -110,6 +110,6 @@ const SidebarHeaderContent = () => {
           </div>
         )}
       </div>
-    </SidebarHeader>
+    </SidebarFooter>
   );
 };

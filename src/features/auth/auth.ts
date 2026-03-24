@@ -3,7 +3,7 @@ import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { admin } from "better-auth/plugins";
 import { nextCookies } from "better-auth/next-js";
 import { db, client } from "@/lib/db";
-import { ac, ROLES_OBJECTS } from "./roles";
+import { ac, ROLE_OBJECTS } from "./roles";
 
 export const auth = betterAuth({
   database: mongodbAdapter(db, {
@@ -16,7 +16,7 @@ export const auth = betterAuth({
     admin({
       defaultRole: "instructor",
       ac,
-      roles: ROLES_OBJECTS,
+      roles: ROLE_OBJECTS,
     }),
     nextCookies(), // ! MUSI BYT POSLEDNI,
   ],

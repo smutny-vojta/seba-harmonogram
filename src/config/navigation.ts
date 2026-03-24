@@ -8,12 +8,6 @@ export const NAVIGATION = [
     subPages: [],
   },
   {
-    title: "Zprávy",
-    href: "/dashboard/zpravy",
-    icon: Send,
-    subPages: [],
-  },
-  {
     title: "Harmonogram",
     href: "/dashboard/harmonogram",
     icon: Calendar,
