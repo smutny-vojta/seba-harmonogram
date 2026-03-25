@@ -1,8 +1,8 @@
+import { type Collection, ObjectId } from "mongodb";
 import { z } from "zod";
-import { Collection, ObjectId } from "mongodb";
-import { ACTIVITY_CATEGORIES_ARRAY } from "./consts";
 import { db } from "@/lib/db";
-import { ActivityLocationType, ActivityType } from "./types";
+import { ACTIVITY_CATEGORIES_ARRAY } from "./consts";
+import type { ActivityLocationType, ActivityType } from "./types";
 
 export const ActivityCategoryEnum = z.enum(ACTIVITY_CATEGORIES_ARRAY);
 

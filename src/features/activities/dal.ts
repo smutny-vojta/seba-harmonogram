@@ -1,11 +1,11 @@
 import { ObjectId } from "mongodb";
 import {
+  ActivityCollection,
   ActivityLocationCollection,
   NewActivityLocationSchema,
-  ActivityCollection,
   NewActivitySchema,
 } from "./schema";
-import { NewActivityLocationType, NewActivityType } from "./types";
+import type { NewActivityLocationType, NewActivityType } from "./types";
 
 export async function getActivityLocationById(id: string) {
   const location = await ActivityLocationCollection.findOne({

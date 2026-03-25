@@ -1,11 +1,11 @@
 "use server";
 
-import { actionClient } from "@/lib/safe-action";
-import { z } from "zod";
 import { revalidatePath } from "next/cache";
+import { z } from "zod";
+import { actionClient } from "@/lib/safe-action";
 
+import { createActivity, deleteActivity, updateActivity } from "./dal";
 import { NewActivitySchema } from "./schema";
-import { createActivity, updateActivity, deleteActivity } from "./dal";
 
 export const createActivityAction = actionClient
   .inputSchema(NewActivitySchema)

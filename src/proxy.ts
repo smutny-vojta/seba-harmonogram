@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
-import { getCookieCache } from "better-auth/cookies";
+// import { getCookieCache } from "better-auth/cookies";
+import { type NextRequest, NextResponse } from "next/server";
 
-export default async function proxy(request: NextRequest) {
-  const isPath = (path: string) => request.nextUrl.pathname === path;
+export default async function proxy(_request: NextRequest) {
+  // const isPath = (path: string) => request.nextUrl.pathname === path;
 
   // // CHECKS IF SESSION COOKIE EXISTS, THIS DOES NOT VALIDATE IT
   // // reason: to make proxy faster, validation is done in api routes

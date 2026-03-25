@@ -1,7 +1,7 @@
-import { auth } from "./auth";
 import { headers } from "next/headers";
-import { Role } from "./types";
+import { auth } from "./auth";
 import { ROLE_LABELS } from "./roles";
+import type { Role } from "./types";
 
 export async function getSession() {
   return auth.api.getSession({
@@ -34,6 +34,6 @@ export function getHighestRoleLabel(
 ): string {
   if (!roleString) return "Neznámá role";
   const roles = roleString.split(",");
-  const highest = roles[roles.length - 1];
+  const highest = roles[roles.length - 1] as Role;
   return ROLE_LABELS[highest] ?? highest;
 }

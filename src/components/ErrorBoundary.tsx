@@ -10,7 +10,7 @@ class ErrorBoundary extends React.Component<{
     return { hasError: true, error };
   }
 
-  componentDidCatch(error: Error, errorInfo: React.ErrorInfo): void {}
+  componentDidCatch(_error: Error, _errorInfo: React.ErrorInfo): void {}
 
   render() {
     if (this.state.hasError) {

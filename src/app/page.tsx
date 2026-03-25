@@ -1,6 +1,3 @@
-import { getSessionUncached, hasRole } from "@/features/auth/utils";
-import { redirect } from "next/navigation";
-
 export default async function Page() {
   // const session = await getSessionUncached();
 

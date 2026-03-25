@@ -1,8 +1,8 @@
-import z from "zod";
-import {
+import type { z } from "zod";
+import type {
   ActivityLocationSchema,
-  NewActivityLocationSchema,
   ActivitySchema,
+  NewActivityLocationSchema,
   NewActivitySchema,
 } from "./schema";
 

@@ -1,10 +1,8 @@
-import { SidebarProvider } from "@/components/ui/sidebar";
-import { TooltipProvider } from "@/components/ui/tooltip";
+import PageHeader from "@/components/layout/PageTitle";
 import { AppSidebar } from "@/components/layout/Sidebar";
 import { ThemeProvider } from "@/components/theme-provider";
-
-import PageHeader from "@/components/layout/PageTitle";
-import { redirect } from "next/navigation";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 export default async function Layout({
   children,

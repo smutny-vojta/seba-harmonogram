@@ -1,26 +1,31 @@
-import { Calendar, LayoutDashboard, Map, Send, Stars } from "lucide-react";
+import {
+  LucideCalendar,
+  LucideLayoutDashboard,
+  LucideMap,
+  LucideStars,
+} from "lucide-react";
 
 export const NAVIGATION = [
   {
     title: "Dashboard",
     href: "/dashboard",
-    icon: LayoutDashboard,
+    icon: LucideLayoutDashboard,
     subPages: [],
   },
   {
     title: "Harmonogram",
     href: "/dashboard/harmonogram",
-    icon: Calendar,
+    icon: LucideCalendar,
     subPages: [
       {
         title: "Aktivity",
         href: "/dashboard/harmonogram/aktivity",
-        icon: Stars,
+        icon: LucideStars,
       },
       {
         title: "Lokace",
         href: "/dashboard/harmonogram/lokace",
-        icon: Map,
+        icon: LucideMap,
       },
     ],
   },

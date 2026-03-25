@@ -2,10 +2,10 @@ import { ArrowLeft } from "lucide-react";
 import { Button } from "./ui/button";
 import {
   Card,
-  CardHeader,
-  CardTitle,
   CardDescription,
   CardFooter,
+  CardHeader,
+  CardTitle,
 } from "./ui/card";
 
 export default function ErrorComponent({ message }: { message: string }) {
