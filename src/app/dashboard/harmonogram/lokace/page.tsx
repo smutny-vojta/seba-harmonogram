@@ -1,19 +1,10 @@
-import { listActivityLocations } from "@/features/activities/dal";
+import ActivityLocationsView from "@/features/activities/ActivityLocationsView";
+import { Suspense } from "react";
 
-export default async function AktivityPage() {
+export default async function ActivityLocationsPage() {
   return (
-    <div>
-      {
-        await listActivityLocations().then((locations) =>
-          locations.map((location) => (
-            <div key={location.id}>
-              {location.id} {location.name}{" "}
-              {location.indoor ? "(vnitřní)" : "(venkovní)"}{" "}
-              {location.restrictedAccess ? "(omezený přístup)" : ""}
-            </div>
-          )),
-        )
-      }
-    </div>
+    <Suspense fallback={<div>Načítám lokace...</div>}>
+      <ActivityLocationsView />
+    </Suspense>
   );
 }

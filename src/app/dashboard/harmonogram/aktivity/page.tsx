@@ -1,3 +1,3 @@
-export default async function AktivityPage() {
+export default async function ActivitiesPage() {
   return <div></div>;
 }
