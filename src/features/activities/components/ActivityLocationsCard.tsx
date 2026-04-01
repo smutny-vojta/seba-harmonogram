@@ -1,14 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ActivityLocationItemType } from "../types";
+import { LucideMountain, LucideUmbrellaOff } from "lucide-react";
 import {
-  LucideHome,
-  LucideMountain,
-  LucidePencil,
-  LucideTrash2,
-  LucideUmbrella,
-  LucideUmbrellaOff,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
+  ActivityLocationsDeleteDialog,
+  ActivityLocationsEditDialog,
+} from "@/features/activities/components/ActivityLocationsDialogs";
 
 export default function ActivityLocationsCard({
   location,
@@ -21,18 +17,15 @@ export default function ActivityLocationsCard({
         location.restrictedAccess ? "border-red-500" : "border-green-500"
       }`}
     >
-      <CardHeader>
-        <CardTitle className="flex items-center justify-between text-sm">
-          <span className="text-lg font-semibold">{location.name}</span>
-          <div className="flex gap-x-2">
-            <Button variant="secondary" size="icon-sm">
-              <LucidePencil size={16} />
-            </Button>
-            <Button variant="destructive" size="icon-sm">
-              <LucideTrash2 size={16} />
-            </Button>
-          </div>
-        </CardTitle>
+      <CardHeader className="flex flex-row items-center justify-between">
+        <CardTitle className="text-lg font-semibold">{location.name}</CardTitle>
+        <div className="flex gap-x-2">
+          <ActivityLocationsEditDialog location={location} />
+          <ActivityLocationsDeleteDialog
+            id={location.id}
+            name={location.name}
+          />
+        </div>
       </CardHeader>
       <CardContent>
         <div className="flex items-center gap-x-4">

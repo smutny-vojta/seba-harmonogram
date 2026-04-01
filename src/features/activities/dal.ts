@@ -1,11 +1,17 @@
-import { ObjectId } from "mongodb";
-import {
-  ActivityCollection,
-  ActivityLocationCollection,
-  NewActivityLocationSchema,
-  NewActivitySchema,
-} from "./schema";
-import type { NewActivityLocationType, NewActivityType } from "./types";
+import { Collection, ObjectId } from "mongodb";
+import { db } from "@/lib/db";
+import type {
+  ActivityLocationType,
+  ActivityType,
+  NewActivityLocationType,
+  NewActivityType,
+} from "./types";
+
+export const ActivityLocationCollection: Collection<ActivityLocationType> =
+  db.collection("activityLocations");
+
+export const ActivityCollection: Collection<ActivityType> =
+  db.collection("activities");
 
 export async function getActivityLocationById(id: string) {
   const location = await ActivityLocationCollection.findOne({
@@ -21,7 +27,9 @@ export async function getActivityLocationById(id: string) {
 }
 
 export async function listActivityLocations() {
-  const locations = await ActivityLocationCollection.find().toArray();
+  const locations = await ActivityLocationCollection.find()
+    .sort({ name: 1 })
+    .toArray();
 
   return locations.map((location) => {
     const { _id, ...rest } = location;
@@ -30,10 +38,8 @@ export async function listActivityLocations() {
 }
 
 export async function createActivityLocation(data: NewActivityLocationType) {
-  const validatedData = NewActivityLocationSchema.parse(data);
-
   return ActivityLocationCollection.insertOne({
-    ...validatedData,
+    ...data,
     _id: new ObjectId(),
   });
 }
@@ -45,11 +51,9 @@ export async function updateActivityLocation({
   id: string;
   data: NewActivityLocationType;
 }) {
-  const validatedData = NewActivityLocationSchema.parse(data);
-
   return ActivityLocationCollection.updateOne(
     { _id: new ObjectId(id) },
-    { $set: validatedData },
+    { $set: data },
   );
 }
 
@@ -80,12 +84,10 @@ export async function listActivities() {
 }
 
 export async function createActivity(data: NewActivityType) {
-  const validatedData = NewActivitySchema.parse(data);
-
   const now = new Date();
 
   return ActivityCollection.insertOne({
-    ...validatedData,
+    ...data,
     _id: new ObjectId(),
     createdAt: now,
     updatedAt: now,
@@ -99,11 +101,9 @@ export async function updateActivity({
   id: string;
   data: NewActivityType;
 }) {
-  const validatedData = NewActivitySchema.parse(data);
-
   return ActivityCollection.updateOne(
     { _id: new ObjectId(id) },
-    { $set: { ...validatedData, updatedAt: new Date() } },
+    { $set: { ...data, updatedAt: new Date() } },
   );
 }
 

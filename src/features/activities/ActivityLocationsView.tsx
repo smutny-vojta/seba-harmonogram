@@ -1,27 +1,14 @@
-import ActivityLocationsCard from "@/features/activities/components/ActivityLocationsCard";
+import ActivityLocationsGrid from "@/features/activities/components/ActivityLocationsGrid";
+import ActivityLocationsMenu from "@/features/activities/components/ActivityLocationsMenu";
 import { listActivityLocations } from "@/features/activities/dal";
 
 export default async function ActivityLocationsView() {
   const locations = await listActivityLocations();
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-
-  console.log(locations);
 
   return (
-    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-      <div className="col-span-3 mb-2 flex gap-x-4">
-        <div className="flex items-center gap-x-2">
-          <div className="h-5 w-5 bg-green-500"></div>
-          <span>Přístup mají všichni</span>
-        </div>
-        <div className="flex items-center gap-x-2">
-          <div className="h-5 w-5 bg-red-500"></div>
-          <span>Přístup mají pouze instři</span>
-        </div>
-      </div>
-      {locations.map((location) => (
-        <ActivityLocationsCard key={location.id} location={location} />
-      ))}
+    <div className="flex h-full flex-col gap-y-4">
+      <ActivityLocationsMenu count={locations.length} />
+      <ActivityLocationsGrid locations={locations} />
     </div>
   );
 }

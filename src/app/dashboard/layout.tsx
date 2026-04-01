@@ -2,6 +2,7 @@ import PageHeader from "@/components/layout/PageTitle";
 import { AppSidebar } from "@/components/layout/Sidebar";
 import { ThemeProvider } from "@/components/theme-provider";
 import { SidebarProvider } from "@/components/ui/sidebar";
+import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
 export default async function Layout({
@@ -23,6 +24,12 @@ export default async function Layout({
           <main className="bg-background text-foreground grid h-svh flex-1 grid-rows-[64px_1fr]">
             <PageHeader />
             <section className="overflow-y-auto p-6">{children}</section>
+            <Toaster
+              richColors
+              duration={2000}
+              position="bottom-right"
+              theme="system"
+            />
           </main>
         </SidebarProvider>
       </TooltipProvider>
