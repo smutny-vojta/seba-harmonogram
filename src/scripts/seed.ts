@@ -1,3 +1,5 @@
+import { createActivityLocation } from "@/features/activities/dal";
+
 // ! TODO: seednout lokace
 export const LOCATIONS: Record<string, string> = {
   za_skladem: "Za skladem",
@@ -29,3 +31,29 @@ export const LOCATIONS: Record<string, string> = {
   jine: "Jiné",
   neurceno: "Neurčeno",
 };
+
+async function seedActivitiesLocations() {
+  const locations = Object.entries(LOCATIONS).map(([_key, value]) => ({
+    name: value,
+    indoor: Math.random() > 0.5,
+    offsite: Math.random() > 0.5,
+    restrictedAccess: Math.random() > 0.5,
+  }));
+
+  for (const [i, location] of locations.entries()) {
+    await createActivityLocation(location)
+      .then(() => {
+        console.log(`Vytvořena lokace ${i + 1}/${locations.length}`);
+      })
+      .catch((e) => {
+        console.error(
+          `Chyba při vytváření lokace ${i + 1}/${locations.length}`,
+        );
+        console.error(e);
+      });
+  }
+
+  process.exit(0);
+}
+
+seedActivitiesLocations();

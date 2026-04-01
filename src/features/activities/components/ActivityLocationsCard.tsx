@@ -1,12 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ActivityLocationItemType } from "../types";
 import {
-  LucideBrickWall,
-  LucideHouse,
-  LucideLock,
+  LucideHome,
+  LucideMountain,
   LucidePencil,
   LucideTrash2,
-  LucideTrees,
+  LucideUmbrella,
+  LucideUmbrellaOff,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -17,18 +17,13 @@ export default function ActivityLocationsCard({
 }) {
   return (
     <Card
-    // className={`border-l-8 ${
-    //   location.restrictedAccess ? "border-destructive" : "border-green-500"
-    // }`}
+      className={`border-l-8 ${
+        location.restrictedAccess ? "border-red-500" : "border-green-500"
+      }`}
     >
       <CardHeader>
-        <CardTitle className="flex items-center justify-between">
-          <div className="flex items-center gap-x-2">
-            <span className="text-lg">{location.name}</span>
-            {Math.random() > 0.5 && (
-              <LucideLock size={16} className="text-destructive" />
-            )}
-          </div>
+        <CardTitle className="flex items-center justify-between text-sm">
+          <span className="text-lg font-semibold">{location.name}</span>
           <div className="flex gap-x-2">
             <Button variant="secondary" size="icon-sm">
               <LucidePencil size={16} />
@@ -40,17 +35,20 @@ export default function ActivityLocationsCard({
         </CardTitle>
       </CardHeader>
       <CardContent>
-        {location.indoor ? (
-          <div className="flex items-center gap-x-2">
-            <LucideHouse size={16} />
-            <span>Vnitřní</span>
-          </div>
-        ) : (
-          <div className="flex items-center gap-x-2">
-            <LucideTrees size={16} />
-            <span>Venkovní</span>
-          </div>
-        )}
+        <div className="flex items-center gap-x-4">
+          {location.indoor && (
+            <span className="flex items-center gap-x-2">
+              <LucideUmbrellaOff size={16} className="text-blue-500" />
+              <span>Kryté</span>
+            </span>
+          )}
+          {location.offsite && (
+            <span className="flex items-center gap-x-2">
+              <LucideMountain size={16} className="text-amber-700" />
+              <span>Mimo areál</span>
+            </span>
+          )}
+        </div>
       </CardContent>
     </Card>
   );
