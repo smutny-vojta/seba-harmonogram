@@ -1,5 +1,5 @@
+import type { ActivityLocationItemType } from "../types";
 import ActivityLocationsCard from "./ActivityLocationsCard";
-import { ActivityLocationItemType } from "../types";
 
 export default function ActivityLocationsGrid({
   locations,

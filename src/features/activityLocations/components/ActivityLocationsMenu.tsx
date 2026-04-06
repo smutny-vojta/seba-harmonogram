@@ -1,4 +1,4 @@
-import { ActivityLocationsAddDialog } from "@/features/activities/components/ActivityLocationsDialogs";
+import { ActivityLocationsAddDialog } from "@/features/activityLocations/components/ActivityLocationsDialogs";
 
 export default function ActivityLocationsMenu({ count }: { count: number }) {
   return (

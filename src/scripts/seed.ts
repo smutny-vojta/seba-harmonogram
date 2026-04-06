@@ -1,4 +1,4 @@
-import { createActivityLocation } from "@/features/activities/dal";
+import { createActivityLocation } from "@/features/activityLocations/dal";
 
 // ! TODO: seednout lokace
 export const LOCATIONS: Record<string, string> = {

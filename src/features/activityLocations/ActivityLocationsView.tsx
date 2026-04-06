@@ -1,6 +1,6 @@
-import ActivityLocationsGrid from "@/features/activities/components/ActivityLocationsGrid";
-import ActivityLocationsMenu from "@/features/activities/components/ActivityLocationsMenu";
-import { listActivityLocations } from "@/features/activities/dal";
+import ActivityLocationsGrid from "@/features/activityLocations/components/ActivityLocationsGrid";
+import ActivityLocationsMenu from "@/features/activityLocations/components/ActivityLocationsMenu";
+import { listActivityLocations } from "@/features/activityLocations/dal";
 
 export default async function ActivityLocationsView() {
   const locations = await listActivityLocations();

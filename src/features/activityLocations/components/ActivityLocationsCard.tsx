@@ -1,10 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ActivityLocationItemType } from "../types";
-import { LucideMountain, LucideUmbrellaOff } from "lucide-react";
 import {
   ActivityLocationsDeleteDialog,
   ActivityLocationsEditDialog,
-} from "@/features/activities/components/ActivityLocationsDialogs";
+} from "@/features/activityLocations/components/ActivityLocationsDialogs";
+import { LucideMountain, LucideUmbrellaOff } from "lucide-react";
+import type { ActivityLocationItemType } from "../types";
 
 export default function ActivityLocationsCard({
   location,

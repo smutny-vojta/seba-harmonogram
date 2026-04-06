@@ -16,20 +16,16 @@ import {
   createActivityLocationAction,
   deleteActivityLocationAction,
   updateActivityLocationAction,
-} from "@/features/activities/actions";
+} from "@/features/activityLocations/actions";
 import { LucidePencil, LucidePlus, LucideTrash2 } from "lucide-react";
 import { toast } from "sonner";
 import { useAction } from "next-safe-action/hooks";
 import { useRef, useState } from "react";
-import { ActivityLocationItemType } from "@/features/activities/types";
+import type { ActivityLocationItemType } from "@/features/activityLocations/types";
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
 
 function parseLocationFormData(formData: FormData) {
   return {
@@ -39,10 +35,6 @@ function parseLocationFormData(formData: FormData) {
     offsite: formData.get("offsite") === "on",
   };
 }
-
-// ---------------------------------------------------------------------------
-// Shared form fields (Add + Edit)
-// ---------------------------------------------------------------------------
 
 function LocationFormFields({
   defaultValues,
@@ -82,10 +74,6 @@ function LocationFormFields({
     </FieldGroup>
   );
 }
-
-// ---------------------------------------------------------------------------
-// Dialogs
-// ---------------------------------------------------------------------------
 
 export function ActivityLocationsAddDialog() {
   const formRef = useRef<HTMLFormElement>(null);

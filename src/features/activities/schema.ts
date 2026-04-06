@@ -4,18 +4,6 @@ import { ACTIVITY_CATEGORIES_ARRAY } from "./consts";
 
 export const ActivityCategoryEnum = z.enum(ACTIVITY_CATEGORIES_ARRAY);
 
-export const ActivityLocationSchema = z.object({
-  _id: z.instanceof(ObjectId),
-  name: z.string().min(1, "Název je povinný"),
-  indoor: z.boolean().default(false),
-  offsite: z.boolean().default(false),
-  restrictedAccess: z.boolean().default(false),
-});
-
-export const NewActivityLocationSchema = ActivityLocationSchema.omit({
-  _id: true,
-});
-
 export const ActivitySchema = z.object({
   _id: z.instanceof(ObjectId),
   title: z.string().min(1, "Název je povinný"),

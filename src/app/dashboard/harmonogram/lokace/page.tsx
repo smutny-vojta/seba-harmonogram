@@ -1,4 +1,4 @@
-import ActivityLocationsView from "@/features/activities/ActivityLocationsView";
+import ActivityLocationsView from "@/features/activityLocations/ActivityLocationsView";
 import { LucideLoader2 } from "lucide-react";
 import { Suspense } from "react";
 
