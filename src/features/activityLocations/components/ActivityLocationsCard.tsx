@@ -21,7 +21,7 @@ export default function ActivityLocationsCard({
   return (
     <Card
       className={`border-l-8 ${
-        location.restrictedAccess ? "border-red-500" : "border-green-500"
+        location.restrictedAccess ? "border-red-400" : "border-green-400"
       }`}
     >
       <CardHeader className="flex flex-row items-center justify-between">

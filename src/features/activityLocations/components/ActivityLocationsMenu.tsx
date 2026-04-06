@@ -5,23 +5,47 @@
  * Pozadavky: Drzet komponentu zamerenou na prezentaci/UX a respektovat feature schema.
  */
 
+"use client";
+
+import { LucideLayoutGrid, LucideList } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { ActivityLocationsAddDialog } from "@/features/activityLocations/components/ActivityLocationsDialogs";
 
-export default function ActivityLocationsMenu({ count }: { count: number }) {
+export type ActivityLocationsViewMode = "grid" | "list";
+
+export default function ActivityLocationsMenu({
+  viewMode,
+  onViewModeChange,
+}: {
+  viewMode: ActivityLocationsViewMode;
+  onViewModeChange: (viewMode: ActivityLocationsViewMode) => void;
+}) {
   return (
-    <div className="flex h-fit shrink-0 items-center justify-between">
-      <div>Celkový počet lokací: {count}</div>
-      <div className="flex items-center gap-x-4">
-        <div className="flex items-center gap-x-2">
-          <div className="h-5 w-5 rounded-full bg-green-500"></div>
-          <span>Přístup pro všechny</span>
-        </div>
-        <div className="flex items-center gap-x-2">
-          <div className="h-5 w-5 rounded-full bg-red-500"></div>
-          <span>Přístup pouze pro robinsony</span>
+    <div className="flex h-fit shrink-0 flex-wrap items-center justify-between gap-3">
+      <ActivityLocationsAddDialog />
+
+      <div className="flex items-center gap-x-3">
+        <div className="flex items-center gap-2">
+          <Button
+            size="sm"
+            variant={viewMode === "grid" ? "default" : "outline"}
+            onClick={() => onViewModeChange("grid")}
+            aria-pressed={viewMode === "grid"}
+          >
+            <LucideLayoutGrid size={16} />
+            Mřížka
+          </Button>
+          <Button
+            size="sm"
+            variant={viewMode === "list" ? "default" : "outline"}
+            onClick={() => onViewModeChange("list")}
+            aria-pressed={viewMode === "list"}
+          >
+            <LucideList size={16} />
+            Seznam
+          </Button>
         </div>
       </div>
-      <ActivityLocationsAddDialog />
     </div>
   );
 }
