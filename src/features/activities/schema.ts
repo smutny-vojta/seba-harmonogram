@@ -2,8 +2,10 @@ import { ObjectId } from "mongodb";
 import { z } from "zod";
 import { ACTIVITY_CATEGORIES_ARRAY } from "./consts";
 
+// Sdilena mnozina kategorii, pouzita napric DB, API i formulary.
 export const ActivityCategoryEnum = z.enum(ACTIVITY_CATEGORIES_ARRAY);
 
+// DB tvar: odpovida dokumentu ulozenemu v MongoDB (vcetne _id a location ObjectId).
 export const ActivitySchema = z.object({
   _id: z.instanceof(ObjectId),
   title: z.string().min(1, "Název je povinný"),
@@ -15,6 +17,7 @@ export const ActivitySchema = z.object({
   updatedAt: z.date().optional(),
 });
 
+// Item tvar: bezpecny vystup pro UI, kde id/locationId jsou serializovane stringy.
 export const ActivityItemSchema = z.object({
   id: z.string(),
   title: z.string(),
@@ -26,6 +29,7 @@ export const ActivityItemSchema = z.object({
   updatedAt: z.date().optional(),
 });
 
+// Input tvar: data, ktera smi prijit z formulare pri create/update akci.
 export const NewActivitySchema = z.object({
   title: z.string().min(1, "Název je povinný"),
   description: z.string().optional(),

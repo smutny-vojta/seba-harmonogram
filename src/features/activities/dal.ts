@@ -1,13 +1,16 @@
 import { type Collection, ObjectId } from "mongodb";
 import { db } from "@/lib/db";
+import { mapMongoIdToId, toObjectId } from "@/lib/dal-utils";
 import type { ActivityItemType, ActivityType, NewActivityType } from "./types";
 
 export const ActivityCollection: Collection<ActivityType> =
   db.collection("activities");
 
-export async function getActivityById(id: string) {
+export async function getActivityById(
+  id: string,
+): Promise<ActivityItemType | null> {
   const activity = await ActivityCollection.findOne({
-    _id: new ObjectId(id),
+    _id: toObjectId(id),
   });
 
   if (!activity) {
@@ -17,7 +20,7 @@ export async function getActivityById(id: string) {
   return mapActivityToItem(activity);
 }
 
-export async function listActivities() {
+export async function listActivities(): Promise<ActivityItemType[]> {
   const activities = await ActivityCollection.find().toArray();
 
   return activities.map(mapActivityToItem);
@@ -29,7 +32,7 @@ export async function createActivity(data: NewActivityType) {
 
   return ActivityCollection.insertOne({
     ...rest,
-    location: new ObjectId(locationId),
+    location: toObjectId(locationId),
     _id: new ObjectId(),
     createdAt: now,
     updatedAt: now,
@@ -46,11 +49,11 @@ export async function updateActivity({
   const { locationId, ...rest } = data;
 
   return ActivityCollection.updateOne(
-    { _id: new ObjectId(id) },
+    { _id: toObjectId(id) },
     {
       $set: {
         ...rest,
-        location: new ObjectId(locationId),
+        location: toObjectId(locationId),
         updatedAt: new Date(),
       },
     },
@@ -58,15 +61,14 @@ export async function updateActivity({
 }
 
 export async function deleteActivity(id: string) {
-  return ActivityCollection.deleteOne({ _id: new ObjectId(id) });
+  return ActivityCollection.deleteOne({ _id: toObjectId(id) });
 }
 
 function mapActivityToItem(activity: ActivityType): ActivityItemType {
-  const { _id, location, ...rest } = activity;
+  const { location, ...rest } = mapMongoIdToId(activity);
 
   return {
     ...rest,
-    id: _id.toString(),
     locationId: location.toString(),
   };
 }

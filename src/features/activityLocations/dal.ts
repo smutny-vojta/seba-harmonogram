@@ -1,32 +1,37 @@
-import { Collection, ObjectId } from "mongodb";
+import { type Collection, ObjectId } from "mongodb";
 import { db } from "@/lib/db";
-import type { ActivityLocationType, NewActivityLocationType } from "./types";
+import { mapMongoIdToId, toObjectId } from "@/lib/dal-utils";
+import type {
+  ActivityLocationItemType,
+  ActivityLocationType,
+  NewActivityLocationType,
+} from "./types";
 
 export const ActivityLocationCollection: Collection<ActivityLocationType> =
   db.collection("activityLocations");
 
-export async function getActivityLocationById(id: string) {
+export async function getActivityLocationById(
+  id: string,
+): Promise<ActivityLocationItemType | null> {
   const location = await ActivityLocationCollection.findOne({
-    _id: new ObjectId(id),
+    _id: toObjectId(id),
   });
 
   if (!location) {
     return null;
   }
 
-  const { _id, ...rest } = location;
-  return { ...rest, id: _id.toString() };
+  return mapActivityLocationToItem(location);
 }
 
-export async function listActivityLocations() {
+export async function listActivityLocations(): Promise<
+  ActivityLocationItemType[]
+> {
   const locations = await ActivityLocationCollection.find()
     .sort({ name: 1 })
     .toArray();
 
-  return locations.map((location) => {
-    const { _id, ...rest } = location;
-    return { ...rest, id: _id.toString() };
-  });
+  return locations.map(mapActivityLocationToItem);
 }
 
 export async function createActivityLocation(data: NewActivityLocationType) {
@@ -44,11 +49,17 @@ export async function updateActivityLocation({
   data: NewActivityLocationType;
 }) {
   return ActivityLocationCollection.updateOne(
-    { _id: new ObjectId(id) },
+    { _id: toObjectId(id) },
     { $set: data },
   );
 }
 
 export async function deleteActivityLocation(id: string) {
-  return ActivityLocationCollection.deleteOne({ _id: new ObjectId(id) });
+  return ActivityLocationCollection.deleteOne({ _id: toObjectId(id) });
+}
+
+function mapActivityLocationToItem(
+  location: ActivityLocationType,
+): ActivityLocationItemType {
+  return mapMongoIdToId(location);
 }

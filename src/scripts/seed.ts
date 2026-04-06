@@ -1,225 +1,285 @@
-import { ACTIVITY_CATEGORIES_ARRAY } from "@/features/activities/consts";
-import { createActivity } from "@/features/activities/dal";
-import { createActivityLocation } from "@/features/activityLocations/dal";
+import { listActivityLocations } from "@/features/activityLocations/dal";
+import { seedActivitiesFeature } from "@/features/activities/seed";
+import { seedActivityLocationsFeature } from "@/features/activityLocations/seed";
+import { stdin as input, stdout as output } from "node:process";
+import { emitKeypressEvents } from "node:readline";
 
-// ! TODO: seednout lokace
-export const LOCATIONS: Record<string, string> = {
-  za_skladem: "Za skladem",
-  sklad: "Sklad",
-  kuchyn: "Kuchyň",
-  jidelna: "Jídelna",
-  kresilka: "Křesílka",
-  kancl: "Kancl",
-  lavicky: "Lavičky",
-  fotbalak: "Fotbalák",
-  pavilon: "Pavilon",
-  bazen: "Bazén",
-  joga: "Jóga",
-  fortnite_altanek: "Fortnite altánek",
-  volejbalove_hriste_u_jogy: "Volejbalové hřiště u jógy",
-  volejbalove_hriste_u_lavky: "Volejbalové hřiště u lávky",
-  ohniste: "Ohniště",
-  lukostrelba: "Lukostřelba",
-  safari: "Safari",
-  elly_misto: "Elly místo",
-  vicmanov: "Vicmanov",
-  jablonecek: "Jabloneček",
-  obedove_misto: "Obědové místo",
-  misto_mladsich: "Místo mladších",
-  misto_starsich: "Místo starších",
-  koupaliste_bukovina: "Koupaliště Bukovina",
-  cele_stredisko: "Celé středisko",
-  mimo_tabor: "Mimo tábor",
-  jine: "Jiné",
-  neurceno: "Neurčeno",
+type SeedEntityId = "locations" | "activities";
+
+type SeedContext = {
+  locationIds: string[];
 };
 
-const ACTIVITY_TEMPLATES: Array<{
-  title: string;
-  description?: string;
-  defaultMaterials: string[];
-}> = [
+type SeedEntity = {
+  id: SeedEntityId;
+  label: string;
+  aliases: string[];
+  run: (ctx: SeedContext) => Promise<void>;
+};
+
+const ANSI = {
+  reset: "\u001b[0m",
+  bold: "\u001b[1m",
+  dim: "\u001b[2m",
+  cyan: "\u001b[36m",
+  green: "\u001b[32m",
+  yellow: "\u001b[33m",
+  red: "\u001b[31m",
+  white: "\u001b[37m",
+} as const;
+
+class UserCancelledError extends Error {
+  constructor() {
+    super("Seed zrušen uživatelem.");
+  }
+}
+
+const ENTITIES: SeedEntity[] = [
   {
-    title: "Ranní rozcvička",
-    description: "Lehká pohybová aktivita na probuzení celého tábora.",
-    defaultMaterials: ["Reproduktor", "Playlist"],
+    id: "locations",
+    label: "Lokace",
+    aliases: ["locations", "lokace", "1"],
+    run: async (ctx) => {
+      ctx.locationIds = await seedActivityLocationsFeature();
+    },
   },
   {
-    title: "Turnaj ve vybíjené",
-    description: "Mezioddílový turnaj ve vybíjené.",
-    defaultMaterials: ["Míč", "Píšťalka"],
-  },
-  {
-    title: "Orientační běh",
-    description: "Hledání kontrol podle mapy v okolí tábora.",
-    defaultMaterials: ["Mapa", "Kontrolní kartičky"],
-  },
-  {
-    title: "Výroba náramků",
-    description: "Kreativní dílna pro mladší i starší oddíly.",
-    defaultMaterials: ["Provázky", "Korálky", "Nůžky"],
-  },
-  {
-    title: "Malování táborového erbu",
-    defaultMaterials: ["Papír A3", "Tempery", "Štětce"],
-  },
-  {
-    title: "Táborový kvíz",
-    description: "Vědomostní soutěž po oddílech.",
-    defaultMaterials: ["Otázky", "Tabule", "Fixy"],
-  },
-  {
-    title: "Šifrovací hra",
-    description: "Týmová hra zaměřená na logiku a spolupráci.",
-    defaultMaterials: ["Šifrovací listy", "Tužky"],
-  },
-  {
-    title: "Přetahovaná lanem",
-    defaultMaterials: ["Lano", "Kužely"],
-  },
-  {
-    title: "Vodní štafeta",
-    description: "Štafetová hra s vodními úkoly.",
-    defaultMaterials: ["Kbelíky", "Kelímky", "Houbičky"],
-  },
-  {
-    title: "Bojovka po areálu",
-    defaultMaterials: ["Stanoviště", "Bodovací list"],
-  },
-  {
-    title: "Večerní táborák",
-    description: "Společné zpívání a program u ohně.",
-    defaultMaterials: ["Kytara", "Zpěvníky", "Dřevo"],
-  },
-  {
-    title: "Noční stezka odvahy",
-    defaultMaterials: ["Čelovky", "Reflexní pásky"],
-  },
-  {
-    title: "Turnaj v přehazované",
-    defaultMaterials: ["Míč", "Síť"],
-  },
-  {
-    title: "Lekce první pomoci",
-    description: "Praktická ukázka základů první pomoci.",
-    defaultMaterials: ["Lékárnička", "Obvazy"],
-  },
-  {
-    title: "Stopovaná",
-    description: "Hledání trasy podle značek v terénu.",
-    defaultMaterials: ["Křída", "Provázky"],
-  },
-  {
-    title: "Kreslení mapy tábora",
-    defaultMaterials: ["Papíry", "Pastelky"],
-  },
-  {
-    title: "Překážková dráha",
-    defaultMaterials: ["Kužely", "Lano", "Žíněnky"],
-  },
-  {
-    title: "Hra na pašeráky",
-    description: "Strategická hra s přesunem zásob mezi stanovišti.",
-    defaultMaterials: ["Kartičky", "Bodovací tabulka"],
-  },
-  {
-    title: "Scénky oddílů",
-    defaultMaterials: ["Kostýmy", "Rekvizity"],
-  },
-  {
-    title: "Táborový tanec",
-    defaultMaterials: ["Reproduktor"],
-  },
-  {
-    title: "Volejbalový miniturnaj",
-    defaultMaterials: ["Volejbalový míč", "Síť"],
-  },
-  {
-    title: "Úklid areálu",
-    description: "Společná organizovaná údržba tábora.",
-    defaultMaterials: ["Pytle na odpad", "Rukavice"],
-  },
-  {
-    title: "Výlet do okolí",
-    defaultMaterials: ["Mapa trasy", "Pitný režim"],
-  },
-  {
-    title: "Odpočinkové čtení",
-    defaultMaterials: ["Knihy", "Deka"],
+    id: "activities",
+    label: "Aktivity",
+    aliases: ["activities", "aktivity", "2"],
+    run: async (ctx) => {
+      const locationIds =
+        ctx.locationIds.length > 0
+          ? ctx.locationIds
+          : (await listActivityLocations()).map((location) => location.id);
+
+      if (locationIds.length === 0) {
+        throw new Error(
+          "Pro seed aktivit nejsou dostupné žádné lokace. Nejprve seedni lokace.",
+        );
+      }
+
+      await seedActivitiesFeature(locationIds);
+    },
   },
 ];
 
-async function seedActivityLocations() {
-  const locations = Object.entries(LOCATIONS).map(([_key, value]) => ({
-    name: value,
-    indoor: Math.random() > 0.5,
-    offsite: Math.random() > 0.5,
-    restrictedAccess: Math.random() > 0.5,
-  }));
-  const locationIds: string[] = [];
+const ALL_ENTITY_IDS = ENTITIES.map((entity) => entity.id);
 
-  for (const [i, location] of locations.entries()) {
-    try {
-      const result = await createActivityLocation(location);
-      locationIds.push(result.insertedId.toString());
-      console.log(`Vytvořena lokace ${i + 1}/${locations.length}`);
-    } catch (error) {
-      console.error(`Chyba při vytváření lokace ${i + 1}/${locations.length}`);
-      console.error(error);
-    }
-  }
-
-  return locationIds;
+function color(text: string, ...styles: string[]) {
+  return `${styles.join("")}${text}${ANSI.reset}`;
 }
 
-async function seedActivities(locationIds: string[]) {
-  if (locationIds.length === 0) {
-    throw new Error("Nelze seedovat aktivity bez lokací.");
+function parseEntityToken(token: string): SeedEntityId[] {
+  const normalized = token.trim().toLowerCase();
+
+  if (normalized.length === 0) {
+    return [];
   }
 
-  if (ACTIVITY_CATEGORIES_ARRAY.length === 0) {
-    throw new Error("Nelze seedovat aktivity bez kategorií.");
+  if (normalized === "all" || normalized === "vse" || normalized === "3") {
+    return [...ALL_ENTITY_IDS];
   }
 
-  for (const [i, activity] of ACTIVITY_TEMPLATES.entries()) {
-    const locationId = locationIds[i % locationIds.length];
-    const category =
-      ACTIVITY_CATEGORIES_ARRAY[i % ACTIVITY_CATEGORIES_ARRAY.length];
+  const match = ENTITIES.find((entity) => entity.aliases.includes(normalized));
 
-    if (!locationId || !category) {
-      throw new Error(
-        "Nepodařilo se určit lokaci nebo kategorii pro seed aktivity.",
-      );
+  if (!match) {
+    throw new Error(
+      `Neznámá entita '${token}'. Použij --entities=locations,activities nebo --entities=all.`,
+    );
+  }
+
+  return [match.id];
+}
+
+function parseEntities(tokens: string[]): SeedEntityId[] {
+  const parsed = new Set<SeedEntityId>();
+
+  for (const token of tokens) {
+    for (const id of parseEntityToken(token)) {
+      parsed.add(id);
+    }
+  }
+
+  return [...parsed];
+}
+
+function parseEntitiesFromArgs(argv: string[]): SeedEntityId[] | null {
+  const arg = argv.find(
+    (item) => item.startsWith("--entities=") || item.startsWith("-e="),
+  );
+
+  if (!arg) {
+    return null;
+  }
+
+  const rawValue = arg.split("=")[1]?.trim();
+
+  if (!rawValue) {
+    throw new Error("Chybí hodnota parametru --entities.");
+  }
+
+  return parseEntities(rawValue.split(/[\s,]+/));
+}
+
+async function selectEntitiesInteractively(): Promise<SeedEntityId[]> {
+  type Option = {
+    id: SeedEntityId;
+    label: string;
+    selected: boolean;
+  };
+
+  const options: Option[] = ENTITIES.map((entity) => ({
+    id: entity.id,
+    label: entity.label,
+    selected: true,
+  }));
+
+  let cursor = 0;
+  let error = "";
+
+  function render() {
+    output.write("\x1Bc");
+    output.write(`${color("SEED SELECTOR", ANSI.bold, ANSI.cyan)}\n`);
+    output.write(`${color("-".repeat(56), ANSI.dim)}\n\n`);
+
+    for (const [index, option] of options.entries()) {
+      const isActive = index === cursor;
+      const pointer = isActive ? color(">", ANSI.bold, ANSI.yellow) : " ";
+      const checkbox = option.selected
+        ? color("[x]", ANSI.bold, ANSI.green)
+        : color("[ ]", ANSI.dim);
+      const label = isActive
+        ? color(option.label, ANSI.bold, ANSI.white)
+        : color(option.label, ANSI.white);
+
+      output.write(`${pointer} ${checkbox} ${label}\n`);
     }
 
-    try {
-      await createActivity({
-        title: activity.title,
-        description: activity.description,
-        locationId,
-        category,
-        defaultMaterials: activity.defaultMaterials,
-      });
-      console.log(`Vytvořena aktivita ${i + 1}/${ACTIVITY_TEMPLATES.length}`);
-    } catch (error) {
-      console.error(
-        `Chyba při vytváření aktivity ${i + 1}/${ACTIVITY_TEMPLATES.length}`,
-      );
-      console.error(error);
+    const selectedCount = options.filter((option) => option.selected).length;
+    output.write(
+      `\n${color("Vybráno:", ANSI.bold)} ${color(`${selectedCount}/${options.length}`, ANSI.green)}\n`,
+    );
+    output.write(
+      `${color("Ovládání:", ANSI.bold, ANSI.cyan)} sipky nahoru/dolu, mezernik, Enter, Ctrl+C\n`,
+    );
+
+    if (error) {
+      output.write(`${color(error, ANSI.bold, ANSI.red)}\n`);
     }
+  }
+
+  return new Promise<SeedEntityId[]>((resolve, reject) => {
+    emitKeypressEvents(input);
+    input.setRawMode?.(true);
+    input.resume();
+
+    function cleanup() {
+      input.removeListener("keypress", onKeypress);
+      input.setRawMode?.(false);
+      input.pause();
+      output.write("\n");
+    }
+
+    function onKeypress(_: string, key: { name?: string; ctrl?: boolean }) {
+      if (key.ctrl && key.name === "c") {
+        cleanup();
+        reject(new UserCancelledError());
+        return;
+      }
+
+      if (key.name === "up") {
+        cursor = cursor > 0 ? cursor - 1 : options.length - 1;
+        error = "";
+        render();
+        return;
+      }
+
+      if (key.name === "down") {
+        cursor = cursor < options.length - 1 ? cursor + 1 : 0;
+        error = "";
+        render();
+        return;
+      }
+
+      if (key.name === "space") {
+        const option = options[cursor];
+
+        if (!option) {
+          return;
+        }
+
+        option.selected = !option.selected;
+        error = "";
+        render();
+        return;
+      }
+
+      if (key.name === "return") {
+        const selected = options
+          .filter((option) => option.selected)
+          .map((option) => option.id);
+
+        if (selected.length === 0) {
+          error = "Vyber alespon jednu entitu.";
+          render();
+          return;
+        }
+
+        cleanup();
+        resolve(selected);
+      }
+    }
+
+    input.on("keypress", onKeypress);
+    render();
+  });
+}
+
+async function resolveEntities(argv: string[]): Promise<SeedEntityId[]> {
+  const fromArgs = parseEntitiesFromArgs(argv);
+
+  if (fromArgs && fromArgs.length > 0) {
+    return fromArgs;
+  }
+
+  if (!process.stdin.isTTY) {
+    throw new Error(
+      "Interaktivní volba není dostupná. Spusť skript s --entities=locations,activities",
+    );
+  }
+
+  return selectEntitiesInteractively();
+}
+
+async function runSelectedEntities(selected: SeedEntityId[]) {
+  const context: SeedContext = { locationIds: [] };
+
+  for (const entity of ENTITIES) {
+    if (!selected.includes(entity.id)) {
+      continue;
+    }
+
+    await entity.run(context);
   }
 }
 
 async function runSeed() {
   try {
-    const locationIds = await seedActivityLocations();
-    await seedActivities(locationIds);
+    const selected = await resolveEntities(process.argv.slice(2));
+    await runSelectedEntities(selected);
     process.exit(0);
   } catch (error) {
+    if (error instanceof UserCancelledError) {
+      console.error(error.message);
+      process.exit(0);
+    }
+
     console.error("Seed selhal.");
     console.error(error);
     process.exit(1);
   }
 }
 
+runSeed();
 runSeed();
