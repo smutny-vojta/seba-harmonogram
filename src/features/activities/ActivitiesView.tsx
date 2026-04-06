@@ -16,7 +16,11 @@ export default async function ActivitiesView() {
   return (
     <div className="flex h-full flex-col gap-y-4">
       <ActivitiesMenu count={activities.length} locations={locations} />
-      <ActivitiesGrid activities={activities} locationsById={locationsById} />
+      <ActivitiesGrid
+        activities={activities}
+        locationsById={locationsById}
+        cardMode="admin"
+      />
     </div>
   );
 }
