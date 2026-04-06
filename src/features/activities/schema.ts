@@ -15,8 +15,21 @@ export const ActivitySchema = z.object({
   updatedAt: z.date().optional(),
 });
 
-export const NewActivitySchema = ActivitySchema.omit({
-  _id: true,
-  createdAt: true,
-  updatedAt: true,
+export const ActivityItemSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  description: z.string().optional(),
+  locationId: z.string(),
+  category: ActivityCategoryEnum,
+  defaultMaterials: z.array(z.string()),
+  createdAt: z.date(),
+  updatedAt: z.date().optional(),
+});
+
+export const NewActivitySchema = z.object({
+  title: z.string().min(1, "Název je povinný"),
+  description: z.string().optional(),
+  locationId: z.string().min(24),
+  category: ActivityCategoryEnum.default("jine"),
+  defaultMaterials: z.array(z.string()).default([]),
 });

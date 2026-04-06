@@ -38,14 +38,24 @@ function parseLocationFormData(formData: FormData) {
 
 function LocationFormFields({
   defaultValues,
+  showRequiredMarkers = false,
 }: {
   defaultValues?: Partial<ActivityLocationItemType>;
+  showRequiredMarkers?: boolean;
 }) {
   return (
     <FieldGroup className="gap-y-4">
       <Field>
-        <Label htmlFor="name">Název lokace</Label>
-        <Input id="name" name="name" defaultValue={defaultValues?.name} />
+        <Label htmlFor="name">
+          Název lokace
+          {showRequiredMarkers && <span className="ml-1 text-red-500">*</span>}
+        </Label>
+        <Input
+          id="name"
+          name="name"
+          defaultValue={defaultValues?.name}
+          required
+        />
       </Field>
       <Field orientation="horizontal">
         <Checkbox
@@ -113,7 +123,7 @@ export function ActivityLocationsAddDialog() {
               Vyplňte prosím následující údaje pro přidání nové lokace.
             </DialogDescription>
           </DialogHeader>
-          <LocationFormFields />
+          <LocationFormFields showRequiredMarkers />
           <DialogFooter>
             <DialogClose asChild>
               <Button variant="outline">Zrušit</Button>

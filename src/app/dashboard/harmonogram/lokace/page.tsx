@@ -1,6 +1,6 @@
-import ActivityLocationsView from "@/features/activityLocations/ActivityLocationsView";
 import { LucideLoader2 } from "lucide-react";
 import { Suspense } from "react";
+import ActivityLocationsView from "@/features/activityLocations/ActivityLocationsView";
 
 export default async function ActivityLocationsPage() {
   return (
