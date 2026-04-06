@@ -5,6 +5,12 @@ import { ACTIVITY_CATEGORIES_ARRAY } from "./consts";
 // Sdilena mnozina kategorii, pouzita napric DB, API i formulary.
 export const ActivityCategoryEnum = z.enum(ACTIVITY_CATEGORIES_ARRAY);
 
+// Material v aktivite ma nazev a mnozstvi (napr. 2x, 250g, 0,5m).
+export const ActivityMaterialSchema = z.object({
+  name: z.string().min(1, "Název materiálu je povinný"),
+  amount: z.string().min(1, "Množství je povinné"),
+});
+
 // DB tvar: odpovida dokumentu ulozenemu v MongoDB (vcetne _id a location ObjectId).
 export const ActivitySchema = z.object({
   _id: z.instanceof(ObjectId),
@@ -12,7 +18,7 @@ export const ActivitySchema = z.object({
   description: z.string().optional(),
   location: z.instanceof(ObjectId),
   category: ActivityCategoryEnum.default("jine"),
-  defaultMaterials: z.array(z.string()).default([]),
+  defaultMaterials: z.array(ActivityMaterialSchema).default([]),
   createdAt: z.date().default(() => new Date()),
   updatedAt: z.date().optional(),
 });
@@ -24,7 +30,7 @@ export const ActivityItemSchema = z.object({
   description: z.string().optional(),
   locationId: z.string(),
   category: ActivityCategoryEnum,
-  defaultMaterials: z.array(z.string()),
+  defaultMaterials: z.array(ActivityMaterialSchema),
   createdAt: z.date(),
   updatedAt: z.date().optional(),
 });
@@ -35,5 +41,5 @@ export const NewActivitySchema = z.object({
   description: z.string().optional(),
   locationId: z.string().min(24),
   category: ActivityCategoryEnum.default("jine"),
-  defaultMaterials: z.array(z.string()).default([]),
+  defaultMaterials: z.array(ActivityMaterialSchema).default([]),
 });

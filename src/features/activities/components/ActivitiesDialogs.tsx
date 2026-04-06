@@ -27,11 +27,12 @@ import {
 } from "@/features/activities/consts";
 import type {
   ActivityItemType,
+  ActivityMaterialType,
   NewActivityType,
 } from "@/features/activities/types";
 import { useAction } from "next-safe-action/hooks";
 import { LucidePencil, LucidePlus, LucideTrash2 } from "lucide-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
 type ActivityLocationOption = {
@@ -39,11 +40,48 @@ type ActivityLocationOption = {
   name: string;
 };
 
-function parseMaterials(raw: string) {
-  return raw
-    .split(",")
-    .map((item) => item.trim())
-    .filter((item) => item.length > 0);
+type MaterialRow = {
+  id: number;
+  defaultAmount?: string;
+  defaultName?: string;
+};
+
+function buildMaterialRows(
+  defaultMaterials?: ActivityMaterialType[],
+): MaterialRow[] {
+  if (!defaultMaterials || defaultMaterials.length === 0) {
+    return [{ id: 0 }];
+  }
+
+  return defaultMaterials.map((material, index) => ({
+    id: index,
+    defaultAmount: material.amount,
+    defaultName: material.name,
+  }));
+}
+
+function parseMaterials(formData: FormData): ActivityMaterialType[] {
+  const amounts = formData
+    .getAll("materialAmount")
+    .map((value) => String(value).trim());
+  const names = formData
+    .getAll("materialName")
+    .map((value) => String(value).trim());
+
+  return names
+    .map((name, index) => {
+      const amount = amounts[index] ?? "";
+
+      if (!name || !amount) {
+        return null;
+      }
+
+      return {
+        name,
+        amount,
+      } satisfies ActivityMaterialType;
+    })
+    .filter((item): item is ActivityMaterialType => item !== null);
 }
 
 function parseActivityFormData(formData: FormData) {
@@ -57,9 +95,7 @@ function parseActivityFormData(formData: FormData) {
     description: description.length > 0 ? description : undefined,
     locationId: String(formData.get("locationId") ?? ""),
     category,
-    defaultMaterials: parseMaterials(
-      String(formData.get("defaultMaterials") ?? ""),
-    ),
+    defaultMaterials: parseMaterials(formData),
   } satisfies NewActivityType;
 }
 
@@ -72,6 +108,39 @@ function ActivityFormFields({
   defaultValues?: Partial<ActivityItemType>;
   showRequiredMarkers?: boolean;
 }) {
+  const rowsIdRef = useRef(0);
+  const [materialRows, setMaterialRows] = useState<MaterialRow[]>(() => {
+    const rows = buildMaterialRows(defaultValues?.defaultMaterials);
+    rowsIdRef.current = rows.length;
+
+    return rows;
+  });
+
+  useEffect(() => {
+    const rows = buildMaterialRows(defaultValues?.defaultMaterials);
+    rowsIdRef.current = rows.length;
+    setMaterialRows(rows);
+  }, [defaultValues?.id, defaultValues?.defaultMaterials]);
+
+  const addMaterialRow = () => {
+    setMaterialRows((previousRows) => [
+      ...previousRows,
+      { id: rowsIdRef.current++ },
+    ]);
+  };
+
+  const removeMaterialRow = (rowId: number) => {
+    setMaterialRows((previousRows) => {
+      const nextRows = previousRows.filter((row) => row.id !== rowId);
+
+      if (nextRows.length > 0) {
+        return nextRows;
+      }
+
+      return [{ id: rowsIdRef.current++ }];
+    });
+  };
+
   return (
     <FieldGroup className="gap-y-4">
       <Field>
@@ -133,15 +202,52 @@ function ActivityFormFields({
         </select>
       </Field>
       <Field>
-        <Label htmlFor="defaultMaterials">
-          Výchozí materiál (odděleno čárkou)
-        </Label>
-        <Textarea
-          id="defaultMaterials"
-          name="defaultMaterials"
-          rows={2}
-          defaultValue={defaultValues?.defaultMaterials?.join(", ") ?? ""}
-        />
+        <Label>Výchozí materiál a množství</Label>
+        <div className="flex flex-col gap-2">
+          {materialRows.map((row) => {
+            const canRemove = materialRows.length > 1;
+
+            return (
+              <div key={row.id} className="flex items-center gap-2">
+                <Input
+                  type="number"
+                  min={0}
+                  step="any"
+                  name="materialAmount"
+                  placeholder="2x"
+                  defaultValue={row.defaultAmount}
+                  className="w-24 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                />
+                <Input
+                  type="text"
+                  name="materialName"
+                  placeholder="Materiál"
+                  defaultValue={row.defaultName}
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon-sm"
+                  aria-label="Smazat řádek materiálu"
+                  onClick={() => removeMaterialRow(row.id)}
+                  disabled={!canRemove}
+                >
+                  <LucideTrash2 size={16} />
+                </Button>
+              </div>
+            );
+          })}
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="w-fit"
+            onClick={addMaterialRow}
+          >
+            <LucidePlus size={16} />
+            Přidat materiál
+          </Button>
+        </div>
       </Field>
     </FieldGroup>
   );

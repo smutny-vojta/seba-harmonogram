@@ -77,8 +77,11 @@ export default function ActivitiesCard({
           <div className="flex flex-wrap items-center gap-2">
             <LucideShapes size={16} className="text-muted-foreground" />
             {activity.defaultMaterials.map((material) => (
-              <Badge key={material} variant="secondary">
-                {material}
+              <Badge
+                key={`${material.amount}-${material.name}`}
+                variant="secondary"
+              >
+                {material.amount} {material.name}
               </Badge>
             ))}
           </div>

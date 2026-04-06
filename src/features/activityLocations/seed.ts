@@ -1,4 +1,7 @@
-import { createActivityLocation } from "@/features/activityLocations/dal";
+import {
+  createActivityLocation,
+  pruneActivityLocations,
+} from "@/features/activityLocations/dal";
 import type { NewActivityLocationType } from "@/features/activityLocations/types";
 
 const LOCATIONS: Record<string, string> = {
@@ -45,7 +48,14 @@ function buildLocationSeedData(): NewActivityLocationType[] {
   }));
 }
 
-export async function seedActivityLocationsFeature(): Promise<string[]> {
+export async function seedActivityLocationsFeature(options?: {
+  prune?: boolean;
+}): Promise<string[]> {
+  if (options?.prune) {
+    await pruneActivityLocations();
+    console.log("Stará data lokací byla smazána (prune).");
+  }
+
   const locations = buildLocationSeedData();
   const locationIds: string[] = [];
 

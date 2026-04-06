@@ -58,6 +58,10 @@ export async function deleteActivityLocation(id: string) {
   return ActivityLocationCollection.deleteOne({ _id: toObjectId(id) });
 }
 
+export async function pruneActivityLocations() {
+  return ActivityLocationCollection.deleteMany({});
+}
+
 function mapActivityLocationToItem(
   location: ActivityLocationType,
 ): ActivityLocationItemType {

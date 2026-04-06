@@ -1,11 +1,10 @@
 import { ACTIVITY_CATEGORIES_ARRAY } from "@/features/activities/consts";
-import { createActivity } from "@/features/activities/dal";
+import { createActivity, pruneActivities } from "@/features/activities/dal";
 import type { NewActivityType } from "@/features/activities/types";
 
-type NewActivityTemplate = Pick<
-  NewActivityType,
-  "title" | "description" | "defaultMaterials"
->;
+type NewActivityTemplate = Pick<NewActivityType, "title" | "description"> & {
+  defaultMaterials: string[];
+};
 
 const ACTIVITY_TEMPLATES: NewActivityTemplate[] = [
   {
@@ -138,7 +137,15 @@ function ensureActivitiesSeedPreconditions(locationIds: string[]) {
   }
 }
 
-export async function seedActivitiesFeature(locationIds: string[]) {
+export async function seedActivitiesFeature(
+  locationIds: string[],
+  options?: { prune?: boolean },
+) {
+  if (options?.prune) {
+    await pruneActivities();
+    console.log("Stará data aktivit byla smazána (prune).");
+  }
+
   ensureActivitiesSeedPreconditions(locationIds);
 
   for (const [i, activity] of ACTIVITY_TEMPLATES.entries()) {
@@ -151,7 +158,10 @@ export async function seedActivitiesFeature(locationIds: string[]) {
         description: activity.description,
         locationId,
         category,
-        defaultMaterials: activity.defaultMaterials,
+        defaultMaterials: activity.defaultMaterials.map((name) => ({
+          name,
+          amount: "1x",
+        })),
       });
       console.log(`Vytvořena aktivita ${i + 1}/${ACTIVITY_TEMPLATES.length}`);
     } catch (error) {

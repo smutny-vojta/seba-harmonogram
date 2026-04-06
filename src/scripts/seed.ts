@@ -8,6 +8,7 @@ type SeedEntityId = "locations" | "activities";
 
 type SeedContext = {
   locationIds: string[];
+  prune: boolean;
 };
 
 type SeedEntity = {
@@ -40,7 +41,9 @@ const ENTITIES: SeedEntity[] = [
     label: "Lokace",
     aliases: ["locations", "lokace", "1"],
     run: async (ctx) => {
-      ctx.locationIds = await seedActivityLocationsFeature();
+      ctx.locationIds = await seedActivityLocationsFeature({
+        prune: ctx.prune,
+      });
     },
   },
   {
@@ -59,12 +62,16 @@ const ENTITIES: SeedEntity[] = [
         );
       }
 
-      await seedActivitiesFeature(locationIds);
+      await seedActivitiesFeature(locationIds, { prune: ctx.prune });
     },
   },
 ];
 
 const ALL_ENTITY_IDS = ENTITIES.map((entity) => entity.id);
+
+function parsePruneFromArgs(argv: string[]) {
+  return argv.includes("--prune") || argv.includes("-p");
+}
 
 function color(text: string, ...styles: string[]) {
   return `${styles.join("")}${text}${ANSI.reset}`;
@@ -136,6 +143,7 @@ async function selectEntitiesInteractively(): Promise<SeedEntityId[]> {
   }));
 
   let cursor = 0;
+  let prune = false;
   let error = "";
 
   function render() {
@@ -162,6 +170,9 @@ async function selectEntitiesInteractively(): Promise<SeedEntityId[]> {
     );
     output.write(
       `${color("Ovládání:", ANSI.bold, ANSI.cyan)} sipky nahoru/dolu, mezernik, Enter, Ctrl+C\n`,
+    );
+    output.write(
+      `${color("Prune:", ANSI.bold)} ${prune ? color("zapnuto", ANSI.yellow) : color("vypnuto", ANSI.dim)} (${color("p", ANSI.cyan)} = přepnout)\n`,
     );
 
     if (error) {
@@ -215,6 +226,13 @@ async function selectEntitiesInteractively(): Promise<SeedEntityId[]> {
         return;
       }
 
+      if (key.name === "p") {
+        prune = !prune;
+        error = "";
+        render();
+        return;
+      }
+
       if (key.name === "return") {
         const selected = options
           .filter((option) => option.selected)
@@ -233,6 +251,9 @@ async function selectEntitiesInteractively(): Promise<SeedEntityId[]> {
 
     input.on("keypress", onKeypress);
     render();
+  }).then((selected) => {
+    process.env.SEED_PRUNE_INTERACTIVE = prune ? "1" : "0";
+    return selected;
   });
 }
 
@@ -252,8 +273,16 @@ async function resolveEntities(argv: string[]): Promise<SeedEntityId[]> {
   return selectEntitiesInteractively();
 }
 
-async function runSelectedEntities(selected: SeedEntityId[]) {
-  const context: SeedContext = { locationIds: [] };
+function resolvePrune(argv: string[]) {
+  if (parsePruneFromArgs(argv)) {
+    return true;
+  }
+
+  return process.env.SEED_PRUNE_INTERACTIVE === "1";
+}
+
+async function runSelectedEntities(selected: SeedEntityId[], prune: boolean) {
+  const context: SeedContext = { locationIds: [], prune };
 
   for (const entity of ENTITIES) {
     if (!selected.includes(entity.id)) {
@@ -266,8 +295,17 @@ async function runSelectedEntities(selected: SeedEntityId[]) {
 
 async function runSeed() {
   try {
-    const selected = await resolveEntities(process.argv.slice(2));
-    await runSelectedEntities(selected);
+    const argv = process.argv.slice(2);
+    const selected = await resolveEntities(argv);
+    const prune = resolvePrune(argv);
+
+    if (prune) {
+      console.log(
+        "Prune režim je zapnutý: stará data vybraných entit budou smazána.",
+      );
+    }
+
+    await runSelectedEntities(selected, prune);
     process.exit(0);
   } catch (error) {
     if (error instanceof UserCancelledError) {
@@ -281,5 +319,4 @@ async function runSeed() {
   }
 }
 
-runSeed();
 runSeed();

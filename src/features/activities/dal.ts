@@ -64,6 +64,10 @@ export async function deleteActivity(id: string) {
   return ActivityCollection.deleteOne({ _id: toObjectId(id) });
 }
 
+export async function pruneActivities() {
+  return ActivityCollection.deleteMany({});
+}
+
 function mapActivityToItem(activity: ActivityType): ActivityItemType {
   const { location, ...rest } = mapMongoIdToId(activity);
 
