@@ -13,7 +13,7 @@ export default function ActivityLocationsContent({
 }: {
   locations: ActivityLocationItemType[];
 }) {
-  const [viewMode, setViewMode] = useState<ActivityLocationsViewMode>("grid");
+  const [viewMode, setViewMode] = useState<ActivityLocationsViewMode>("list");
 
   return (
     <>

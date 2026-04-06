@@ -5,9 +5,8 @@
  * Pozadavky: Preferovat server rendering a drzet komponentu bez mutacni logiky.
  */
 
+import ActivitiesContent from "@features/activities/components/ActivitiesContent";
 import { listActivityLocations } from "@/features/activityLocations/dal";
-import ActivitiesGrid from "@features/activities/components/ActivitiesGrid";
-import ActivitiesMenu from "@features/activities/components/ActivitiesMenu";
 import { listActivities } from "./dal";
 
 export default async function ActivitiesView() {
@@ -22,11 +21,10 @@ export default async function ActivitiesView() {
 
   return (
     <div className="flex h-full flex-col gap-y-4">
-      <ActivitiesMenu count={activities.length} locations={locations} />
-      <ActivitiesGrid
+      <ActivitiesContent
         activities={activities}
+        locations={locations}
         locationsById={locationsById}
-        cardMode="admin"
       />
     </div>
   );
