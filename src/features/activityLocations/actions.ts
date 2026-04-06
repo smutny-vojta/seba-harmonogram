@@ -1,17 +1,23 @@
+/**
+ * Soubor: src/features/activityLocations/actions.ts
+ * Ucel: Server actions pro feature "activityLocations".
+ * Parametry/Vstupy: Validovane vstupy ze schema.ts predavane do DAL funkci.
+ * Pozadavky: Pouzivat actionClient, validaci na action vrstve a revalidatePath po mutacich.
+ */
+
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { z } from "zod";
 import { actionClient } from "@/lib/safe-action";
 import {
   createActivityLocation,
   deleteActivityLocation,
   updateActivityLocation,
 } from "./dal";
-import { NewActivityLocationSchema } from "./schema";
+import { ActivityLocationOperationSchemas } from "./schema";
 
 export const createActivityLocationAction = actionClient
-  .inputSchema(NewActivityLocationSchema)
+  .inputSchema(ActivityLocationOperationSchemas.create)
   .action(async ({ parsedInput }) => {
     const result = await createActivityLocation(parsedInput);
 
@@ -21,12 +27,7 @@ export const createActivityLocationAction = actionClient
   });
 
 export const updateActivityLocationAction = actionClient
-  .inputSchema(
-    z.object({
-      id: z.string().min(24),
-      ...NewActivityLocationSchema.shape,
-    }),
-  )
+  .inputSchema(ActivityLocationOperationSchemas.update)
   .action(async ({ parsedInput }) => {
     const { id, ...data } = parsedInput;
 
@@ -38,7 +39,7 @@ export const updateActivityLocationAction = actionClient
   });
 
 export const deleteActivityLocationAction = actionClient
-  .inputSchema(z.object({ id: z.string().min(24) }))
+  .inputSchema(ActivityLocationOperationSchemas.delete)
   .action(async ({ parsedInput }) => {
     const result = await deleteActivityLocation(parsedInput.id);
 

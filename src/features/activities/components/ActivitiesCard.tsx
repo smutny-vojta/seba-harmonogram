@@ -1,3 +1,10 @@
+/**
+ * Soubor: src/features/activities/components/ActivitiesCard.tsx
+ * Ucel: UI komponenta feature "activities".
+ * Parametry/Vstupy: Props pro vykresleni dat a obsluhu uzivatelskych akci.
+ * Pozadavky: Drzet komponentu zamerenou na prezentaci/UX a respektovat feature schema.
+ */
+
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ACTIVITY_CATEGORIES } from "@/features/activities/consts";

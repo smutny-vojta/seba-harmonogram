@@ -1,3 +1,10 @@
+/**
+ * Soubor: src/features/activityLocations/components/ActivityLocationsMenu.tsx
+ * Ucel: UI komponenta feature "activityLocations".
+ * Parametry/Vstupy: Props pro vykresleni dat a obsluhu uzivatelskych akci.
+ * Pozadavky: Drzet komponentu zamerenou na prezentaci/UX a respektovat feature schema.
+ */
+
 import { ActivityLocationsAddDialog } from "@/features/activityLocations/components/ActivityLocationsDialogs";
 
 export default function ActivityLocationsMenu({ count }: { count: number }) {

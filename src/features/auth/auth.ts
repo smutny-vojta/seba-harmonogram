@@ -1,3 +1,10 @@
+/**
+ * Soubor: src/features/auth/auth.ts
+ * Ucel: Server konfigurace autentizace a autorizace (Better Auth).
+ * Parametry/Vstupy: Pluginy, role, session nastaveni, DB adapter.
+ * Pozadavky: Zmeny delat opatrne, protoze ovlivnuji cele prihlasovani aplikace.
+ */
+
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { betterAuth } from "better-auth/minimal";
 import { nextCookies } from "better-auth/next-js";

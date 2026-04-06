@@ -6,11 +6,11 @@ This document defines the coding standards for **seba-harmonogram**. All rules a
 
 ## Tooling
 
-| Tool | Purpose | Config |
-|------|---------|--------|
-| Biome 2.x | Lint + format | `biome.json` |
-| Prettier | Tailwind class sorting | `.prettierrc` |
-| TypeScript 5 | Type checking | `tsconfig.json` |
+| Tool         | Purpose                | Config          |
+| ------------ | ---------------------- | --------------- |
+| Biome 2.x    | Lint + format          | `biome.json`    |
+| Prettier     | Tailwind class sorting | `.prettierrc`   |
+| TypeScript 5 | Type checking          | `tsconfig.json` |
 
 Run checks: `bun run lint`  
 Auto-format: `bun run format`
@@ -65,32 +65,34 @@ Never use `any`. Use `unknown` and narrow with type guards if the shape is truly
 
 ### Files & Directories
 
-| Type | Convention | Example |
-|------|-----------|---------|
-| React components | `PascalCase.tsx` | `AppSidebar.tsx`, `PageTitle.tsx` |
-| Non-component modules | `camelCase.ts` | `dal.ts`, `safe-action.ts`, `auth-client.ts` |
-| Feature-slice files | fixed names | `schema.ts`, `types.ts`, `dal.ts`, `actions.ts`, `consts.ts` |
-| Route segments | **Czech**, kebab-case | `aktivity/`, `lokace/` |
-| Hook files | `use-kebab-case.ts` | `use-mobile.ts` |
+| Type                  | Convention            | Example                                                      |
+| --------------------- | --------------------- | ------------------------------------------------------------ |
+| React components      | `PascalCase.tsx`      | `AppSidebar.tsx`, `PageTitle.tsx`                            |
+| Non-component modules | `camelCase.ts`        | `dal.ts`, `safe-action.ts`, `auth-client.ts`                 |
+| Feature-slice files   | fixed names           | `schema.ts`, `types.ts`, `dal.ts`, `actions.ts`, `consts.ts` |
+| Route segments        | **Czech**, kebab-case | `aktivity/`, `lokace/`                                       |
+| Hook files            | `use-kebab-case.ts`   | `use-mobile.ts`                                              |
 
 ### Variables & Functions
 
-| Type | Convention | Example |
-|------|-----------|---------|
-| Functions | `camelCase` | `createActivity`, `listActivities` |
-| React components | `PascalCase` | `AppSidebar`, `SidebarFooterContent` |
-| Arrow function components | `PascalCase` const | `const SidebarFooterContent = () => ...` |
-| Constants (module-level) | `SCREAMING_SNAKE_CASE` | `NAVIGATION`, `APP_ROLES`, `ROLE_LABELS` |
-| Zod schemas | `PascalCase` + `Schema` suffix | `ActivitySchema`, `NewActivityLocationSchema` |
-| MongoDB collections | `PascalCase` + `Collection` suffix | `ActivityCollection` |
-| Types from Zod | `PascalCase` + `Type` suffix | `ActivityType`, `NewActivityLocationType` |
-| Enum/string unions | `PascalCase` + `Enum` suffix | `ActivityCategoryEnum` |
+| Type                      | Convention                         | Example                                       |
+| ------------------------- | ---------------------------------- | --------------------------------------------- |
+| Functions                 | `camelCase`                        | `createActivity`, `listActivities`            |
+| React components          | `PascalCase`                       | `AppSidebar`, `SidebarFooterContent`          |
+| Arrow function components | `PascalCase` const                 | `const SidebarFooterContent = () => ...`      |
+| Constants (module-level)  | `SCREAMING_SNAKE_CASE`             | `NAVIGATION`, `APP_ROLES`, `ROLE_LABELS`      |
+| Zod schemas               | `PascalCase` + `Schema` suffix     | `ActivitySchema`, `NewActivityLocationSchema` |
+| MongoDB collections       | `PascalCase` + `Collection` suffix | `ActivityCollection`                          |
+| Types from Zod            | `PascalCase` + `Type` suffix       | `ActivityType`, `NewActivityLocationType`     |
+| Enum/string unions        | `PascalCase` + `Enum` suffix       | `ActivityCategoryEnum`                        |
 
 ---
 
 ## Feature Slice Structure
 
 Every feature under `src/features/<name>/` must follow this file layout:
+
+Canonical file-by-file template is documented in `FEATURE_TEMPLATE.md`.
 
 ```
 <feature>/
@@ -131,7 +133,7 @@ export type ActivityLocationType = z.infer<typeof ActivityLocationSchema>;
 ## Data Access Layer (DAL)
 
 - All DAL functions are `async` and return typed results.
-- Always validate input with the Zod schema before any write operation.
+- DAL stores already validated data and does not perform business input validation.
 - Always generate `_id` explicitly with `new ObjectId()` — do not rely on MongoDB defaults.
 - On reads, always destructure `_id` and remap it to `id: _id.toString()`. The `ObjectId` type must not leak above the DAL boundary.
 - Timestamps (`createdAt`, `updatedAt`) are managed in the DAL, not by callers.
@@ -153,6 +155,7 @@ export async function getActivityById(id: string) {
 - Every file with Server Actions must start with `"use server";`.
 - Use the `actionClient` from `@/lib/safe-action` — never create raw Server Actions without it.
 - Input must always be validated with `.inputSchema(ZodSchema)`.
+- Server Actions are the single validation boundary for write operations.
 - Call `revalidatePath()` after any mutation. Use the exact route path string.
 - Return only serializable values (string, number, plain object) — never return `ObjectId` or `Date`.
 

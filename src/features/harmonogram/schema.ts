@@ -1,3 +1,10 @@
+/**
+ * Soubor: src/features/harmonogram/schema.ts
+ * Ucel: Definuje schema pro danou feature (DB, item a operacni vstupy).
+ * Parametry/Vstupy: Zod struktury pro create/read/update/delete.
+ * Pozadavky: Udrzovat poradi operacnich schemat create -> read -> update -> delete.
+ */
+
 import { ObjectId } from "mongodb";
 import { z } from "zod";
 import { ActivityCategoryEnum } from "@/features/activities/schema";

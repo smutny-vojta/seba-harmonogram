@@ -1,3 +1,10 @@
+/**
+ * Soubor: src/features/activities/consts.ts
+ * Ucel: Konstanty feature "activities" pouzivane napric dalsimi vrstvami.
+ * Parametry/Vstupy: Staticke mapy, seznamy a defaultni hodnoty.
+ * Pozadavky: Bez vedlejsich efektu; pouze deklarativni data.
+ */
+
 export const ACTIVITY_CATEGORIES = {
   sport: {
     name: "Sport",

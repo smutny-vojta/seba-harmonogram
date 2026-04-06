@@ -1,3 +1,10 @@
+/**
+ * Soubor: src/features/activityLocations/components/ActivityLocationsDialogs.tsx
+ * Ucel: UI komponenta feature "activityLocations".
+ * Parametry/Vstupy: Props pro vykresleni dat a obsluhu uzivatelskych akci.
+ * Pozadavky: Drzet komponentu zamerenou na prezentaci/UX a respektovat feature schema.
+ */
+
 "use client";
 
 import { Button } from "@/components/ui/button";

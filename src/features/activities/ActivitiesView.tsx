@@ -1,3 +1,10 @@
+/**
+ * Soubor: src/features/activities/ActivitiesView.tsx
+ * Ucel: Server view orchestrujici nacteni dat a predani do UI komponent.
+ * Parametry/Vstupy: Read modely z DAL vrsty dane feature.
+ * Pozadavky: Preferovat server rendering a drzet komponentu bez mutacni logiky.
+ */
+
 import { listActivityLocations } from "@/features/activityLocations/dal";
 import ActivitiesGrid from "@features/activities/components/ActivitiesGrid";
 import ActivitiesMenu from "@features/activities/components/ActivitiesMenu";

@@ -1,3 +1,10 @@
+/**
+ * Soubor: src/features/activities/components/ActivitiesGrid.tsx
+ * Ucel: UI komponenta feature "activities".
+ * Parametry/Vstupy: Props pro vykresleni dat a obsluhu uzivatelskych akci.
+ * Pozadavky: Drzet komponentu zamerenou na prezentaci/UX a respektovat feature schema.
+ */
+
 import type { ActivityItemType } from "../types";
 import ActivitiesCard, { type ActivityCardMode } from "./ActivitiesCard";
 

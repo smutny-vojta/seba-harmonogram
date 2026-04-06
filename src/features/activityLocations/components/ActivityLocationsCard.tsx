@@ -1,3 +1,10 @@
+/**
+ * Soubor: src/features/activityLocations/components/ActivityLocationsCard.tsx
+ * Ucel: UI komponenta feature "activityLocations".
+ * Parametry/Vstupy: Props pro vykresleni dat a obsluhu uzivatelskych akci.
+ * Pozadavky: Drzet komponentu zamerenou na prezentaci/UX a respektovat feature schema.
+ */
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   ActivityLocationsDeleteDialog,

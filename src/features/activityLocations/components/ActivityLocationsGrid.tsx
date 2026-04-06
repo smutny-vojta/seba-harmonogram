@@ -1,3 +1,10 @@
+/**
+ * Soubor: src/features/activityLocations/components/ActivityLocationsGrid.tsx
+ * Ucel: UI komponenta feature "activityLocations".
+ * Parametry/Vstupy: Props pro vykresleni dat a obsluhu uzivatelskych akci.
+ * Pozadavky: Drzet komponentu zamerenou na prezentaci/UX a respektovat feature schema.
+ */
+
 import type { ActivityLocationItemType } from "../types";
 import ActivityLocationsCard from "./ActivityLocationsCard";
 

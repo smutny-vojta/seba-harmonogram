@@ -1,3 +1,10 @@
+<!--
+Soubor: src/features/auth/IMPLEMENTATION.md
+Ucel: Dokumentace k feature nebo sablona pro vyvoj feature.
+Parametry/Vstupy: Navody, pravidla a implementacni poznamky.
+Pozadavky: Udrzovat aktualni, konkretni a konzistentni s kodem.
+-->
+
 # Plán implementace: Zvací odkazy & Přihlašování telefonem
 
 Tento dokument slouží jako technický manuál a checklist pro přesnou implementaci přihlašovacího systému (telefon + heslo) přes skryté zvací odkazy. 

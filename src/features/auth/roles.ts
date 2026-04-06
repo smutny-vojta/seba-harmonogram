@@ -1,3 +1,10 @@
+/**
+ * Soubor: src/features/auth/roles.ts
+ * Ucel: Definuje role, opravneni a mapovani labelu pro autorizaci.
+ * Parametry/Vstupy: Access-control statements a role objekty.
+ * Pozadavky: Zmeny roli musi byt konzistentni napric serverem i klientem.
+ */
+
 import { createAccessControl } from "better-auth/plugins";
 import { adminAc } from "better-auth/plugins/organization/access";
 

@@ -1,3 +1,10 @@
+/**
+ * Soubor: src/features/activityLocations/seed.ts
+ * Ucel: Seed logika pro naplneni feature testovacimi/dev daty.
+ * Parametry/Vstupy: Volitelny prune rezim a templaty dat.
+ * Pozadavky: Seed ma byt idempotentni v ramci zvolene strategie a jasne logovat prubeh.
+ */
+
 import {
   createActivityLocation,
   pruneActivityLocations,

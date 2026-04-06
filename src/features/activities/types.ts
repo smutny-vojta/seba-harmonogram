@@ -1,3 +1,10 @@
+/**
+ * Soubor: src/features/activities/types.ts
+ * Ucel: Definuje TypeScript typy odvozene ze schema vrstvy.
+ * Parametry/Vstupy: Pouziva z.infer nad exporty ze schema.ts.
+ * Pozadavky: Bez runtime logiky; pouze type aliasy a type-only importy.
+ */
+
 import type { z } from "zod";
 import type {
   ActivityMaterialSchema,

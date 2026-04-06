@@ -1,3 +1,10 @@
+/**
+ * Soubor: src/features/auth/utils.ts
+ * Ucel: Pomocne funkce pro auth/session vrstvu.
+ * Parametry/Vstupy: Session objekty, role stringy a utility mapovani.
+ * Pozadavky: Funkce maji byt side-effect free mimo explicitni cteni session.
+ */
+
 import { headers } from "next/headers";
 import { auth } from "./auth";
 import { ROLE_LABELS } from "./roles";

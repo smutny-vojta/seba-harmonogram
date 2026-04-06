@@ -1,3 +1,10 @@
+/**
+ * Soubor: src/features/activities/seed.ts
+ * Ucel: Seed logika pro naplneni feature testovacimi/dev daty.
+ * Parametry/Vstupy: Volitelny prune rezim a templaty dat.
+ * Pozadavky: Seed ma byt idempotentni v ramci zvolene strategie a jasne logovat prubeh.
+ */
+
 import { ACTIVITY_CATEGORIES_ARRAY } from "@/features/activities/consts";
 import { createActivity, pruneActivities } from "@/features/activities/dal";
 import type { NewActivityType } from "@/features/activities/types";

@@ -1,3 +1,16 @@
+/**
+ * Soubor: src/features/activities/schema.ts
+ * Ucel: Definuje schema pro danou feature (DB, item a operacni vstupy).
+ * Parametry/Vstupy: Zod struktury pro create/read/update/delete.
+ * Pozadavky: Udrzovat poradi operacnich schemat create -> read -> update -> delete.
+ *
+ * - DB schema: odpovida dokumentu ulozenemu v MongoDB (vcetne _id a location ObjectId).
+ * - Item schema: bezpecny vystup pro UI, kde id/locationId jsou serializovane stringy.
+ * - Input schema: data, ktera smi prijit z formulare pri create/update akci.
+ *
+ * Krome toho jsou zde definovany operacni schema pro CRUD operace, ktere se pouzivaji v actions.ts pro validaci vstupu.
+ */
+
 import { ObjectId } from "mongodb";
 import { z } from "zod";
 import { ACTIVITY_CATEGORIES_ARRAY } from "./consts";
@@ -23,7 +36,7 @@ export const ActivitySchema = z.object({
   updatedAt: z.date().optional(),
 });
 
-// Item tvar: bezpecny vystup pro UI, kde id/locationId jsou serializovane stringy.
+// Item schema: bezpecny vystup pro UI, kde id/locationId jsou serializovane stringy.
 export const ActivityItemSchema = z.object({
   id: z.string(),
   title: z.string(),
@@ -35,7 +48,7 @@ export const ActivityItemSchema = z.object({
   updatedAt: z.date().optional(),
 });
 
-// Input tvar: data, ktera smi prijit z formulare pri create/update akci.
+// Input schema: data, ktera smi prijit z formulare pri create/update akci.
 export const NewActivitySchema = z.object({
   title: z.string().min(1, "Název je povinný"),
   description: z.string().optional(),
@@ -43,3 +56,15 @@ export const NewActivitySchema = z.object({
   category: ActivityCategoryEnum.default("jine"),
   defaultMaterials: z.array(ActivityMaterialSchema).default([]),
 });
+
+const ActivityIdSchema = z.object({
+  id: z.string().min(24),
+});
+
+// Operacni shcema pro CRUD operace, ktere se pouzivaji v actions.ts pro validaci vstupu.
+export const ActivityOperationSchemas = {
+  create: NewActivitySchema,
+  read: ActivityIdSchema,
+  update: ActivityIdSchema.extend(NewActivitySchema.shape),
+  delete: ActivityIdSchema,
+} as const;

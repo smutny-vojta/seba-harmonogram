@@ -1,5 +1,7 @@
 # Architecture
 
+This document describes the overall architecture and design decisions of the **seba-harmonogram** application. It covers the directory structure, architectural patterns, data flow, and key technologies used in the project. This serves as a reference for current and future developers to understand how the application is organized and how different parts interact with each other.
+
 ## Overview
 
 **seba-harmonogram** is a Progressive Web Application (PWA) built for managing a summer camp schedule ("harmonogram"). It is a full-stack application running entirely within the Next.js framework — there is no separate backend service. The application is in Czech.
@@ -67,14 +69,16 @@
 
 All business domains live under `src/features/<domain>/`. Each feature slice is self-contained and follows a strict three-layer internal structure:
 
-| File | Role |
-|------|------|
-| `schema.ts` | Zod schemas for validation + MongoDB typed `Collection` exports |
-| `types.ts` | TypeScript types inferred from Zod schemas via `z.infer<>` |
-| `dal.ts` | Data Access Layer — all MongoDB queries, input validation, ID mapping |
-| `actions.ts` | Next.js Server Actions — thin orchestration, calls DAL, revalidates cache |
-| `consts.ts` | Domain constants (enums, static arrays) |
-| `components/` | (optional) Feature-specific React components |
+The canonical implementation template for new domain features is in `FEATURE_TEMPLATE.md`.
+
+| File          | Role                                                                                   |
+| ------------- | -------------------------------------------------------------------------------------- |
+| `schema.ts`   | Zod schemas for validation + MongoDB typed `Collection` exports                        |
+| `types.ts`    | TypeScript types inferred from Zod schemas via `z.infer<>`                             |
+| `dal.ts`      | Data Access Layer — all MongoDB queries, ID mapping, persistence only                  |
+| `actions.ts`  | Next.js Server Actions — input validation, orchestration, calls DAL, revalidates cache |
+| `consts.ts`   | Domain constants (enums, static arrays)                                                |
+| `components/` | (optional) Feature-specific React components                                           |
 
 **Dependency flow within a slice:**
 ```
@@ -87,9 +91,10 @@ Cross-feature imports go from `harmonogram` → `activities` (e.g., reusing `Act
 
 The DAL (`dal.ts`) is the **single point of contact** between the application and MongoDB. Its responsibilities are:
 - Accepting raw input typed via `NewXxxType` (omitting `_id`, `createdAt`, `updatedAt`)
-- Re-validating data with the Zod schema before any write
 - Instantiating `ObjectId` for new documents
 - Remapping `_id` to `id` (string) on reads, so the rest of the application never handles `ObjectId` directly above the DAL boundary
+
+Write validation boundary is `actions.ts` via `actionClient.inputSchema(...)`, not DAL.
 
 ### 3. Server Actions with `next-safe-action`
 
@@ -159,13 +164,13 @@ revalidatePath() → Next.js cache invalidated → UI re-renders
 
 Defined in `tsconfig.json`:
 
-| Alias | Resolves to |
-|-------|-------------|
-| `@/*` | `src/*` |
-| `@features/*` | `src/features/*` |
+| Alias           | Resolves to        |
+| --------------- | ------------------ |
+| `@/*`           | `src/*`            |
+| `@features/*`   | `src/features/*`   |
 | `@components/*` | `src/components/*` |
-| `@hooks/*` | `src/hooks/*` |
-| `@lib/*` | `src/lib/*` |
+| `@hooks/*`      | `src/hooks/*`      |
+| `@lib/*`        | `src/lib/*`        |
 
 ---
 
