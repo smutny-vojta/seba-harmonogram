@@ -2,12 +2,17 @@
 
 import type { ColumnDef } from "@tanstack/react-table";
 import { LucideMountain, LucideUmbrellaOff } from "lucide-react";
+import { useMemo, useState } from "react";
 import { DataTable } from "@/components/ui/data-table";
+import { Input } from "@/components/ui/input";
 import {
   ActivityLocationsDeleteDialog,
   ActivityLocationsEditDialog,
 } from "@/features/activityLocations/components/ActivityLocationsDialogs";
 import type { ActivityLocationItemType } from "../types";
+
+type PropertiesFilter = "all" | "none" | "indoor" | "offsite" | "both";
+type AccessFilter = "all" | "public" | "restricted";
 
 const columns: Array<ColumnDef<ActivityLocationItemType>> = [
   {
@@ -91,12 +96,102 @@ export default function ActivityLocationsList({
 }: {
   locations: ActivityLocationItemType[];
 }) {
+  const [search, setSearch] = useState("");
+  const [accessFilter, setAccessFilter] = useState<AccessFilter>("all");
+  const [propertiesFilter, setPropertiesFilter] =
+    useState<PropertiesFilter>("all");
+
+  const filteredLocations = useMemo(
+    () =>
+      locations.filter((location) => {
+        const searchValue = search.trim().toLocaleLowerCase("cs-CZ");
+        const searchSource = [
+          location.name,
+          location.restrictedAccess
+            ? "přístup pouze pro robinsony"
+            : "přístup pro všechny",
+          location.indoor ? "kryté vnitřní" : "",
+          location.offsite ? "mimo areál" : "",
+        ]
+          .join(" ")
+          .toLocaleLowerCase("cs-CZ");
+
+        const matchesSearch =
+          searchValue.length === 0 || searchSource.includes(searchValue);
+
+        const matchesProperties =
+          propertiesFilter === "all" ||
+          (propertiesFilter === "none" &&
+            !location.indoor &&
+            !location.offsite) ||
+          (propertiesFilter === "indoor" &&
+            location.indoor &&
+            !location.offsite) ||
+          (propertiesFilter === "offsite" &&
+            !location.indoor &&
+            location.offsite) ||
+          (propertiesFilter === "both" && location.indoor && location.offsite);
+
+        const matchesAccess =
+          accessFilter === "all" ||
+          (accessFilter === "public" && !location.restrictedAccess) ||
+          (accessFilter === "restricted" && location.restrictedAccess);
+
+        return matchesSearch && matchesProperties && matchesAccess;
+      }),
+    [accessFilter, locations, propertiesFilter, search],
+  );
+
   return (
-    <div className="min-h-0 flex-1 overflow-y-auto">
+    <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto">
+      <div className="flex flex-wrap items-center gap-3">
+        <div className="flex items-center gap-2 text-sm">
+          <span>Hledat:</span>
+          <Input
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+            placeholder="Název, přístup, vlastnosti..."
+            className="w-72"
+          />
+        </div>
+
+        <div className="flex items-center gap-2 text-sm">
+          <span>Přístup:</span>
+          <select
+            value={accessFilter}
+            onChange={(event) =>
+              setAccessFilter(event.target.value as AccessFilter)
+            }
+            className="border-input focus-visible:border-ring focus-visible:ring-ring/50 h-9 rounded-md border bg-transparent px-3 text-sm outline-none focus-visible:ring-3"
+          >
+            <option value="all">Všechny</option>
+            <option value="public">Přístup pro všechny</option>
+            <option value="restricted">Pouze pro robinsony</option>
+          </select>
+        </div>
+
+        <div className="flex items-center gap-2 text-sm">
+          <span>Vlastnosti:</span>
+          <select
+            value={propertiesFilter}
+            onChange={(event) =>
+              setPropertiesFilter(event.target.value as PropertiesFilter)
+            }
+            className="border-input focus-visible:border-ring focus-visible:ring-ring/50 h-9 rounded-md border bg-transparent px-3 text-sm outline-none focus-visible:ring-3"
+          >
+            <option value="all">Všechny</option>
+            <option value="none">Bez vlastností</option>
+            <option value="indoor">Pouze kryté</option>
+            <option value="offsite">Pouze mimo areál</option>
+            <option value="both">Kryté i mimo areál</option>
+          </select>
+        </div>
+      </div>
+
       <DataTable
         className="bg-card"
         columns={columns}
-        data={locations}
+        data={filteredLocations}
         emptyMessage="Nejsou zde žádné lokality."
         defaultSorting={[{ id: "name", desc: false }]}
         singleColumnSort
