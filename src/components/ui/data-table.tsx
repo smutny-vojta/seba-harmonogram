@@ -1,8 +1,10 @@
 "use client";
 
 import {
+  type ColumnFiltersState,
   type ColumnDef,
   flexRender,
+  getFilteredRowModel,
   getCoreRowModel,
   getSortedRowModel,
   type SortingState,
@@ -44,12 +46,14 @@ export function DataTable<TData, TValue>({
   singleColumnSort = false,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>(defaultSorting ?? []);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
   const table = useReactTable({
     data,
     columns,
     state: {
       sorting,
+      columnFilters,
     },
     onSortingChange: (updater) => {
       setSorting((previousSorting) => {
@@ -64,7 +68,9 @@ export function DataTable<TData, TValue>({
         return nextSorting;
       });
     },
+    onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
     enableMultiSort: !singleColumnSort,
   });
@@ -77,7 +83,9 @@ export function DataTable<TData, TValue>({
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
                 <TableHead key={header.id}>
-                  {header.isPlaceholder ? null : header.column.getCanSort() ? (
+                  {header.isPlaceholder ? null : header.column.getCanSort() &&
+                    !(header.column.columnDef.meta as { disableAutoSortTrigger?: boolean } | undefined)
+                      ?.disableAutoSortTrigger ? (
                     <button
                       type="button"
                       className="inline-flex items-center gap-x-1 hover:opacity-80"

@@ -1,9 +1,18 @@
 "use client";
 
-import type { ColumnDef } from "@tanstack/react-table";
-import { LucideMountain, LucideUmbrellaOff } from "lucide-react";
+import type { Column, ColumnDef } from "@tanstack/react-table";
+import { LucideChevronDown } from "lucide-react";
 import { useMemo, useState } from "react";
+import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import {
   ActivityLocationsDeleteDialog,
@@ -11,8 +20,50 @@ import {
 } from "@/features/activityLocations/components/ActivityLocationsDialogs";
 import type { ActivityLocationItemType } from "../types";
 
-type PropertiesFilter = "all" | "none" | "indoor" | "offsite" | "both";
-type AccessFilter = "all" | "public" | "restricted";
+type HeaderFilterOption = {
+  value: string;
+  label: string;
+};
+
+function FilterableHeaderMenu({
+  column,
+  title,
+  options,
+}: {
+  column: Column<ActivityLocationItemType, unknown>;
+  title: string;
+  options: HeaderFilterOption[];
+}) {
+  const filterValue = (column.getFilterValue() as string | undefined) ?? "all";
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" size="sm" className="h-7 gap-1 px-1.5">
+          <span>{title}</span>
+          <LucideChevronDown size={14} className="text-muted-foreground" />
+        </Button>
+      </DropdownMenuTrigger>
+
+      <DropdownMenuContent align="start" className="w-52">
+        <DropdownMenuLabel>Filtr</DropdownMenuLabel>
+        <DropdownMenuRadioGroup
+          value={filterValue}
+          onValueChange={(value) =>
+            column.setFilterValue(value === "all" ? undefined : value)
+          }
+        >
+          <DropdownMenuRadioItem value="all">Všechny</DropdownMenuRadioItem>
+          {options.map((option) => (
+            <DropdownMenuRadioItem key={option.value} value={option.value}>
+              {option.label}
+            </DropdownMenuRadioItem>
+          ))}
+        </DropdownMenuRadioGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
 
 const columns: Array<ColumnDef<ActivityLocationItemType>> = [
   {
@@ -22,7 +73,33 @@ const columns: Array<ColumnDef<ActivityLocationItemType>> = [
   },
   {
     accessorKey: "restrictedAccess",
-    header: "Přístup",
+    enableSorting: false,
+    filterFn: (row, columnId, filterValue) => {
+      if (!filterValue) {
+        return true;
+      }
+
+      const value = row.getValue<boolean>(columnId);
+      if (filterValue === "public") {
+        return !value;
+      }
+      if (filterValue === "restricted") {
+        return value;
+      }
+
+      return true;
+    },
+    meta: { disableAutoSortTrigger: true },
+    header: ({ column }) => (
+      <FilterableHeaderMenu
+        column={column}
+        title="Přístup"
+        options={[
+          { value: "public", label: "Přístup pro všechny" },
+          { value: "restricted", label: "Pouze pro robinsony" },
+        ]}
+      />
+    ),
     cell: ({ row }) =>
       row.original.restrictedAccess ? (
         <span className="flex items-center gap-x-2">
@@ -36,42 +113,88 @@ const columns: Array<ColumnDef<ActivityLocationItemType>> = [
   },
 
   {
-    accessorFn: ({ indoor, offsite }) => {
-      if (indoor && offsite) {
-        return 3;
+    accessorKey: "offsite",
+    enableSorting: false,
+    filterFn: (row, columnId, filterValue) => {
+      if (!filterValue) {
+        return true;
       }
-      if (indoor) {
-        return 2;
+
+      const value = row.getValue<boolean>(columnId);
+      if (filterValue === "yes") {
+        return value;
       }
-      if (offsite) {
-        return 1;
+      if (filterValue === "no") {
+        return !value;
       }
-      return 0;
+
+      return true;
     },
-    id: "properties",
-    header: "Vlastnosti",
+    meta: { disableAutoSortTrigger: true },
+    header: ({ column }) => (
+      <FilterableHeaderMenu
+        column={column}
+        title="Mimo areál"
+        options={[
+          { value: "yes", label: "Ano" },
+          { value: "no", label: "Ne" },
+        ]}
+      />
+    ),
     cell: ({ row }) => {
-      const { indoor, offsite } = row.original;
-
-      if (!indoor && !offsite) {
-        return <span className="text-muted-foreground">Bez vlastností</span>;
+      return (
+        <span className="flex items-center gap-x-2">
+          {row.original.offsite ? (
+            <>
+              <span>Ano</span>
+            </>
+          ) : (
+            <span className="text-muted-foreground">Ne</span>
+          )}
+        </span>
+      );
+    },
+  },
+  {
+    accessorKey: "indoor",
+    enableSorting: false,
+    filterFn: (row, columnId, filterValue) => {
+      if (!filterValue) {
+        return true;
       }
 
+      const value = row.getValue<boolean>(columnId);
+      if (filterValue === "yes") {
+        return value;
+      }
+      if (filterValue === "no") {
+        return !value;
+      }
+
+      return true;
+    },
+    meta: { disableAutoSortTrigger: true },
+    header: ({ column }) => (
+      <FilterableHeaderMenu
+        column={column}
+        title="Je krytá"
+        options={[
+          { value: "yes", label: "Ano" },
+          { value: "no", label: "Ne" },
+        ]}
+      />
+    ),
+    cell: ({ row }) => {
       return (
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-          {indoor && (
-            <span className="flex items-center gap-x-2">
-              <LucideUmbrellaOff size={16} className="text-blue-500" />
-              <span>Kryté</span>
-            </span>
+        <span className="flex items-center gap-x-2">
+          {row.original.indoor ? (
+            <>
+              <span>Ano</span>
+            </>
+          ) : (
+            <span className="text-muted-foreground">Ne</span>
           )}
-          {offsite && (
-            <span className="flex items-center gap-x-2">
-              <LucideMountain size={16} className="text-amber-700" />
-              <span>Mimo areál</span>
-            </span>
-          )}
-        </div>
+        </span>
       );
     },
   },
@@ -97,9 +220,6 @@ export default function ActivityLocationsList({
   locations: ActivityLocationItemType[];
 }) {
   const [search, setSearch] = useState("");
-  const [accessFilter, setAccessFilter] = useState<AccessFilter>("all");
-  const [propertiesFilter, setPropertiesFilter] =
-    useState<PropertiesFilter>("all");
 
   const filteredLocations = useMemo(
     () =>
@@ -119,27 +239,9 @@ export default function ActivityLocationsList({
         const matchesSearch =
           searchValue.length === 0 || searchSource.includes(searchValue);
 
-        const matchesProperties =
-          propertiesFilter === "all" ||
-          (propertiesFilter === "none" &&
-            !location.indoor &&
-            !location.offsite) ||
-          (propertiesFilter === "indoor" &&
-            location.indoor &&
-            !location.offsite) ||
-          (propertiesFilter === "offsite" &&
-            !location.indoor &&
-            location.offsite) ||
-          (propertiesFilter === "both" && location.indoor && location.offsite);
-
-        const matchesAccess =
-          accessFilter === "all" ||
-          (accessFilter === "public" && !location.restrictedAccess) ||
-          (accessFilter === "restricted" && location.restrictedAccess);
-
-        return matchesSearch && matchesProperties && matchesAccess;
+        return matchesSearch;
       }),
-    [accessFilter, locations, propertiesFilter, search],
+    [locations, search],
   );
 
   return (
@@ -153,38 +255,6 @@ export default function ActivityLocationsList({
             placeholder="Název, přístup, vlastnosti..."
             className="w-72"
           />
-        </div>
-
-        <div className="flex items-center gap-2 text-sm">
-          <span>Přístup:</span>
-          <select
-            value={accessFilter}
-            onChange={(event) =>
-              setAccessFilter(event.target.value as AccessFilter)
-            }
-            className="border-input focus-visible:border-ring focus-visible:ring-ring/50 h-9 rounded-md border bg-transparent px-3 text-sm outline-none focus-visible:ring-3"
-          >
-            <option value="all">Všechny</option>
-            <option value="public">Přístup pro všechny</option>
-            <option value="restricted">Pouze pro robinsony</option>
-          </select>
-        </div>
-
-        <div className="flex items-center gap-2 text-sm">
-          <span>Vlastnosti:</span>
-          <select
-            value={propertiesFilter}
-            onChange={(event) =>
-              setPropertiesFilter(event.target.value as PropertiesFilter)
-            }
-            className="border-input focus-visible:border-ring focus-visible:ring-ring/50 h-9 rounded-md border bg-transparent px-3 text-sm outline-none focus-visible:ring-3"
-          >
-            <option value="all">Všechny</option>
-            <option value="none">Bez vlastností</option>
-            <option value="indoor">Pouze kryté</option>
-            <option value="offsite">Pouze mimo areál</option>
-            <option value="both">Kryté i mimo areál</option>
-          </select>
         </div>
       </div>
 
