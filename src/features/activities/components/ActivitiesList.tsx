@@ -4,8 +4,13 @@ import {
   ActivitiesDeleteDialog,
   ActivitiesEditDialog,
 } from "@features/activities/components/ActivitiesDialogs";
-import type { Column, ColumnDef } from "@tanstack/react-table";
-import { LucideChevronDown, LucideMapPin, LucideShapes } from "lucide-react";
+import type { ColumnDef } from "@tanstack/react-table";
+import {
+  LucideCheck,
+  LucideChevronDown,
+  LucideMapPin,
+  LucideShapes,
+} from "lucide-react";
 import { useMemo, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -14,9 +19,8 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
+  DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
@@ -35,16 +39,16 @@ type HeaderFilterOption = {
 };
 
 function FilterableSingleHeaderMenu({
-  column,
   title,
+  value,
   options,
+  onValueChange,
 }: {
-  column: Column<ActivityItemType, unknown>;
   title: string;
+  value: string;
   options: HeaderFilterOption[];
+  onValueChange: (value: string) => void;
 }) {
-  const filterValue = (column.getFilterValue() as string | undefined) ?? "all";
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -55,45 +59,41 @@ function FilterableSingleHeaderMenu({
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" className="w-56">
         <DropdownMenuLabel>Filtr</DropdownMenuLabel>
-        <DropdownMenuRadioGroup
-          value={filterValue}
-          onValueChange={(value) =>
-            column.setFilterValue(value === "all" ? undefined : value)
-          }
-        >
-          <DropdownMenuRadioItem value="all">Všechny</DropdownMenuRadioItem>
-          {options.map((option) => (
-            <DropdownMenuRadioItem key={option.value} value={option.value}>
-              {option.label}
-            </DropdownMenuRadioItem>
-          ))}
-        </DropdownMenuRadioGroup>
+        <DropdownMenuItem onClick={() => onValueChange("all")}>
+          <span>Všechny</span>
+          {value === "all" ? (
+            <LucideCheck size={14} className="ml-auto" />
+          ) : null}
+        </DropdownMenuItem>
+        {options.map((option) => (
+          <DropdownMenuItem
+            key={option.value}
+            onClick={() => onValueChange(option.value)}
+          >
+            <span>{option.label}</span>
+            {value === option.value ? (
+              <LucideCheck size={14} className="ml-auto" />
+            ) : null}
+          </DropdownMenuItem>
+        ))}
       </DropdownMenuContent>
     </DropdownMenu>
   );
 }
 
 function FilterableMultiHeaderMenu({
-  column,
   title,
   options,
+  selectedValues,
+  onToggleValue,
+  onClear,
 }: {
-  column: Column<ActivityItemType, unknown>;
   title: string;
   options: HeaderFilterOption[];
+  selectedValues: string[];
+  onToggleValue: (value: string) => void;
+  onClear: () => void;
 }) {
-  const selectedValues =
-    (column.getFilterValue() as string[] | undefined) ?? [];
-
-  const toggleValue = (value: string) => {
-    const alreadySelected = selectedValues.includes(value);
-    const nextValues = alreadySelected
-      ? selectedValues.filter((item) => item !== value)
-      : [...selectedValues, value];
-
-    column.setFilterValue(nextValues.length > 0 ? nextValues : undefined);
-  };
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -106,7 +106,7 @@ function FilterableMultiHeaderMenu({
         <DropdownMenuLabel>Filtr (více hodnot)</DropdownMenuLabel>
         <DropdownMenuCheckboxItem
           checked={selectedValues.length === 0}
-          onCheckedChange={() => column.setFilterValue(undefined)}
+          onCheckedChange={onClear}
         >
           Všechny
         </DropdownMenuCheckboxItem>
@@ -115,7 +115,7 @@ function FilterableMultiHeaderMenu({
           <DropdownMenuCheckboxItem
             key={option.value}
             checked={selectedValues.includes(option.value)}
-            onCheckedChange={() => toggleValue(option.value)}
+            onCheckedChange={() => onToggleValue(option.value)}
           >
             {option.label}
           </DropdownMenuCheckboxItem>
@@ -135,6 +135,9 @@ export default function ActivitiesList({
   locationsById: Record<string, string>;
 }) {
   const [search, setSearch] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState<string>("all");
+  const [locationFilter, setLocationFilter] = useState<string>("all");
+  const [materialFilters, setMaterialFilters] = useState<string[]>([]);
 
   const filteredActivities = useMemo(
     () =>
@@ -158,10 +161,43 @@ export default function ActivitiesList({
         const matchesSearch =
           searchValue.length === 0 || searchSource.includes(searchValue);
 
-        return matchesSearch;
+        const matchesCategory =
+          categoryFilter === "all" || activity.category === categoryFilter;
+
+        const matchesLocation =
+          locationFilter === "all" || activity.locationId === locationFilter;
+
+        const materialNames = activity.defaultMaterials.map(
+          (material) => material.name,
+        );
+        const matchesMaterials =
+          materialFilters.length === 0 ||
+          materialFilters.some((material) => materialNames.includes(material));
+
+        return (
+          matchesSearch &&
+          matchesCategory &&
+          matchesLocation &&
+          matchesMaterials
+        );
       }),
-    [activities, locationsById, search],
+    [
+      activities,
+      categoryFilter,
+      locationFilter,
+      locationsById,
+      materialFilters,
+      search,
+    ],
   );
+
+  const toggleMaterialFilter = (value: string) => {
+    setMaterialFilters((previous) =>
+      previous.includes(value)
+        ? previous.filter((item) => item !== value)
+        : [...previous, value],
+    );
+  };
 
   const categoryOptions = useMemo(
     () =>
@@ -208,18 +244,11 @@ export default function ActivitiesList({
       accessorKey: "category",
       id: "category",
       enableSorting: false,
-      filterFn: (row, columnId, filterValue) => {
-        if (!filterValue) {
-          return true;
-        }
-
-        return row.getValue<string>(columnId) === filterValue;
-      },
-      meta: { disableAutoSortTrigger: true },
-      header: ({ column }) => (
+      header: () => (
         <FilterableSingleHeaderMenu
-          column={column}
           title="Kategorie"
+          value={categoryFilter}
+          onValueChange={setCategoryFilter}
           options={categoryOptions}
         />
       ),
@@ -238,18 +267,11 @@ export default function ActivitiesList({
       accessorKey: "locationId",
       id: "locationId",
       enableSorting: false,
-      filterFn: (row, columnId, filterValue) => {
-        if (!filterValue) {
-          return true;
-        }
-
-        return row.getValue<string>(columnId) === filterValue;
-      },
-      meta: { disableAutoSortTrigger: true },
-      header: ({ column }) => (
+      header: () => (
         <FilterableSingleHeaderMenu
-          column={column}
           title="Lokace"
+          value={locationFilter}
+          onValueChange={setLocationFilter}
           options={locationOptions}
         />
       ),
@@ -267,27 +289,13 @@ export default function ActivitiesList({
       accessorFn: (activity) =>
         activity.defaultMaterials.map((material) => material.name),
       enableSorting: false,
-      filterFn: (row, _columnId, filterValue) => {
-        const selectedMaterials = (filterValue as string[] | undefined) ?? [];
-
-        if (selectedMaterials.length === 0) {
-          return true;
-        }
-
-        const rowMaterialNames = row.original.defaultMaterials.map(
-          (material) => material.name,
-        );
-
-        return selectedMaterials.some((selectedMaterial) =>
-          rowMaterialNames.includes(selectedMaterial),
-        );
-      },
-      meta: { disableAutoSortTrigger: true },
-      header: ({ column }) => (
+      header: () => (
         <FilterableMultiHeaderMenu
-          column={column}
           title="Materiál"
           options={materialOptions}
+          selectedValues={materialFilters}
+          onToggleValue={toggleMaterialFilter}
+          onClear={() => setMaterialFilters([])}
         />
       ),
       cell: ({ row }) =>
