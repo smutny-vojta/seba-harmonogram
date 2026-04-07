@@ -49,7 +49,7 @@ function FilterableHeaderMenu({
 
       <DropdownMenuContent align="start" className="w-52">
         <DropdownMenuLabel>Filtr</DropdownMenuLabel>
-        <DropdownMenuItem onClick={() => onValueChange("all")}>
+        <DropdownMenuItem onSelect={() => onValueChange("all")}>
           <span>Všechny</span>
           {value === "all" ? (
             <LucideCheck size={14} className="ml-auto" />
@@ -58,7 +58,7 @@ function FilterableHeaderMenu({
         {options.map((option) => (
           <DropdownMenuItem
             key={option.value}
-            onClick={() => onValueChange(option.value)}
+            onSelect={() => onValueChange(option.value)}
           >
             <span>{option.label}</span>
             {value === option.value ? (
