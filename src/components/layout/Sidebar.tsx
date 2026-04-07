@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Fragment } from "react";
 import {
   Sidebar,
   SidebarContent,
@@ -15,10 +16,11 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
+  SidebarSeparator,
   SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { NAVIGATION } from "@/config/navigation";
+import { NAVIGATION, NavigationItem } from "@/lib/navigation";
 
 export function AppSidebar() {
   const pathname = usePathname();
@@ -32,31 +34,40 @@ export function AppSidebar() {
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupContent>
-            <SidebarMenu>
-              {NAVIGATION.map((page) => (
-                <SidebarMenuItem key={page.href}>
-                  <SidebarMenuButton asChild isActive={pathname === page.href}>
-                    <Link href={page.href}>
-                      <page.icon />
-                      <span className="text-[15px]">{page.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                  <SidebarMenuSub className="">
-                    {page.subPages.map((subPage) => (
-                      <SidebarMenuSubItem key={subPage.href}>
-                        <SidebarMenuSubButton
-                          asChild
-                          isActive={pathname === subPage.href}
-                        >
-                          <Link href={subPage.href}>
-                            <subPage.icon />
-                            <span>{subPage.title}</span>
-                          </Link>
-                        </SidebarMenuSubButton>
-                      </SidebarMenuSubItem>
-                    ))}
-                  </SidebarMenuSub>
-                </SidebarMenuItem>
+            <SidebarMenu className="gap-2">
+              {NAVIGATION.map((page: NavigationItem) => (
+                <Fragment key={page.href}>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={pathname === page.href}
+                    >
+                      <Link href={page.href}>
+                        <page.icon />
+                        <span className="text-[15px]">{page.title}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                    {page.subPages && (
+                      <SidebarMenuSub className="">
+                        {page.subPages.map((subPage) => (
+                          <SidebarMenuSubItem key={subPage.href}>
+                            <SidebarMenuSubButton
+                              asChild
+                              isActive={pathname === subPage.href}
+                            >
+                              <Link href={subPage.href}>
+                                <subPage.icon />
+                                <span>{subPage.title}</span>
+                              </Link>
+                            </SidebarMenuSubButton>
+                          </SidebarMenuSubItem>
+                        ))}
+                      </SidebarMenuSub>
+                    )}
+                  </SidebarMenuItem>
+
+                  {page.separator && <SidebarSeparator />}
+                </Fragment>
               ))}
             </SidebarMenu>
           </SidebarGroupContent>

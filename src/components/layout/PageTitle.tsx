@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { NAVIGATION } from "@/config/navigation";
+import { NAVIGATION } from "@/lib/navigation";
 
 export default function PageHeader() {
   const pathname = usePathname();

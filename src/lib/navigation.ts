@@ -1,11 +1,21 @@
 import {
   LucideCalendar,
+  LucideCalendarRange,
   LucideLayoutDashboard,
   LucideMap,
   LucideStars,
+  LucideUsers,
 } from "lucide-react";
 
-export const NAVIGATION = [
+export type NavigationItem = {
+  title: string;
+  href: string;
+  icon: React.ComponentType;
+  subPages: Omit<NavigationItem, "subPages">[];
+  separator?: boolean;
+};
+
+export const NAVIGATION: NavigationItem[] = [
   {
     title: "Dashboard",
     href: "/dashboard",
@@ -28,5 +38,17 @@ export const NAVIGATION = [
         icon: LucideMap,
       },
     ],
+  },
+  {
+    title: "Turnusy",
+    href: "/dashboard/terms",
+    icon: LucideCalendarRange,
+    subPages: [],
+  },
+  {
+    title: "Oddíly",
+    href: "/dashboard/groups",
+    icon: LucideUsers,
+    subPages: [],
   },
 ] as const;
