@@ -6,8 +6,10 @@ import {
 } from "@features/activities/components/ActivitiesDialogs";
 import type { ColumnDef } from "@tanstack/react-table";
 import { LucideMapPin, LucideShapes } from "lucide-react";
+import { useMemo, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { DataTable } from "@/components/ui/data-table";
+import { Input } from "@/components/ui/input";
 import { ACTIVITY_CATEGORIES } from "@/features/activities/consts";
 import type { ActivityItemType } from "@/features/activities/types";
 
@@ -25,6 +27,41 @@ export default function ActivitiesList({
   locations: ActivityLocationOption[];
   locationsById: Record<string, string>;
 }) {
+  const [search, setSearch] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState<string>("all");
+  const [locationFilter, setLocationFilter] = useState<string>("all");
+
+  const filteredActivities = useMemo(
+    () =>
+      activities.filter((activity) => {
+        const searchValue = search.trim().toLocaleLowerCase("cs-CZ");
+        const locationName = locationsById[activity.locationId] ?? "";
+        const materialText = activity.defaultMaterials
+          .map((material) => `${material.amount} ${material.name}`)
+          .join(" ");
+
+        const searchSource = [
+          activity.title,
+          activity.description ?? "",
+          ACTIVITY_CATEGORIES[activity.category].name,
+          locationName,
+          materialText,
+        ]
+          .join(" ")
+          .toLocaleLowerCase("cs-CZ");
+
+        const matchesSearch =
+          searchValue.length === 0 || searchSource.includes(searchValue);
+        const matchesCategory =
+          categoryFilter === "all" || activity.category === categoryFilter;
+        const matchesLocation =
+          locationFilter === "all" || activity.locationId === locationFilter;
+
+        return matchesSearch && matchesCategory && matchesLocation;
+      }),
+    [activities, categoryFilter, locationFilter, locationsById, search],
+  );
+
   const columns: Array<ColumnDef<ActivityItemType>> = [
     {
       accessorKey: "title",
@@ -97,11 +134,55 @@ export default function ActivitiesList({
   ];
 
   return (
-    <div className="min-h-0 flex-1 overflow-y-auto">
+    <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto">
+      <div className="flex flex-wrap items-center gap-3">
+        <label className="flex items-center gap-2 text-sm">
+          <span>Hledat:</span>
+          <Input
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+            placeholder="Název, popis, kategorie, lokace..."
+            className="w-72"
+          />
+        </label>
+
+        <label className="flex items-center gap-2 text-sm">
+          <span>Kategorie:</span>
+          <select
+            value={categoryFilter}
+            onChange={(event) => setCategoryFilter(event.target.value)}
+            className="border-input focus-visible:border-ring focus-visible:ring-ring/50 h-9 rounded-md border bg-transparent px-3 text-sm outline-none focus-visible:ring-3"
+          >
+            <option value="all">Všechny</option>
+            {Object.entries(ACTIVITY_CATEGORIES).map(([key, category]) => (
+              <option key={key} value={key}>
+                {category.name}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <label className="flex items-center gap-2 text-sm">
+          <span>Lokace:</span>
+          <select
+            value={locationFilter}
+            onChange={(event) => setLocationFilter(event.target.value)}
+            className="border-input focus-visible:border-ring focus-visible:ring-ring/50 h-9 rounded-md border bg-transparent px-3 text-sm outline-none focus-visible:ring-3"
+          >
+            <option value="all">Všechny</option>
+            {locations.map((location) => (
+              <option key={location.id} value={location.id}>
+                {location.name}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
+
       <DataTable
         className="bg-card"
         columns={columns}
-        data={activities}
+        data={filteredActivities}
         emptyMessage="Nejsou zde žádné aktivity."
         defaultSorting={[{ id: "title", desc: false }]}
         singleColumnSort
