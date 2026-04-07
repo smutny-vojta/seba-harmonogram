@@ -4,11 +4,22 @@ import {
   ActivitiesDeleteDialog,
   ActivitiesEditDialog,
 } from "@features/activities/components/ActivitiesDialogs";
-import type { ColumnDef } from "@tanstack/react-table";
-import { LucideMapPin, LucideShapes } from "lucide-react";
+import type { Column, ColumnDef } from "@tanstack/react-table";
+import { LucideChevronDown, LucideMapPin, LucideShapes } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { ACTIVITY_CATEGORIES } from "@/features/activities/consts";
 import type { ActivityItemType } from "@/features/activities/types";
@@ -17,6 +28,102 @@ type ActivityLocationOption = {
   id: string;
   name: string;
 };
+
+type HeaderFilterOption = {
+  value: string;
+  label: string;
+};
+
+function FilterableSingleHeaderMenu({
+  column,
+  title,
+  options,
+}: {
+  column: Column<ActivityItemType, unknown>;
+  title: string;
+  options: HeaderFilterOption[];
+}) {
+  const filterValue = (column.getFilterValue() as string | undefined) ?? "all";
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" size="sm" className="h-7 gap-1 px-1.5">
+          <span>{title}</span>
+          <LucideChevronDown size={14} className="text-muted-foreground" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="start" className="w-56">
+        <DropdownMenuLabel>Filtr</DropdownMenuLabel>
+        <DropdownMenuRadioGroup
+          value={filterValue}
+          onValueChange={(value) =>
+            column.setFilterValue(value === "all" ? undefined : value)
+          }
+        >
+          <DropdownMenuRadioItem value="all">Všechny</DropdownMenuRadioItem>
+          {options.map((option) => (
+            <DropdownMenuRadioItem key={option.value} value={option.value}>
+              {option.label}
+            </DropdownMenuRadioItem>
+          ))}
+        </DropdownMenuRadioGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
+function FilterableMultiHeaderMenu({
+  column,
+  title,
+  options,
+}: {
+  column: Column<ActivityItemType, unknown>;
+  title: string;
+  options: HeaderFilterOption[];
+}) {
+  const selectedValues =
+    (column.getFilterValue() as string[] | undefined) ?? [];
+
+  const toggleValue = (value: string) => {
+    const alreadySelected = selectedValues.includes(value);
+    const nextValues = alreadySelected
+      ? selectedValues.filter((item) => item !== value)
+      : [...selectedValues, value];
+
+    column.setFilterValue(nextValues.length > 0 ? nextValues : undefined);
+  };
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" size="sm" className="h-7 gap-1 px-1.5">
+          <span>{title}</span>
+          <LucideChevronDown size={14} className="text-muted-foreground" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="start" className="w-64">
+        <DropdownMenuLabel>Filtr (více hodnot)</DropdownMenuLabel>
+        <DropdownMenuCheckboxItem
+          checked={selectedValues.length === 0}
+          onCheckedChange={() => column.setFilterValue(undefined)}
+        >
+          Všechny
+        </DropdownMenuCheckboxItem>
+        <DropdownMenuSeparator />
+        {options.map((option) => (
+          <DropdownMenuCheckboxItem
+            key={option.value}
+            checked={selectedValues.includes(option.value)}
+            onCheckedChange={() => toggleValue(option.value)}
+          >
+            {option.label}
+          </DropdownMenuCheckboxItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
 
 export default function ActivitiesList({
   activities,
@@ -28,8 +135,6 @@ export default function ActivitiesList({
   locationsById: Record<string, string>;
 }) {
   const [search, setSearch] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState<string>("all");
-  const [locationFilter, setLocationFilter] = useState<string>("all");
 
   const filteredActivities = useMemo(
     () =>
@@ -52,15 +157,46 @@ export default function ActivitiesList({
 
         const matchesSearch =
           searchValue.length === 0 || searchSource.includes(searchValue);
-        const matchesCategory =
-          categoryFilter === "all" || activity.category === categoryFilter;
-        const matchesLocation =
-          locationFilter === "all" || activity.locationId === locationFilter;
 
-        return matchesSearch && matchesCategory && matchesLocation;
+        return matchesSearch;
       }),
-    [activities, categoryFilter, locationFilter, locationsById, search],
+    [activities, locationsById, search],
   );
+
+  const categoryOptions = useMemo(
+    () =>
+      Object.entries(ACTIVITY_CATEGORIES).map(([value, category]) => ({
+        value,
+        label: category.name,
+      })),
+    [],
+  );
+
+  const locationOptions = useMemo(
+    () =>
+      locations.map((location) => ({
+        value: location.id,
+        label: location.name,
+      })),
+    [locations],
+  );
+
+  const materialOptions = useMemo(() => {
+    const uniqueMaterialNames = new Set<string>();
+
+    for (const activity of activities) {
+      for (const material of activity.defaultMaterials) {
+        uniqueMaterialNames.add(material.name);
+      }
+    }
+
+    return [...uniqueMaterialNames]
+      .sort((a, b) => a.localeCompare(b, "cs-CZ"))
+      .map((materialName) => ({
+        value: materialName,
+        label: materialName,
+      }));
+  }, [activities]);
 
   const columns: Array<ColumnDef<ActivityItemType>> = [
     {
@@ -69,9 +205,24 @@ export default function ActivitiesList({
       cell: ({ row }) => <p className="font-semibold">{row.original.title}</p>,
     },
     {
-      accessorFn: (activity) => ACTIVITY_CATEGORIES[activity.category].name,
+      accessorKey: "category",
       id: "category",
-      header: "Kategorie",
+      enableSorting: false,
+      filterFn: (row, columnId, filterValue) => {
+        if (!filterValue) {
+          return true;
+        }
+
+        return row.getValue<string>(columnId) === filterValue;
+      },
+      meta: { disableAutoSortTrigger: true },
+      header: ({ column }) => (
+        <FilterableSingleHeaderMenu
+          column={column}
+          title="Kategorie"
+          options={categoryOptions}
+        />
+      ),
       cell: ({ row }) => (
         <Badge
           style={{
@@ -84,9 +235,24 @@ export default function ActivitiesList({
       ),
     },
     {
-      accessorFn: (activity) => locationsById[activity.locationId] ?? "",
-      id: "location",
-      header: "Lokace",
+      accessorKey: "locationId",
+      id: "locationId",
+      enableSorting: false,
+      filterFn: (row, columnId, filterValue) => {
+        if (!filterValue) {
+          return true;
+        }
+
+        return row.getValue<string>(columnId) === filterValue;
+      },
+      meta: { disableAutoSortTrigger: true },
+      header: ({ column }) => (
+        <FilterableSingleHeaderMenu
+          column={column}
+          title="Lokace"
+          options={locationOptions}
+        />
+      ),
       cell: ({ row }) => (
         <span className="text-muted-foreground flex items-center gap-x-2">
           <LucideMapPin size={16} />
@@ -97,9 +263,33 @@ export default function ActivitiesList({
       ),
     },
     {
-      accessorFn: (activity) => activity.defaultMaterials.length,
       id: "materials",
-      header: "Materiál",
+      accessorFn: (activity) =>
+        activity.defaultMaterials.map((material) => material.name),
+      enableSorting: false,
+      filterFn: (row, _columnId, filterValue) => {
+        const selectedMaterials = (filterValue as string[] | undefined) ?? [];
+
+        if (selectedMaterials.length === 0) {
+          return true;
+        }
+
+        const rowMaterialNames = row.original.defaultMaterials.map(
+          (material) => material.name,
+        );
+
+        return selectedMaterials.some((selectedMaterial) =>
+          rowMaterialNames.includes(selectedMaterial),
+        );
+      },
+      meta: { disableAutoSortTrigger: true },
+      header: ({ column }) => (
+        <FilterableMultiHeaderMenu
+          column={column}
+          title="Materiál"
+          options={materialOptions}
+        />
+      ),
       cell: ({ row }) =>
         row.original.defaultMaterials.length > 0 ? (
           <div className="flex flex-wrap items-center gap-2">
@@ -136,7 +326,7 @@ export default function ActivitiesList({
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto">
       <div className="flex flex-wrap items-center gap-3">
-        <label className="flex items-center gap-2 text-sm">
+        <div className="flex items-center gap-2 text-sm">
           <span>Hledat:</span>
           <Input
             value={search}
@@ -144,39 +334,7 @@ export default function ActivitiesList({
             placeholder="Název, popis, kategorie, lokace..."
             className="w-72"
           />
-        </label>
-
-        <label className="flex items-center gap-2 text-sm">
-          <span>Kategorie:</span>
-          <select
-            value={categoryFilter}
-            onChange={(event) => setCategoryFilter(event.target.value)}
-            className="border-input focus-visible:border-ring focus-visible:ring-ring/50 h-9 rounded-md border bg-transparent px-3 text-sm outline-none focus-visible:ring-3"
-          >
-            <option value="all">Všechny</option>
-            {Object.entries(ACTIVITY_CATEGORIES).map(([key, category]) => (
-              <option key={key} value={key}>
-                {category.name}
-              </option>
-            ))}
-          </select>
-        </label>
-
-        <label className="flex items-center gap-2 text-sm">
-          <span>Lokace:</span>
-          <select
-            value={locationFilter}
-            onChange={(event) => setLocationFilter(event.target.value)}
-            className="border-input focus-visible:border-ring focus-visible:ring-ring/50 h-9 rounded-md border bg-transparent px-3 text-sm outline-none focus-visible:ring-3"
-          >
-            <option value="all">Všechny</option>
-            {locations.map((location) => (
-              <option key={location.id} value={location.id}>
-                {location.name}
-              </option>
-            ))}
-          </select>
-        </label>
+        </div>
       </div>
 
       <DataTable
