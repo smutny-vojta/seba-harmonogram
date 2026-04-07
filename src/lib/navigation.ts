@@ -12,7 +12,6 @@ export type NavigationItem = {
   href: string;
   icon: React.ComponentType;
   subPages: Omit<NavigationItem, "subPages">[];
-  separator?: boolean;
 };
 
 export const NAVIGATION: NavigationItem[] = [
@@ -24,17 +23,17 @@ export const NAVIGATION: NavigationItem[] = [
   },
   {
     title: "Harmonogram",
-    href: "/dashboard/harmonogram",
+    href: "/dashboard/schedule",
     icon: LucideCalendar,
     subPages: [
       {
         title: "Aktivity",
-        href: "/dashboard/harmonogram/aktivity",
+        href: "/dashboard/schedule/activities",
         icon: LucideStars,
       },
-      {
+      { 
         title: "Lokace",
-        href: "/dashboard/harmonogram/lokace",
+        href: "/dashboard/schedule/locations",
         icon: LucideMap,
       },
     ],
