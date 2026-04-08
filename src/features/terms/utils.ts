@@ -1,42 +1,30 @@
 import type { NewTermType } from "@/features/terms/types";
-import { formatPragueDateTimeInput } from "@/lib/date-time/prague";
+import {
+  TERM_END_HOUR,
+  TERM_END_MINUTE,
+  TERM_START_HOUR,
+  TERM_START_MINUTE,
+} from "@/features/terms/consts";
 
 // Helpers used in components/TermsDialogs.tsx
 
-export function splitDateTimeValue(
-  date: Date | undefined,
-  fallbackTime: string,
-) {
-  if (!date) {
-    return {
-      date: "",
-      time: fallbackTime,
-    };
-  }
-
-  const value = formatPragueDateTimeInput(date);
-  const [datePart, timePart] = value.split("T");
-
-  if (!datePart || !timePart) {
-    return {
-      date: "",
-      time: fallbackTime,
-    };
-  }
-
-  return {
-    date: datePart,
-    time: timePart,
-  };
+function toTwoDigits(value: number): string {
+  return value.toString().padStart(2, "0");
 }
 
-export function buildDateTimeValue(date: string, time: string, label: string) {
+export function buildDateTimeValue(
+  date: string,
+  hour: number,
+  minute: number,
+  label: string,
+) {
   const safeDate = date.trim();
-  const safeTime = time.trim();
 
-  if (!safeDate || !safeTime) {
-    throw new Error(`Vyplňte prosím datum i čas položky ${label}.`);
+  if (!safeDate) {
+    throw new Error(`Vyplňte prosím datum položky ${label}.`);
   }
+
+  const safeTime = `${toTwoDigits(hour)}:${toTwoDigits(minute)}`;
 
   return `${safeDate}T${safeTime}`;
 }
@@ -91,12 +79,14 @@ export function parseTermFormData(
 ): NewTermType {
   const startsAtValue = buildDateTimeValue(
     String(formData.get("startsAtDate") ?? ""),
-    String(formData.get("startsAtTime") ?? ""),
+    TERM_START_HOUR,
+    TERM_START_MINUTE,
     "začátek",
   );
   const endsAtValue = buildDateTimeValue(
     String(formData.get("endsAtDate") ?? ""),
-    String(formData.get("endsAtTime") ?? ""),
+    TERM_END_HOUR,
+    TERM_END_MINUTE,
     "konec",
   );
 

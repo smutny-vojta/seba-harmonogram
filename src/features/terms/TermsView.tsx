@@ -1,5 +1,6 @@
-import TermsContent from "@/features/terms/components/TermsContent";
 import { getNextTermOrder, listTerms } from "@/features/terms/dal";
+import TermsMenu from "./components/TermsMenu";
+import TermsGrid from "./components/TermsGrid";
 
 export default async function TermsView() {
   const [terms, nextOrder] = await Promise.all([
@@ -9,7 +10,8 @@ export default async function TermsView() {
 
   return (
     <div className="flex h-full flex-col gap-y-4">
-      <TermsContent terms={terms} nextOrder={nextOrder} />
+      <TermsMenu count={terms.length} nextOrder={nextOrder} />
+      <TermsGrid terms={terms} />
     </div>
   );
 }

@@ -7,7 +7,8 @@ import {
   TermsEditDialog,
 } from "@/features/terms/components/TermsDialogs";
 import type { TermItemType } from "@/features/terms/types";
-import { formatPragueDateTime } from "@/lib/date-time/prague";
+import { Badge } from "@/components/ui/badge";
+import { formatPragueDate } from "@/lib/date-time/prague";
 
 interface TermsCardProps {
   term: TermItemType;
@@ -58,25 +59,28 @@ export default function TermsCard({ term }: TermsCardProps) {
       </CardHeader>
       <CardContent className="space-y-3 text-sm">
         <p>
-          <span className="text-muted-foreground">Začátek:</span>{" "}
-          {formatPragueDateTime(term.startsAt)}
-        </p>
-        <p>
-          <span className="text-muted-foreground">Konec:</span>{" "}
-          {formatPragueDateTime(term.endsAt)}
+          <span className="text-muted-foreground">Datum:</span>{" "}
+          {formatPragueDate(term.startsAt)}
+          <span className="text-muted-foreground">&nbsp;-&nbsp;</span>
+          {formatPragueDate(term.endsAt)}
         </p>
         <div className="space-y-1">
           {term.campCategoryCounts.map((campCategoryCount) => (
             <div
               key={campCategoryCount.campCategory}
-              className="rounded-md border p-2"
+              className="flex justify-between rounded-md border p-2"
             >
-              <p className="truncate text-sm font-medium">
+              <p
+                className={`truncate text-sm font-medium ${campCategoryCount.count === 0 ? "text-muted-foreground" : ""}`}
+              >
                 {campCategoryCount.campName}
               </p>
-              <p className="text-muted-foreground text-xs">
-                Oddílů: {campCategoryCount.count}
-              </p>
+              <Badge
+                variant={campCategoryCount.count > 0 ? "default" : "secondary"}
+                className="text-muted-foreground w-6 text-xs font-medium"
+              >
+                <span>{campCategoryCount.count}</span>
+              </Badge>
             </div>
           ))}
         </div>

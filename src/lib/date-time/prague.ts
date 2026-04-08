@@ -151,3 +151,12 @@ export function formatPragueDateTime(date: Date): string {
     hour12: false,
   }).format(date);
 }
+
+export function formatPragueDate(date: Date): string {
+  return new Intl.DateTimeFormat("cs-CZ", {
+    timeZone: PRAGUE_TIME_ZONE,
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  }).format(date);
+}

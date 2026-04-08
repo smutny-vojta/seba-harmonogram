@@ -1,19 +1,19 @@
 export const CAMP_CATEGORIES = {
-  minecraft: {
-    name: "Minecraft",
-    shortCodeBase: "MC",
+  "cyber-camp": {
+    name: "Cyber camp",
+    shortCodeBase: "CC",
   },
   fortnite: {
     name: "Fortnite",
     shortCodeBase: "FN",
   },
+  minecraft: {
+    name: "Minecraft",
+    shortCodeBase: "MC",
+  },
   "sportovni-tabor": {
     name: "Sportovní tábor",
     shortCodeBase: "ST",
-  },
-  "cyber-camp": {
-    name: "Cyber camp",
-    shortCodeBase: "CC",
   },
 } as const;
 

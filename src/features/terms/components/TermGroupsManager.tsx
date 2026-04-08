@@ -5,8 +5,8 @@ import { useRouter } from "next/navigation";
 import { useAction } from "next-safe-action/hooks";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   decreaseGroupCountAction,
   increaseGroupCountAction,
@@ -191,81 +191,76 @@ export default function TermGroupsManager({
   };
 
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-1 gap-3 xl:grid-cols-2">
-        {initialGroupCounts.map((groupCount) => {
-          const categoryGroups =
-            groupsByCategory.get(groupCount.campCategory) ?? [];
+    <div className="space-y-6">
+      {initialGroupCounts.map((groupCount) => {
+        const categoryGroups =
+          groupsByCategory.get(groupCount.campCategory) ?? [];
 
-          return (
-            <div
-              key={groupCount.campCategory}
-              className="rounded-md border p-3"
-            >
-              <div className="mb-3 grid grid-cols-[1fr_auto_auto] items-center gap-2">
-                <div className="min-w-0">
-                  <p className="truncate text-sm font-semibold">
-                    {CAMP_CATEGORIES[groupCount.campCategory].name}
-                  </p>
-                  <p className="text-muted-foreground text-xs">
-                    Oddílů: {groupCount.count}
-                  </p>
-                </div>
-                <Button
-                  type="button"
-                  size="icon-sm"
-                  variant="outline"
-                  disabled={isMutatingCount || groupCount.count === 0}
-                  aria-label={`Snížit počet oddílů pro ${CAMP_CATEGORIES[groupCount.campCategory].name}`}
-                  onClick={() =>
-                    decreaseCount({
-                      termId,
-                      campCategory: groupCount.campCategory,
-                    })
-                  }
-                >
-                  <LucideMinus size={16} />
-                </Button>
-                <Button
-                  type="button"
-                  size="icon-sm"
-                  disabled={isMutatingCount}
-                  aria-label={`Zvýšit počet oddílů pro ${CAMP_CATEGORIES[groupCount.campCategory].name}`}
-                  onClick={() =>
-                    increaseCount({
-                      termId,
-                      campCategory: groupCount.campCategory,
-                    })
-                  }
-                >
-                  <LucidePlus size={16} />
-                </Button>
-              </div>
-
-              {categoryGroups.length === 0 ? (
-                <p className="text-muted-foreground text-xs">
-                  V této kategorii zatím není žádný oddíl.
+        return (
+          <section key={groupCount.campCategory} className="space-y-3">
+            <div className="grid grid-cols-[1fr_auto_auto] items-center gap-2">
+              <div className="min-w-0 space-y-0.5">
+                <h2 className="truncate text-base font-semibold">
+                  {CAMP_CATEGORIES[groupCount.campCategory].name}
+                </h2>
+                <p className="text-muted-foreground text-sm">
+                  Oddílů: {groupCount.count}
                 </p>
-              ) : (
-                <div className="space-y-2">
-                  {categoryGroups.map((group) => {
-                    const assignedUsers = (usersByGroupId[group.id] ?? [])
-                      .map((userId) => userById.get(userId))
-                      .filter((user): user is DummyUser => user !== undefined);
-                    const selectableUsers = getSelectableUsersForGroup(
-                      group.id,
-                    );
+              </div>
+              <Button
+                type="button"
+                size="icon-sm"
+                variant="outline"
+                disabled={isMutatingCount || groupCount.count === 0}
+                aria-label={`Snížit počet oddílů pro ${CAMP_CATEGORIES[groupCount.campCategory].name}`}
+                onClick={() =>
+                  decreaseCount({
+                    termId,
+                    campCategory: groupCount.campCategory,
+                  })
+                }
+              >
+                <LucideMinus size={16} />
+              </Button>
+              <Button
+                type="button"
+                size="icon-sm"
+                disabled={isMutatingCount}
+                aria-label={`Zvýšit počet oddílů pro ${CAMP_CATEGORIES[groupCount.campCategory].name}`}
+                onClick={() =>
+                  increaseCount({
+                    termId,
+                    campCategory: groupCount.campCategory,
+                  })
+                }
+              >
+                <LucidePlus size={16} />
+              </Button>
+            </div>
 
-                    return (
-                      <div key={group.id} className="rounded-md border p-2">
-                        <div className="mb-2 flex flex-wrap items-center gap-2">
-                          <Badge variant="secondary">{group.name}</Badge>
+            {categoryGroups.length === 0 ? (
+              <p className="text-muted-foreground text-sm">
+                V této kategorii zatím není žádný oddíl.
+              </p>
+            ) : (
+              <div className="grid grid-cols-3 gap-2">
+                {categoryGroups.map((group) => {
+                  const assignedUsers = (usersByGroupId[group.id] ?? [])
+                    .map((userId) => userById.get(userId))
+                    .filter((user): user is DummyUser => user !== undefined);
+                  const selectableUsers = getSelectableUsersForGroup(group.id);
+
+                  return (
+                    <Card key={group.id}>
+                      <CardContent className="space-y-3">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <h3>{group.name}</h3>
                           <span className="text-muted-foreground text-xs">
-                            {group.slug}
+                            ({group.slug})
                           </span>
                         </div>
 
-                        <div className="mb-2 flex flex-wrap gap-1.5">
+                        <div className="flex flex-wrap gap-1.5">
                           {assignedUsers.length > 0 ? (
                             assignedUsers.map((user) => (
                               <div
@@ -322,15 +317,15 @@ export default function TermGroupsManager({
                             Přidat uživatele
                           </Button>
                         </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </div>
+            )}
+          </section>
+        );
+      })}
     </div>
   );
 }

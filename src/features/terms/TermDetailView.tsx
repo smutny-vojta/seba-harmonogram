@@ -1,12 +1,11 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { LucideArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { listGroupCountsByTerm, listGroupsByTerm } from "@/features/groups/dal";
 import TermGroupsManager from "@/features/terms/components/TermGroupsManager";
 import { getTermById } from "@/features/terms/dal";
-import { formatPragueDateTime } from "@/lib/date-time/prague";
-import { LucideArrowLeft } from "lucide-react";
+import { formatPragueDate } from "@/lib/date-time/prague";
 
 interface TermDetailViewProps {
   termId: string;
@@ -25,51 +24,35 @@ export default async function TermDetailView({ termId }: TermDetailViewProps) {
 
   return (
     <div className="flex h-full min-h-0 flex-col gap-4">
-      <div className="shrink-0">
+      {/* <div className="shrink-0">
         <Button asChild variant="outline" size="sm">
           <Link href="/dashboard/terms">
             <LucideArrowLeft /> Zpět na turnusy
           </Link>
         </Button>
-      </div>
+      </div> */}
 
-      <Card className="shrink-0">
-        <CardContent className="grid gap-3 py-0 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
-          <div className="space-y-1">
-            <CardTitle className="text-base">{term.name}</CardTitle>
-            <p className="text-muted-foreground text-xs">Přehled turnusu</p>
-          </div>
+      <h1 className="text-2xl font-semibold tracking-tight">
+        {term.name}{" "}
+        <span className="text-muted-foreground text-lg">
+          ({formatPragueDate(term.startsAt)}
+          <span className="text-muted-foreground">&nbsp;-&nbsp;</span>
+          {formatPragueDate(term.endsAt)})
+        </span>
+      </h1>
 
-          <div className="flex flex-wrap gap-2 text-sm">
-            <div className="bg-muted/35 rounded-md px-3 py-1.5">
-              <p className="text-muted-foreground text-[11px]">Turnus</p>
-              <p>
-                {formatPragueDateTime(term.startsAt)} -{" "}
-                {formatPragueDateTime(term.endsAt)}
-              </p>
-            </div>
-            <div className="bg-muted/35 rounded-md px-3 py-1.5">
-              <p className="text-muted-foreground text-[11px]">
-                Aktivní tábory
-              </p>
-              <p>{term.activeCampCount}</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      <div className="h-2 shrink-0" />
 
-      <Card className="flex min-h-0 flex-1 flex-col">
-        <CardHeader>
-          <CardTitle>Správa oddílů podle táborů</CardTitle>
-        </CardHeader>
-        <CardContent className="min-h-0 flex-1 overflow-y-auto">
+      <section className="flex min-h-0 flex-1 flex-col space-y-3">
+        {/* <h2 className="text-xl font-semibold tracking-tight">Tábory</h2> */}
+        <div className="min-h-0 flex-1">
           <TermGroupsManager
             termId={termId}
             initialGroupCounts={groupCounts}
             initialGroups={groups}
           />
-        </CardContent>
-      </Card>
+        </div>
+      </section>
     </div>
   );
 }

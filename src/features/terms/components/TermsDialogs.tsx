@@ -24,7 +24,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Field, FieldGroup } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { LoadingButton } from "@/components/ui/loading-button";
 import {
@@ -44,7 +43,6 @@ import {
   formatRangeLabel,
   inputValueToDate,
   parseTermFormData,
-  splitDateTimeValue,
 } from "@/features/terms/utils";
 import { parsePragueDateTimeInput } from "@/lib/date-time/prague";
 
@@ -135,16 +133,20 @@ function TermFormFields({
   defaultValues,
   showRequiredMarkers = false,
 }: TermFormFieldsProps) {
-  const startDefault = splitDateTimeValue(defaultValues?.startsAt, "14:00");
-  const endDefault = splitDateTimeValue(defaultValues?.endsAt, "10:30");
+  const startDefaultDate = defaultValues?.startsAt
+    ? dateToInputValue(defaultValues.startsAt)
+    : "";
+  const endDefaultDate = defaultValues?.endsAt
+    ? dateToInputValue(defaultValues.endsAt)
+    : "";
 
-  const [startDate, setStartDate] = useState(startDefault.date);
-  const [endDate, setEndDate] = useState(endDefault.date);
+  const [startDate, setStartDate] = useState(startDefaultDate);
+  const [endDate, setEndDate] = useState(endDefaultDate);
 
   useEffect(() => {
-    setStartDate(startDefault.date);
-    setEndDate(endDefault.date);
-  }, [startDefault.date, endDefault.date]);
+    setStartDate(startDefaultDate);
+    setEndDate(endDefaultDate);
+  }, [startDefaultDate, endDefaultDate]);
 
   return (
     <FieldGroup className="gap-y-4">
@@ -163,44 +165,6 @@ function TermFormFields({
         />
         <input type="hidden" name="startsAtDate" value={startDate} />
         <input type="hidden" name="endsAtDate" value={endDate} />
-      </Field>
-
-      <Field>
-        <Label htmlFor="startsAtTime">
-          Čas začátku
-          {showRequiredMarkers ? (
-            <span className="ml-1 text-red-500">*</span>
-          ) : null}
-        </Label>
-        <Input
-          id="startsAtTime"
-          name="startsAtTime"
-          type="time"
-          lang="cs-CZ"
-          step={60}
-          defaultValue={startDefault.time}
-          required
-          className="bg-background appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
-        />
-      </Field>
-
-      <Field>
-        <Label htmlFor="endsAtTime">
-          Čas konce
-          {showRequiredMarkers ? (
-            <span className="ml-1 text-red-500">*</span>
-          ) : null}
-        </Label>
-        <Input
-          id="endsAtTime"
-          name="endsAtTime"
-          type="time"
-          lang="cs-CZ"
-          step={60}
-          defaultValue={endDefault.time}
-          required
-          className="bg-background appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
-        />
       </Field>
     </FieldGroup>
   );
