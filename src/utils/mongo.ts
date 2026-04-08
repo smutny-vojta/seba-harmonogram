@@ -1,6 +1,8 @@
-import { ObjectId } from "mongodb";
+type StringifiableId = {
+  toString(): string;
+};
 
-export function mapMongoIdToId<T extends { _id: ObjectId }>(
+export function mapMongoIdToId<T extends { _id: StringifiableId }>(
   document: T,
 ): Omit<T, "_id"> & { id: string } {
   const { _id, ...rest } = document;
@@ -9,8 +11,4 @@ export function mapMongoIdToId<T extends { _id: ObjectId }>(
     ...rest,
     id: _id.toString(),
   };
-}
-
-export function toObjectId(id: string): ObjectId {
-  return new ObjectId(id);
 }

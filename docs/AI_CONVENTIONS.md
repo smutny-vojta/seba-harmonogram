@@ -41,6 +41,14 @@ Do not start implementation before this sequence is completed.
 - Use `cn()` from `@/utils/cn` for conditional classes.
 - Keep `src/components/ui/` (shadcn generated) unchanged unless explicitly requested.
 
+## Client/server boundary
+
+- Keep client and server code strictly separated.
+- Client Components and files imported by them must not import server-only modules (`mongodb`, `@/lib/db`, Node built-ins like `fs`, `dns`, `net`, `tls`, `child_process`, `timers/promises`).
+- Do not mix browser helpers and DAL/database helpers in one shared module.
+- Place DB and Node-dependent logic only in server files (`dal.ts`, server actions, route handlers, server components).
+- Shared helpers used by both client and server must be runtime-safe for browser bundles (type-only imports are fine; no runtime imports from server-only packages).
+
 ## Server actions
 
 - Start action files with `"use server"`.
