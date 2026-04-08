@@ -14,6 +14,7 @@ import {
 import type {
   NewTermType,
   TermItemType,
+  TermNavigationType,
   TermType,
 } from "@/features/terms/types";
 import { db } from "@/lib/db";
@@ -198,6 +199,25 @@ export async function listTerms(): Promise<TermItemType[]> {
   return terms.map((term) =>
     mapTermToItem(term, countsByTermId.get(term._id.toString()) ?? []),
   );
+}
+
+export async function listTermsForNavigation(): Promise<TermNavigationType[]> {
+  const terms = await TermCollection.find(
+    {},
+    {
+      projection: {
+        _id: 1,
+        order: 1,
+      },
+    },
+  )
+    .sort({ order: 1 })
+    .toArray();
+
+  return terms.map((term) => ({
+    id: term._id.toString(),
+    name: `${term.order}. turnus`,
+  }));
 }
 
 export async function getNextTermOrder(): Promise<number> {

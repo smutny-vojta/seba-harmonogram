@@ -1,7 +1,14 @@
 "use client";
 
+import { LucideChevronRight } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import {
   Sidebar,
   SidebarContent,
@@ -10,6 +17,7 @@ import {
   SidebarGroupContent,
   SidebarHeader,
   SidebarMenu,
+  SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarMenuSub,
@@ -18,14 +26,40 @@ import {
   SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { NAVIGATION, type NavigationItem } from "@/lib/navigation";
+import {
+  NAVIGATION,
+  TERMS_ROUTE,
+  getTermHref,
+  isRouteActive,
+  isRouteMatch,
+  type NavigationTermItem,
+  type NavigationItem,
+} from "@/lib/navigation";
+import { cn } from "@/utils/cn";
 
-export function AppSidebar() {
+interface AppSidebarProps {
+  terms: NavigationTermItem[];
+}
+
+export function AppSidebar({ terms }: AppSidebarProps) {
   const pathname = usePathname();
+  const [termsOpen, setTermsOpen] = useState(pathname.startsWith(TERMS_ROUTE));
+  const sidebarNavigation = NAVIGATION.filter((page) => page.sidebar !== false);
+  const termNavigationItems = useMemo(
+    () =>
+      terms.map((term) => ({ title: term.name, href: getTermHref(term.id) })),
+    [terms],
+  );
+
+  useEffect(() => {
+    if (pathname.startsWith(TERMS_ROUTE)) {
+      setTermsOpen(true);
+    }
+  }, [pathname]);
 
   return (
     <Sidebar collapsible="icon">
-      <SidebarHeader className="h-16 flex-row items-center justify-between border-b">
+      <SidebarHeader className="h-20 flex-row items-center justify-between border-b">
         <h1 className="text-3xl font-bold">SiS</h1>
         <SidebarTrigger />
       </SidebarHeader>
@@ -33,33 +67,95 @@ export function AppSidebar() {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu className="gap-2">
-              {NAVIGATION.map((page: NavigationItem) => (
-                <SidebarMenuItem key={page.href}>
-                  <SidebarMenuButton asChild isActive={pathname === page.href}>
-                    <Link href={page.href}>
-                      <page.icon />
-                      <span className="text-[15px]">{page.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                  {page.subPages && (
-                    <SidebarMenuSub className="">
-                      {page.subPages.map((subPage) => (
-                        <SidebarMenuSubItem key={subPage.href}>
-                          <SidebarMenuSubButton
-                            asChild
-                            isActive={pathname === subPage.href}
-                          >
-                            <Link href={subPage.href}>
-                              <subPage.icon />
-                              <span>{subPage.title}</span>
-                            </Link>
-                          </SidebarMenuSubButton>
-                        </SidebarMenuSubItem>
-                      ))}
-                    </SidebarMenuSub>
-                  )}
-                </SidebarMenuItem>
-              ))}
+              {sidebarNavigation.map((page: NavigationItem) =>
+                page.href === TERMS_ROUTE ? (
+                  <Collapsible
+                    key={page.href}
+                    open={termsOpen}
+                    onOpenChange={setTermsOpen}
+                    className="group/collapsible"
+                  >
+                    <SidebarMenuItem>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={isRouteActive(pathname, page)}
+                      >
+                        <Link href={page.href}>
+                          {page.icon ? <page.icon /> : null}
+                          <span className="text-[15px]">{page.title}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                      <CollapsibleTrigger asChild>
+                        <SidebarMenuAction
+                          className="data-[state=open]:rotate-90"
+                          showOnHover
+                        >
+                          <LucideChevronRight className="size-4" />
+                          <span className="sr-only">Přepnout turnusy</span>
+                        </SidebarMenuAction>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent>
+                        <SidebarMenuSub className="">
+                          {termNavigationItems.map((termPage) => (
+                            <SidebarMenuSubItem key={termPage.href}>
+                              <SidebarMenuSubButton
+                                asChild
+                                isActive={isRouteMatch(pathname, termPage.href)}
+                              >
+                                <Link href={termPage.href}>
+                                  <span>{termPage.title}</span>
+                                </Link>
+                              </SidebarMenuSubButton>
+                            </SidebarMenuSubItem>
+                          ))}
+                          {termNavigationItems.length === 0 ? (
+                            <SidebarMenuSubItem>
+                              <span
+                                className={cn(
+                                  "text-muted-foreground block px-2 py-1 text-sm",
+                                )}
+                              >
+                                Žádné turnusy
+                              </span>
+                            </SidebarMenuSubItem>
+                          ) : null}
+                        </SidebarMenuSub>
+                      </CollapsibleContent>
+                    </SidebarMenuItem>
+                  </Collapsible>
+                ) : (
+                  <SidebarMenuItem key={page.href}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={isRouteActive(pathname, page)}
+                    >
+                      <Link href={page.href}>
+                        {page.icon ? <page.icon /> : null}
+                        <span className="text-[15px]">{page.title}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                    {page.children && page.children.length > 0 && (
+                      <SidebarMenuSub className="">
+                        {page.children
+                          .filter((subPage) => subPage.sidebar !== false)
+                          .map((subPage) => (
+                            <SidebarMenuSubItem key={subPage.href}>
+                              <SidebarMenuSubButton
+                                asChild
+                                isActive={isRouteMatch(pathname, subPage.href)}
+                              >
+                                <Link href={subPage.href}>
+                                  {subPage.icon ? <subPage.icon /> : null}
+                                  <span>{subPage.title}</span>
+                                </Link>
+                              </SidebarMenuSubButton>
+                            </SidebarMenuSubItem>
+                          ))}
+                      </SidebarMenuSub>
+                    )}
+                  </SidebarMenuItem>
+                ),
+              )}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

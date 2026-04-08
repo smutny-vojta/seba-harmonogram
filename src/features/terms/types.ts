@@ -8,3 +8,4 @@ import type {
 export type TermType = z.infer<typeof TermSchema>;
 export type TermItemType = z.infer<typeof TermItemSchema>;
 export type NewTermType = z.infer<typeof NewTermSchema>;
+export type TermNavigationType = Pick<TermItemType, "id" | "name">;

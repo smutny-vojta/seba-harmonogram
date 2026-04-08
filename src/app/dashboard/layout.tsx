@@ -1,9 +1,10 @@
-import PageHeader from "@/components/layout/PageTitle";
+import PageHeader from "@/components/layout/PageHeader";
 import { AppSidebar } from "@/components/layout/Sidebar";
 import { ThemeProvider } from "@/components/theme-provider";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { listTermsForNavigation } from "@/features/terms/dal";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -16,13 +17,15 @@ export default async function Layout({ children }: DashboardLayoutProps) {
   //   redirect("/");
   // }
 
+  const terms = await listTermsForNavigation();
+
   return (
     <ThemeProvider attribute="class" defaultTheme="dark" forcedTheme="dark">
       <TooltipProvider>
         <SidebarProvider>
-          <AppSidebar />
-          <main className="bg-background text-foreground grid h-svh flex-1 grid-rows-[64px_1fr]">
-            <PageHeader />
+          <AppSidebar terms={terms} />
+          <main className="bg-background text-foreground grid h-svh flex-1 grid-rows-[80px_1fr]">
+            <PageHeader terms={terms} />
             <section className="overflow-y-auto p-6">{children}</section>
             <Toaster
               richColors

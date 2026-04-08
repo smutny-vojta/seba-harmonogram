@@ -77,9 +77,11 @@ export default function TermsCard({ term }: TermsCardProps) {
               </p>
               <Badge
                 variant={campCategoryCount.count > 0 ? "default" : "secondary"}
-                className="text-muted-foreground w-6 text-xs font-medium"
+                className="w-6"
               >
-                <span>{campCategoryCount.count}</span>
+                <span className={`text-xs font-medium ${campCategoryCount.count === 0 ? "text-muted-foreground" : ""}`}>
+                  {campCategoryCount.count}
+                </span>
               </Badge>
             </div>
           ))}
