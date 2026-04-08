@@ -8,7 +8,11 @@ import {
   CardTitle,
 } from "./ui/card";
 
-export default function ErrorComponent({ message }: { message: string }) {
+interface ErrorComponentProps {
+  message: string;
+}
+
+export default function ErrorComponent({ message }: ErrorComponentProps) {
   return (
     <Card className="border-destructive bg-destructive/10 w-full max-w-xs">
       <CardHeader>

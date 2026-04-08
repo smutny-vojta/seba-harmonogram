@@ -4,10 +4,10 @@ import TermsGrid from "@/features/terms/components/TermsGrid";
 import TermsMenu from "@/features/terms/components/TermsMenu";
 import type { TermItemType } from "@/features/terms/types";
 
-type TermsContentProps = {
+interface TermsContentProps {
   terms: TermItemType[];
   nextOrder: number;
-};
+}
 
 export default function TermsContent({ terms, nextOrder }: TermsContentProps) {
   return (

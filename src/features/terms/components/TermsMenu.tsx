@@ -2,10 +2,10 @@
 
 import { TermsAddDialog } from "@/features/terms/components/TermsDialogs";
 
-type TermsMenuProps = {
+interface TermsMenuProps {
   count: number;
   nextOrder: number;
-};
+}
 
 export default function TermsMenu({ count, nextOrder }: TermsMenuProps) {
   return (

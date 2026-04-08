@@ -5,11 +5,11 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
-export default async function Layout({
-  children,
-}: Readonly<{
+interface DashboardLayoutProps {
   children: React.ReactNode;
-}>) {
+}
+
+export default async function Layout({ children }: DashboardLayoutProps) {
   // const session = await getServerSession({ disableCookieCache: true });
 
   // if (!session || !hasRole(session.user.role, "programManager")) {

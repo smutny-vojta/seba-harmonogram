@@ -1,9 +1,9 @@
 import TermsCard from "@/features/terms/components/TermsCard";
 import type { TermItemType } from "@/features/terms/types";
 
-type TermsGridProps = {
+interface TermsGridProps {
   terms: TermItemType[];
-};
+}
 
 export default function TermsGrid({ terms }: TermsGridProps) {
   if (terms.length === 0) {

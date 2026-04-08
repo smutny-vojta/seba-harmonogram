@@ -48,17 +48,19 @@ import {
 } from "@/features/terms/utils";
 import { parsePragueDateTimeInput } from "@/lib/date-time/prague";
 
+interface DateRangePickerProps {
+  from: string;
+  to: string;
+  onFromChange: (value: string) => void;
+  onToChange: (value: string) => void;
+}
+
 function DateRangePicker({
   from,
   to,
   onFromChange,
   onToChange,
-}: {
-  from: string;
-  to: string;
-  onFromChange: (value: string) => void;
-  onToChange: (value: string) => void;
-}) {
+}: DateRangePickerProps) {
   const selectedRange: DateRange | undefined = {
     from: inputValueToDate(from),
     to: inputValueToDate(to),
@@ -124,13 +126,15 @@ function DateRangePicker({
   );
 }
 
+interface TermFormFieldsProps {
+  defaultValues?: Partial<TermItemType>;
+  showRequiredMarkers?: boolean;
+}
+
 function TermFormFields({
   defaultValues,
   showRequiredMarkers = false,
-}: {
-  defaultValues?: Partial<TermItemType>;
-  showRequiredMarkers?: boolean;
-}) {
+}: TermFormFieldsProps) {
   const startDefault = splitDateTimeValue(defaultValues?.startsAt, "14:00");
   const endDefault = splitDateTimeValue(defaultValues?.endsAt, "10:30");
 
@@ -202,7 +206,11 @@ function TermFormFields({
   );
 }
 
-export function TermsAddDialog({ nextOrder }: { nextOrder: number }) {
+interface TermsAddDialogProps {
+  nextOrder: number;
+}
+
+export function TermsAddDialog({ nextOrder }: TermsAddDialogProps) {
   const [open, setOpen] = useState(false);
 
   const { execute, isExecuting } = useAction(createTermAction, {
@@ -272,7 +280,11 @@ export function TermsAddDialog({ nextOrder }: { nextOrder: number }) {
   );
 }
 
-export function TermsEditDialog({ term }: { term: TermItemType }) {
+interface TermsEditDialogProps {
+  term: TermItemType;
+}
+
+export function TermsEditDialog({ term }: TermsEditDialogProps) {
   const [open, setOpen] = useState(false);
 
   const { execute, isExecuting } = useAction(updateTermAction, {
@@ -343,7 +355,12 @@ export function TermsEditDialog({ term }: { term: TermItemType }) {
   );
 }
 
-export function TermsDeleteDialog({ id, name }: { id: string; name: string }) {
+interface TermsDeleteDialogProps {
+  id: string;
+  name: string;
+}
+
+export function TermsDeleteDialog({ id, name }: TermsDeleteDialogProps) {
   const [open, setOpen] = useState(false);
 
   const { execute, isExecuting } = useAction(deleteTermAction, {

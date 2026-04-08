@@ -6,9 +6,9 @@ import {
 import type { TermItemType } from "@/features/terms/types";
 import { formatPragueDateTime } from "@/lib/date-time/prague";
 
-type TermsCardProps = {
+interface TermsCardProps {
   term: TermItemType;
-};
+}
 
 export default function TermsCard({ term }: TermsCardProps) {
   return (

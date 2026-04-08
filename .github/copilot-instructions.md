@@ -21,31 +21,28 @@ Use Bun commands unless a task explicitly requires otherwise:
 - `bun run db:stop`
 - `bun run db:reset`
 
-## Architecture
+## Mandatory Startup Protocol
 
-- Follow feature slices under `src/features/<name>/` with files: `consts.ts`, `schema.ts`, `types.ts`, `dal.ts`, `actions.ts`.
-- Only `dal.ts` may access MongoDB.
-- Keep `ObjectId` inside DAL. On reads, remap `_id` to `id` string before returning.
-- Server actions must be thin wrappers over DAL using `actionClient` and should call `revalidatePath` after mutations.
+Before writing or editing code, always:
 
-## Conventions
+1. Read `docs/AI_CONVENTIONS.md`.
+2. Read `docs/README.md`.
+3. Read `docs/ARCHITECTURE.md` and `docs/STYLEGUIDE.md`.
+4. Read feature-specific docs relevant to the task (for auth use `docs/features/auth/IMPLEMENTATION.md`).
 
-- Use `type` (not `interface`) for domain models and `import type` for type-only imports.
-- Never use `any`; use `unknown` + narrowing.
-- Do not use TypeScript `enum`; use Zod enums or `as const` objects.
-- Use path aliases (`@/*`, `@features/*`, `@components/*`, `@hooks/*`, `@lib/*`), not deep relative paths.
-- Prefer Server Components; add `"use client"` only when required by hooks/events/browser APIs.
-- Use `cn()` from `@/lib/utils` for conditional class merging.
+If context is missing, gather it first and only then implement changes.
 
-## Auth Pattern
+## Canonical Rules
 
-- Server-side auth access: `@/features/auth/auth.ts`.
-- Client-side auth hooks: `@/features/auth/auth-client`.
-- Roles are defined in `@/features/auth/roles.ts`.
+- Use [docs/AI_CONVENTIONS.md](docs/AI_CONVENTIONS.md) as the single source of truth for coding conventions.
+- Use [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for structural and layering decisions.
+- Use [docs/STYLEGUIDE.md](docs/STYLEGUIDE.md) for typing/naming/style details.
+- If guidance conflicts across docs, prefer [AGENTS.md](AGENTS.md), then [docs/AI_CONVENTIONS.md](docs/AI_CONVENTIONS.md), then other docs.
 
 ## Reference Docs (Link, Don’t Embed)
 
-- Architecture details: `ARCHITECTURE.md`
-- Coding and naming rules: `STYLEGUIDE.md`
-- Auth implementation notes: `src/features/auth/IMPLEMENTATION.md`
-- Setup and project overview: `README.md` (parts of the stack section may be outdated)
+- AI conventions checklist: `docs/AI_CONVENTIONS.md`
+- Architecture details: `docs/ARCHITECTURE.md`
+- Coding and naming rules: `docs/STYLEGUIDE.md`
+- Auth implementation notes: `docs/features/auth/IMPLEMENTATION.md`
+- Setup and project overview: `docs/README.md` (parts of the stack section may be outdated)

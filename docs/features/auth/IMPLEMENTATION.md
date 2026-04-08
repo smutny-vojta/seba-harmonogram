@@ -1,5 +1,5 @@
 <!--
-Soubor: src/features/auth/IMPLEMENTATION.md
+Soubor: docs/features/auth/IMPLEMENTATION.md
 Ucel: Dokumentace k feature nebo sablona pro vyvoj feature.
 Parametry/Vstupy: Navody, pravidla a implementacni poznamky.
 Pozadavky: Udrzovat aktualni, konkretni a konzistentni s kodem.

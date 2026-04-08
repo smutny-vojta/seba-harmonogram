@@ -1,5 +1,5 @@
 <!--
-Soubor: src/features/FEATURE_TEMPLATE.md
+Soubor: docs/FEATURE_TEMPLATE.md
 Ucel: Dokumentace k feature nebo sablona pro vyvoj feature.
 Parametry/Vstupy: Navody, pravidla a implementacni poznamky.
 Pozadavky: Udrzovat aktualni, konkretni a konzistentni s kodem.
@@ -323,6 +323,11 @@ All client-side forms should:
 - Parse FormData in one helper.
 - Use next-safe-action useAction hook.
 - Show Czech toasts for success and error.
+
+Component props convention:
+- Use `interface <ComponentName>Props` for props.
+- Prefer function signature `function <ComponentName>({ ... }: <ComponentName>Props)`.
+- Do not use `React.FC`.
 
 ## 9) seed.ts Template
 

@@ -32,7 +32,8 @@ The project uses **maximum TypeScript strictness**. The following compiler flags
 
 ### Types vs Interfaces
 
-- **Use `type`** for all domain types (inferred from Zod or composed). Do not use `interface` unless extending third-party types requires it.
+- **Use `type`** for all domain types (inferred from Zod or composed).
+- **Use `interface` for React component props** (`<ComponentName>Props`).
 - All domain types are defined in `types.ts` and inferred from Zod schemas:
 
 ```ts
@@ -41,6 +42,17 @@ export type ActivityType = z.infer<typeof ActivitySchema>;
 
 // ❌ Avoid
 export interface ActivityType { ... }
+```
+
+```ts
+// ✅ Correct for component props
+interface MyComponentProps {
+  name: string;
+}
+
+function MyComponent({ name }: MyComponentProps) {
+  return <div>{name}</div>;
+}
 ```
 
 ### `import type`
@@ -199,7 +211,7 @@ export const createActivityAction = actionClient
   ```ts
   const SidebarFooterContent = () => { ... };
   ```
-- Props types are always inline `Readonly<{ ... }>` for layout/page components.
+- Component props use dedicated `interface <ComponentName>Props` declarations.
 - Never use `React.FC` or `React.FunctionComponent`.
 
 ### CSS & Tailwind
