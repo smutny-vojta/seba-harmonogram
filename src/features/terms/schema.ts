@@ -1,5 +1,9 @@
 import { ObjectId } from "mongodb";
 import { z } from "zod";
+import {
+  CampCategoryEnum,
+  GroupCategoryCountItemSchema,
+} from "@/features/groups/schema";
 
 export const TermSchema = z
   .object({
@@ -22,6 +26,9 @@ export const TermItemSchema = z.object({
   startsAt: z.date(),
   endsAt: z.date(),
   isActive: z.boolean(),
+  activeCampCategories: z.array(CampCategoryEnum),
+  activeCampCount: z.number().int().min(0),
+  campCategoryCounts: z.array(GroupCategoryCountItemSchema),
   createdAt: z.date(),
   updatedAt: z.date(),
 });

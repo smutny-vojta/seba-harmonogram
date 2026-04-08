@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { createDefaultGroupsForTerm } from "@/features/groups/dal";
 import { createTerm, deleteTerm, updateTerm } from "@/features/terms/dal";
 import { TermOperationSchemas } from "@/features/terms/schema";
 import { actionClient } from "@/lib/safe-action";
@@ -27,10 +28,20 @@ export const createTermAction = actionClient
   .action(async ({ parsedInput }) => {
     // AUTH DISABLED (temporary): await assertCanMutate();
     const result = await createTerm(parsedInput);
+    const createdTermId = result.insertedId.toString();
+
+    try {
+      await createDefaultGroupsForTerm(createdTermId);
+    } catch {
+      await deleteTerm(createdTermId);
+      throw new Error(
+        "Turnus se nepodařilo připravit. Zkuste to prosím znovu.",
+      );
+    }
 
     revalidatePath("/dashboard/terms");
 
-    return result.insertedId.toString();
+    return createdTermId;
   });
 
 export const updateTermAction = actionClient

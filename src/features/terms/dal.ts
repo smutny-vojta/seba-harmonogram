@@ -1,5 +1,13 @@
 import { type Collection, ObjectId } from "mongodb";
 import {
+  CAMP_CATEGORIES,
+  CAMP_CATEGORIES_ARRAY,
+} from "@/features/groups/consts";
+import type {
+  GroupCategoryCountItemType,
+  GroupType,
+} from "@/features/groups/types";
+import {
   getExpectedEndFromStart,
   hasExpectedFixedTimes,
 } from "@/features/terms/time";
@@ -18,6 +26,7 @@ type TermDateRange = {
 };
 
 export const TermCollection: Collection<TermType> = db.collection("terms");
+const GroupCollection: Collection<GroupType> = db.collection("groups");
 
 async function assertNoTermOverlap(
   collection: Collection<TermType>,
@@ -89,14 +98,82 @@ async function normalizeTermOrderByStart(collection: Collection<TermType>) {
   await collection.bulkWrite(operations);
 }
 
-function mapTermToItem(term: TermType): TermItemType {
+async function getCampCategoryCountsByTermIds(
+  termIds: ObjectId[],
+): Promise<Map<string, GroupCategoryCountItemType[]>> {
+  if (termIds.length === 0) {
+    return new Map();
+  }
+
+  const rows = await GroupCollection.aggregate<{
+    _id: {
+      termId: ObjectId;
+      campCategory: GroupType["campCategory"];
+    };
+    count: number;
+  }>([
+    {
+      $match: {
+        termId: { $in: termIds },
+        archivedAt: { $exists: false },
+      },
+    },
+    {
+      $group: {
+        _id: {
+          termId: "$termId",
+          campCategory: "$campCategory",
+        },
+        count: { $sum: 1 },
+      },
+    },
+  ]).toArray();
+
+  const countsByTermCategory = new Map<string, number>(
+    rows.map((row) => [
+      `${row._id.termId.toString()}::${row._id.campCategory}`,
+      row.count,
+    ]),
+  );
+
+  return new Map(
+    termIds.map((termId) => {
+      const termIdString = termId.toString();
+      const campCategoryCounts = CAMP_CATEGORIES_ARRAY.map((campCategory) => ({
+        campCategory,
+        campName: CAMP_CATEGORIES[campCategory].name,
+        count:
+          countsByTermCategory.get(`${termIdString}::${campCategory}`) ?? 0,
+      }));
+
+      return [termIdString, campCategoryCounts];
+    }),
+  );
+}
+
+function mapTermToItem(
+  term: TermType,
+  campCategoryCounts: GroupCategoryCountItemType[] = CAMP_CATEGORIES_ARRAY.map(
+    (campCategory) => ({
+      campCategory,
+      campName: CAMP_CATEGORIES[campCategory].name,
+      count: 0,
+    }),
+  ),
+): TermItemType {
   const item = mapMongoIdToId(term);
   const now = new Date();
+  const activeCampCategories = campCategoryCounts
+    .filter((campCategoryCount) => campCategoryCount.count > 0)
+    .map((campCategoryCount) => campCategoryCount.campCategory);
 
   return {
     ...item,
     name: `${item.order}. turnus`,
     isActive: item.startsAt <= now && now <= item.endsAt,
+    activeCampCategories,
+    activeCampCount: activeCampCategories.length,
+    campCategoryCounts,
   };
 }
 
@@ -107,13 +184,20 @@ export async function getTermById(id: string): Promise<TermItemType | null> {
     return null;
   }
 
-  return mapTermToItem(term);
+  const countsByTermId = await getCampCategoryCountsByTermIds([term._id]);
+
+  return mapTermToItem(term, countsByTermId.get(term._id.toString()) ?? []);
 }
 
 export async function listTerms(): Promise<TermItemType[]> {
   const terms = await TermCollection.find().sort({ order: 1 }).toArray();
+  const countsByTermId = await getCampCategoryCountsByTermIds(
+    terms.map((term) => term._id),
+  );
 
-  return terms.map(mapTermToItem);
+  return terms.map((term) =>
+    mapTermToItem(term, countsByTermId.get(term._id.toString()) ?? []),
+  );
 }
 
 export async function getNextTermOrder(): Promise<number> {
