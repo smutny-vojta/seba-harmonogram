@@ -7,6 +7,10 @@
 
 "use client";
 
+import { LucidePencil, LucidePlus, LucideTrash2 } from "lucide-react";
+import { useAction } from "next-safe-action/hooks";
+import { useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -32,79 +36,17 @@ import {
   ACTIVITY_CATEGORIES,
   ACTIVITY_CATEGORIES_ARRAY,
 } from "@/features/activities/consts";
-import type {
-  ActivityItemType,
-  ActivityMaterialType,
-  NewActivityType,
-} from "@/features/activities/types";
-import { useAction } from "next-safe-action/hooks";
-import { LucidePencil, LucidePlus, LucideTrash2 } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
-import { toast } from "sonner";
+import type { ActivityItemType } from "@/features/activities/types";
+import {
+  buildMaterialRows,
+  type MaterialRow,
+  parseActivityFormData,
+} from "@/features/activities/utils";
 
 type ActivityLocationOption = {
   id: string;
   name: string;
 };
-
-type MaterialRow = {
-  id: number;
-  defaultAmount?: string;
-  defaultName?: string;
-};
-
-function buildMaterialRows(
-  defaultMaterials?: ActivityMaterialType[],
-): MaterialRow[] {
-  if (!defaultMaterials || defaultMaterials.length === 0) {
-    return [{ id: 0 }];
-  }
-
-  return defaultMaterials.map((material, index) => ({
-    id: index,
-    defaultAmount: material.amount,
-    defaultName: material.name,
-  }));
-}
-
-function parseMaterials(formData: FormData): ActivityMaterialType[] {
-  const amounts = formData
-    .getAll("materialAmount")
-    .map((value) => String(value).trim());
-  const names = formData
-    .getAll("materialName")
-    .map((value) => String(value).trim());
-
-  return names
-    .map((name, index) => {
-      const amount = amounts[index] ?? "";
-
-      if (!name || !amount) {
-        return null;
-      }
-
-      return {
-        name,
-        amount,
-      } satisfies ActivityMaterialType;
-    })
-    .filter((item): item is ActivityMaterialType => item !== null);
-}
-
-function parseActivityFormData(formData: FormData) {
-  const description = String(formData.get("description") ?? "").trim();
-  const category = String(
-    formData.get("category") ?? "jine",
-  ) as NewActivityType["category"];
-
-  return {
-    title: String(formData.get("title") ?? "").trim(),
-    description: description.length > 0 ? description : undefined,
-    locationId: String(formData.get("locationId") ?? ""),
-    category,
-    defaultMaterials: parseMaterials(formData),
-  } satisfies NewActivityType;
-}
 
 function ActivityFormFields({
   locations,
@@ -127,7 +69,7 @@ function ActivityFormFields({
     const rows = buildMaterialRows(defaultValues?.defaultMaterials);
     rowsIdRef.current = rows.length;
     setMaterialRows(rows);
-  }, [defaultValues?.id, defaultValues?.defaultMaterials]);
+  }, [defaultValues?.defaultMaterials]);
 
   const addMaterialRow = () => {
     setMaterialRows((previousRows) => [

@@ -1,11 +1,11 @@
 "use client";
 
 import {
-  type ColumnFiltersState,
   type ColumnDef,
+  type ColumnFiltersState,
   flexRender,
-  getFilteredRowModel,
   getCoreRowModel,
+  getFilteredRowModel,
   getSortedRowModel,
   type SortingState,
   useReactTable,
@@ -24,7 +24,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils/cn";
 
 type DataTableProps<TData, TValue> = {
   columns: Array<ColumnDef<TData, TValue>>;
@@ -84,8 +84,11 @@ export function DataTable<TData, TValue>({
               {headerGroup.headers.map((header) => (
                 <TableHead key={header.id}>
                   {header.isPlaceholder ? null : header.column.getCanSort() &&
-                    !(header.column.columnDef.meta as { disableAutoSortTrigger?: boolean } | undefined)
-                      ?.disableAutoSortTrigger ? (
+                    !(
+                      header.column.columnDef.meta as
+                        | { disableAutoSortTrigger?: boolean }
+                        | undefined
+                    )?.disableAutoSortTrigger ? (
                     <button
                       type="button"
                       className="inline-flex items-center gap-x-1 hover:opacity-80"

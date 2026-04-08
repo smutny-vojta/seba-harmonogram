@@ -20,6 +20,14 @@ Tento projekt je web(ová aplikace) pro správu harmonogramu a dalších provozn
 
 ## Struktura aplikace
 
+## Konvence: lib vs utils
+
+- `src/lib`: strukturovane znovupouzitelne moduly (mini-knihovny v ramci aplikace).
+- `src/utils`: male bezstavove genericke helpery.
+- `src/lib` muze importovat ze `src/utils`.
+- `src/utils` nesmi mit interni app importy (`@/...`, relativni importy na aplikacni moduly).
+- Feature-specific helpery patri do `src/features/<feature>/utils.ts` (nebo `utils/`) a pri znovupouziti napric features se presouvaji do `src/lib` nebo `src/utils`.
+
 ### Role a Přístupy
 Aplikace rozlišuje uživatelské role (uloženo v DB), primárně:
 - **Instruktor:** Je uživatelem s přístupem k informacím, harmonogramu, službách, jídelníčku a dalším provozním záležitostem.

@@ -36,20 +36,23 @@ This document describes the overall architecture and design decisions of the **s
 │   │   ├── ErrorBoundary.tsx
 │   │   └── theme-provider.tsx
 │   │
-│   ├── config/               # App-wide static configuration
-│   │   └── navigation.ts     # Sidebar navigation tree (typed, as const)
-│   │
 │   ├── features/             # Feature slices (core business logic)
 │   │   ├── activities/       # Activity templates & locations
 │   │   ├── harmonogram/      # Scheduled entries
 │   │   └── auth/             # Authentication & authorization
 │   │
 │   ├── hooks/                # Shared custom React hooks
-│   ├── lib/                  # Infrastructure singletons and utilities
+│   ├── lib/                  # Reusable library-like modules (structured, cohesive)
+│   │   ├── date-time/        # Shared date-time logic (e.g. Prague conversions)
 │   │   ├── db.ts             # MongoDB client singleton
 │   │   ├── env.ts            # Validated environment variables
+│   │   ├── navigation.ts     # Sidebar navigation tree
 │   │   ├── safe-action.ts    # next-safe-action client factory
-│   │   └── utils.ts          # cn() class merging helper
+│   │
+│   ├── utils/                # Small generic stateless helpers
+│   │   ├── cn.ts             # className merge helper
+│   │   ├── mongo.ts          # ObjectId mapping helpers
+│   │   └── ...               # tiny cross-feature utilities
 │   │
 │   ├── scripts/              # One-off server-side scripts (seed, migrate)
 │   └── proxy.ts              # Potential API proxy utility
@@ -86,6 +89,14 @@ consts → schema → types → dal → actions
 ```
 
 Cross-feature imports go from `harmonogram` → `activities` (e.g., reusing `ActivityCategoryEnum`), but never in reverse.
+
+### 1.1 Lib vs Utils Policy
+
+- `src/lib` is for structured reusable modules that can stand as mini-packages.
+- `src/utils` is for small generic stateless helpers.
+- `src/lib` modules may import from `src/utils`.
+- `src/utils` modules must not import internal app modules (`@/...` project imports).
+- Feature-local helpers stay in `src/features/<feature>/utils.ts` (or `utils/` subfolder), unless they become reusable across features.
 
 ### 2. Data Access Layer (DAL)
 
@@ -171,6 +182,8 @@ Defined in `tsconfig.json`:
 | `@components/*` | `src/components/*` |
 | `@hooks/*`      | `src/hooks/*`      |
 | `@lib/*`        | `src/lib/*`        |
+
+`src/utils/*` is imported via `@/utils/*` through the `@/*` alias.
 
 ---
 

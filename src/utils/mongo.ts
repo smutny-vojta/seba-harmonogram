@@ -10,3 +10,7 @@ export function mapMongoIdToId<T extends { _id: ObjectId }>(
     id: _id.toString(),
   };
 }
+
+export function toObjectId(id: string): ObjectId {
+  return new ObjectId(id);
+}

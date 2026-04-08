@@ -7,8 +7,12 @@
 
 "use client";
 
+import { LucidePencil, LucidePlus, LucideTrash2 } from "lucide-react";
+import { useAction } from "next-safe-action/hooks";
+import { useRef, useState } from "react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { LoadingButton } from "@/components/ui/loading-button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogClose,
@@ -19,29 +23,17 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Field, FieldGroup } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { LoadingButton } from "@/components/ui/loading-button";
 import {
   createActivityLocationAction,
   deleteActivityLocationAction,
   updateActivityLocationAction,
 } from "@/features/activityLocations/actions";
-import { LucidePencil, LucidePlus, LucideTrash2 } from "lucide-react";
-import { toast } from "sonner";
-import { useAction } from "next-safe-action/hooks";
-import { useRef, useState } from "react";
 import type { ActivityLocationItemType } from "@/features/activityLocations/types";
-import { Field, FieldGroup } from "@/components/ui/field";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
-
-function parseLocationFormData(formData: FormData) {
-  return {
-    name: formData.get("name") as string,
-    restrictedAccess: formData.get("restrictedAccess") === "on",
-    indoor: formData.get("indoor") === "on",
-    offsite: formData.get("offsite") === "on",
-  };
-}
+import { parseLocationFormData } from "@/features/activityLocations/utils";
 
 function LocationFormFields({
   defaultValues,

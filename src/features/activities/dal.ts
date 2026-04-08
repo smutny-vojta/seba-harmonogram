@@ -7,8 +7,8 @@
 
 import { type Collection, ObjectId } from "mongodb";
 import { db } from "@/lib/db";
-import { mapMongoIdToId } from "@/lib/dal-utils";
 import type { ActivityItemType, ActivityType, NewActivityType } from "./types";
+import { mapActivityToItem } from "./utils";
 
 // DAL vrstva pouze pracuje s jiz validovanymi daty z actions vrstvy.
 
@@ -75,13 +75,4 @@ export async function deleteActivity(id: string) {
 
 export async function pruneActivities() {
   return ActivityCollection.deleteMany({});
-}
-
-function mapActivityToItem(activity: ActivityType): ActivityItemType {
-  const { location, ...rest } = mapMongoIdToId(activity);
-
-  return {
-    ...rest,
-    locationId: location.toString(),
-  };
 }

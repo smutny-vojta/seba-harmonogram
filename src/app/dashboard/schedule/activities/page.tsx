@@ -15,5 +15,3 @@ export default async function ActivitiesPage() {
     </Suspense>
   );
 }
-
-

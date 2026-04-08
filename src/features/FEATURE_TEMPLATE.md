@@ -24,6 +24,8 @@ src/features/<featureName>/
   types.ts
   dal.ts
   actions.ts
+  utils.ts                     # helpery specificke pro feature
+  utils/                       # volitelne: rozdeleni helperu do vice souboru
   <FeatureName>View.tsx
   seed.ts                      # optional but recommended
   components/                  # optional but recommended
@@ -38,6 +40,26 @@ Dependency flow inside a feature:
 ~~~text
 consts.ts -> schema.ts -> types.ts -> dal.ts -> actions.ts
 ~~~
+
+## 1.1) Utility Layer Rules
+
+Global placement policy:
+- `src/lib`: structured, reusable mini-modules that are coherent enough to stand on their own.
+- `src/utils`: small, stateless generic helpers.
+
+Import direction:
+- Files in `src/lib` may import from `src/utils`.
+- Files in `src/utils` must not use internal project imports (`@/...`, relative imports to other app modules).
+
+Feature placement policy:
+- Feature-specific helpers (used only in one feature) belong in `src/features/<featureName>/utils.ts`.
+- If helper count grows, split into `src/features/<featureName>/utils/<module>.ts`.
+- Reusable cross-feature logic must be moved out of feature folders into `src/lib` or `src/utils`.
+
+Quick decision guide:
+- Uses one feature domain model/consts only: feature `utils.ts`.
+- Small generic stateless helper: `src/utils`.
+- Larger reusable module (e.g. date-time conversion library): `src/lib`.
 
 ## 2) consts.ts Template
 
@@ -133,7 +155,7 @@ Rules:
 ~~~ts
 import { type Collection, ObjectId } from "mongodb";
 import { db } from "@/lib/db";
-import { mapMongoIdToId, toObjectId } from "@/lib/dal-utils";
+import { mapMongoIdToId, toObjectId } from "@/utils/mongo";
 import type {
   <FeatureName>Type,
   <FeatureName>ItemType,

@@ -5,12 +5,12 @@
  * Pozadavky: Drzet komponentu zamerenou na prezentaci/UX a respektovat feature schema.
  */
 
+import { LucideMountain, LucideUmbrellaOff } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   ActivityLocationsDeleteDialog,
   ActivityLocationsEditDialog,
 } from "@/features/activityLocations/components/ActivityLocationsDialogs";
-import { LucideMountain, LucideUmbrellaOff } from "lucide-react";
 import type { ActivityLocationItemType } from "../types";
 
 export default function ActivityLocationsCard({

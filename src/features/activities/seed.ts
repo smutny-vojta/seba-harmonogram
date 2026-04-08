@@ -8,6 +8,8 @@
 import { ACTIVITY_CATEGORIES_ARRAY } from "@/features/activities/consts";
 import { createActivity, pruneActivities } from "@/features/activities/dal";
 import type { NewActivityType } from "@/features/activities/types";
+import { ensureActivitiesSeedPreconditions } from "@/features/activities/utils";
+import { getCyclicValue } from "@/utils/arrays";
 
 type NewActivityTemplate = Pick<NewActivityType, "title" | "description"> & {
   defaultMaterials: string[];
@@ -123,26 +125,6 @@ const ACTIVITY_TEMPLATES: NewActivityTemplate[] = [
     defaultMaterials: ["Knihy", "Deka"],
   },
 ];
-
-function getCyclicValue<T>(items: T[], index: number): T {
-  const value = items[index % items.length];
-
-  if (!value) {
-    throw new Error("Seed data je neplatná nebo prázdná.");
-  }
-
-  return value;
-}
-
-function ensureActivitiesSeedPreconditions(locationIds: string[]) {
-  if (locationIds.length === 0) {
-    throw new Error("Nelze seedovat aktivity bez lokací.");
-  }
-
-  if (ACTIVITY_CATEGORIES_ARRAY.length === 0) {
-    throw new Error("Nelze seedovat aktivity bez kategorií.");
-  }
-}
 
 export async function seedActivitiesFeature(
   locationIds: string[],

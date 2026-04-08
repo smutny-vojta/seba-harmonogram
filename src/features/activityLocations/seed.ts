@@ -9,51 +9,7 @@ import {
   createActivityLocation,
   pruneActivityLocations,
 } from "@/features/activityLocations/dal";
-import type { NewActivityLocationType } from "@/features/activityLocations/types";
-
-const LOCATIONS: Record<string, string> = {
-  za_skladem: "Za skladem",
-  sklad: "Sklad",
-  kuchyn: "Kuchyň",
-  jidelna: "Jídelna",
-  kresilka: "Křesílka",
-  kancl: "Kancl",
-  lavicky: "Lavičky",
-  fotbalak: "Fotbalák",
-  pavilon: "Pavilon",
-  bazen: "Bazén",
-  joga: "Jóga",
-  fortnite_altanek: "Fortnite altánek",
-  volejbalove_hriste_u_jogy: "Volejbalové hřiště u jógy",
-  volejbalove_hriste_u_lavky: "Volejbalové hřiště u lávky",
-  ohniste: "Ohniště",
-  lukostrelba: "Lukostřelba",
-  safari: "Safari",
-  elly_misto: "Elly místo",
-  vicmanov: "Vicmanov",
-  jablonecek: "Jabloneček",
-  obedove_misto: "Obědové místo",
-  misto_mladsich: "Místo mladších",
-  misto_starsich: "Místo starších",
-  koupaliste_bukovina: "Koupaliště Bukovina",
-  cele_stredisko: "Celé středisko",
-  mimo_tabor: "Mimo tábor",
-  jine: "Jiné",
-  neurceno: "Neurčeno",
-};
-
-function randomBool() {
-  return Math.random() > 0.5;
-}
-
-function buildLocationSeedData(): NewActivityLocationType[] {
-  return Object.values(LOCATIONS).map((name) => ({
-    name,
-    indoor: randomBool(),
-    offsite: randomBool(),
-    restrictedAccess: randomBool(),
-  }));
-}
+import { buildLocationSeedData } from "@/features/activityLocations/utils";
 
 export async function seedActivityLocationsFeature(options?: {
   prune?: boolean;

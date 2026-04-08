@@ -5,14 +5,14 @@
  * Pozadavky: Drzet komponentu zamerenou na prezentaci/UX a respektovat feature schema.
  */
 
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ACTIVITY_CATEGORIES } from "@/features/activities/consts";
 import {
   ActivitiesDeleteDialog,
   ActivitiesEditDialog,
 } from "@features/activities/components/ActivitiesDialogs";
 import { LucideMapPin, LucideShapes } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ACTIVITY_CATEGORIES } from "@/features/activities/consts";
 import type { ActivityItemType } from "../types";
 
 export type ActivityCardMode = "admin" | "user";

@@ -1,10 +1,11 @@
-import { listActivityLocations } from "@/features/activityLocations/dal";
-import { seedActivitiesFeature } from "@/features/activities/seed";
-import { seedActivityLocationsFeature } from "@/features/activityLocations/seed";
 import { stdin as input, stdout as output } from "node:process";
 import { emitKeypressEvents } from "node:readline";
+import { seedActivitiesFeature } from "@/features/activities/seed";
+import { listActivityLocations } from "@/features/activityLocations/dal";
+import { seedActivityLocationsFeature } from "@/features/activityLocations/seed";
+import { seedTermsFeature } from "@/features/terms/seed";
 
-type SeedEntityId = "locations" | "activities";
+type SeedEntityId = "locations" | "activities" | "terms";
 
 type SeedContext = {
   locationIds: string[];
@@ -65,6 +66,14 @@ const ENTITIES: SeedEntity[] = [
       await seedActivitiesFeature(locationIds, { prune: ctx.prune });
     },
   },
+  {
+    id: "terms",
+    label: "Turnusy",
+    aliases: ["terms", "turnusy", "turnus", "3"],
+    run: async (ctx) => {
+      await seedTermsFeature({ prune: ctx.prune });
+    },
+  },
 ];
 
 const ALL_ENTITY_IDS = ENTITIES.map((entity) => entity.id);
@@ -84,7 +93,11 @@ function parseEntityToken(token: string): SeedEntityId[] {
     return [];
   }
 
-  if (normalized === "all" || normalized === "vse" || normalized === "3") {
+  if (
+    normalized === "all" ||
+    normalized === "vse" ||
+    normalized === String(ENTITIES.length + 1)
+  ) {
     return [...ALL_ENTITY_IDS];
   }
 
@@ -92,7 +105,7 @@ function parseEntityToken(token: string): SeedEntityId[] {
 
   if (!match) {
     throw new Error(
-      `Neznámá entita '${token}'. Použij --entities=locations,activities nebo --entities=all.`,
+      `Neznámá entita '${token}'. Použij --entities=locations,activities,terms nebo --entities=all.`,
     );
   }
 
@@ -266,7 +279,7 @@ async function resolveEntities(argv: string[]): Promise<SeedEntityId[]> {
 
   if (!process.stdin.isTTY) {
     throw new Error(
-      "Interaktivní volba není dostupná. Spusť skript s --entities=locations,activities",
+      "Interaktivní volba není dostupná. Spusť skript s --entities=locations,activities,terms",
     );
   }
 

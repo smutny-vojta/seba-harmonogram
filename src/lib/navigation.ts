@@ -31,7 +31,7 @@ export const NAVIGATION: NavigationItem[] = [
         href: "/dashboard/schedule/activities",
         icon: LucideStars,
       },
-      { 
+      {
         title: "Lokace",
         href: "/dashboard/schedule/locations",
         icon: LucideMap,

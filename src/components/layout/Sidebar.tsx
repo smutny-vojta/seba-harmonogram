@@ -18,7 +18,7 @@ import {
   SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { NAVIGATION, NavigationItem } from "@/lib/navigation";
+import { NAVIGATION, type NavigationItem } from "@/lib/navigation";
 
 export function AppSidebar() {
   const pathname = usePathname();

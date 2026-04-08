@@ -106,6 +106,14 @@ Canonical file-by-file template is documented in `FEATURE_TEMPLATE.md`.
 
 **Never** place database queries outside of `dal.ts`. **Never** import `dal.ts` directly in Client Components.
 
+## Lib vs Utils
+
+- `src/lib` contains structured reusable modules (library-like, cohesive, broader scope).
+- `src/utils` contains small stateless generic helpers.
+- `src/lib` files may import from `src/utils`.
+- `src/utils` files must not import internal app modules (`@/...` or app-relative imports).
+- Feature-local helpers belong in `src/features/<feature>/utils.ts` (or `utils/`) and should be promoted to `src/lib` or `src/utils` when reused across features.
+
 ---
 
 ## Zod Schemas
@@ -196,9 +204,9 @@ export const createActivityAction = actionClient
 
 ### CSS & Tailwind
 
-- Use the `cn()` utility from `@/lib/utils` for conditional/merged class names:
+- Use the `cn()` utility from `@/utils/cn` for conditional/merged class names:
   ```ts
-  import { cn } from "@/lib/utils";
+  import { cn } from "@/utils/cn";
   className={cn("base-class", condition && "conditional-class")}
   ```
 - TailwindCSS v4 is used — use standard Tailwind utilities only. No `@apply` unless in `globals.css`.
@@ -220,7 +228,7 @@ export const createActivityAction = actionClient
 - **No tabs**
 - **Trailing commas** in multi-line structures
 - **Imports are auto-organized** by Biome's `organizeImports` assist action
-- Import order convention: external libraries → `@/lib` → `@/features` → `@/components` → relative
+- Import order convention: external libraries → `@/lib` → `@/utils` → `@/features` → `@/components` → relative
 
 ---
 
