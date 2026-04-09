@@ -3,7 +3,6 @@
 import { revalidatePath } from "next/cache";
 import { actionClient } from "@/lib/safe-action";
 import {
-  copyGroupCountsToTerm,
   decreaseGroupCountForCategory,
   increaseGroupCountForCategory,
 } from "./dal";
@@ -27,17 +26,6 @@ export const decreaseGroupCountAction = actionClient
 
     revalidatePath("/dashboard/terms");
     revalidatePath(`/dashboard/terms/${parsedInput.termId}`);
-
-    return result;
-  });
-
-export const copyGroupCountsToTermAction = actionClient
-  .inputSchema(GroupOperationSchemas.copyCountsToTerm)
-  .action(async ({ parsedInput }) => {
-    const result = await copyGroupCountsToTerm(parsedInput);
-
-    revalidatePath("/dashboard/terms");
-    revalidatePath(`/dashboard/terms/${parsedInput.targetTermId}`);
 
     return result;
   });

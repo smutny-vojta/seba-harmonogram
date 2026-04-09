@@ -4,7 +4,6 @@ import { db } from "@/lib/db";
 import { CAMP_CATEGORIES, CAMP_CATEGORIES_ARRAY } from "./consts";
 import type {
   GroupCategoryCountItemType,
-  GroupCopyCountsType,
   GroupItemType,
   GroupType,
 } from "./types";
@@ -149,18 +148,6 @@ async function setGroupCountForCategoryInternal({
   };
 }
 
-export async function getGroupById(id: string): Promise<GroupItemType | null> {
-  const group = await GroupCollection.findOne({
-    _id: toObjectId(id, "ID oddílu"),
-  });
-
-  if (!group) {
-    return null;
-  }
-
-  return mapGroupToItem(group);
-}
-
 export async function listGroupsByTerm({
   termId,
   includeArchived = false,
@@ -277,33 +264,6 @@ export async function createDefaultGroupsForTerm(termId: string) {
   };
 }
 
-export async function copyGroupCountsToTerm({
-  sourceTermId,
-  targetTermId,
-}: GroupCopyCountsType) {
-  const sourceTermObjectId = toObjectId(sourceTermId, "ID zdrojového turnusu");
-  const targetTermObjectId = toObjectId(targetTermId, "ID cílového turnusu");
-
-  await Promise.all([
-    assertTermExists(sourceTermObjectId),
-    assertTermIsActiveForMutations(targetTermObjectId),
-  ]);
-
-  const sourceCounts = await listGroupCountsByTerm(sourceTermId);
-
-  for (const sourceCount of sourceCounts) {
-    await setGroupCountForCategoryInternal({
-      termId: targetTermObjectId,
-      campCategory: sourceCount.campCategory,
-      count: sourceCount.count,
-    });
-  }
-
-  return {
-    categoriesCopied: sourceCounts.length,
-  };
-}
-
 export async function archiveExpiredTermGroups(referenceDate = new Date()) {
   const expiredTermIds = await TermCollection.find(
     { endsAt: { $lt: referenceDate } },
@@ -338,8 +298,4 @@ export async function archiveExpiredTermGroups(referenceDate = new Date()) {
     archivedCount: result.modifiedCount,
     affectedTermCount: expiredTermIds.length,
   };
-}
-
-export async function pruneGroups() {
-  return GroupCollection.deleteMany({});
 }

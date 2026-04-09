@@ -1,7 +1,6 @@
 import type { z } from "zod";
 import type {
   GroupCategoryCountItemSchema,
-  GroupCopyCountsSchema,
   GroupItemSchema,
   GroupSchema,
 } from "./schema";
@@ -11,4 +10,3 @@ export type GroupItemType = z.infer<typeof GroupItemSchema>;
 export type GroupCategoryCountItemType = z.infer<
   typeof GroupCategoryCountItemSchema
 >;
-export type GroupCopyCountsType = z.infer<typeof GroupCopyCountsSchema>;

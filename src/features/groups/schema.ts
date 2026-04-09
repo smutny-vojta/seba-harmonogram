@@ -61,22 +61,7 @@ const GroupCountAdjustmentSchema = TermIdSchema.extend({
   campCategory: CampCategoryEnum,
 });
 
-export const GroupCopyCountsSchema = z
-  .object({
-    sourceTermId: z.string().min(24, "ID zdrojového turnusu je neplatné"),
-    targetTermId: z.string().min(24, "ID cílového turnusu je neplatné"),
-  })
-  .refine((value) => value.sourceTermId !== value.targetTermId, {
-    message: "Zdrojový a cílový turnus musí být odlišný.",
-    path: ["targetTermId"],
-  });
-
 export const GroupOperationSchemas = {
-  listByTerm: TermIdSchema.extend({
-    includeArchived: z.boolean().default(false),
-  }),
-  listCountsByTerm: TermIdSchema,
   increaseCount: GroupCountAdjustmentSchema,
   decreaseCount: GroupCountAdjustmentSchema,
-  copyCountsToTerm: GroupCopyCountsSchema,
 } as const;

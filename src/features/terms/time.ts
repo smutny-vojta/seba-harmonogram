@@ -19,18 +19,6 @@ export function getExpectedEndFromStart(startAt: Date): Date {
   });
 }
 
-export function getExpectedStartFromPreviousEnd(previousEndAt: Date): Date {
-  const end = getPragueParts(previousEndAt);
-
-  return pragueLocalToUtc({
-    year: end.year,
-    month: end.month,
-    day: end.day,
-    hour: TERM_START_HOUR,
-    minute: TERM_START_MINUTE,
-  });
-}
-
 export function hasExpectedFixedTimes(startAt: Date, endAt: Date): boolean {
   const start = getPragueParts(startAt);
   const end = getPragueParts(endAt);
