@@ -7,7 +7,7 @@
 
 import { ObjectId } from "mongodb";
 import { z } from "zod";
-import { ActivityCategoryEnum } from "@/lib/activityCategories";
+import { ActivityCategoryEnum } from "@/lib/activity-categories";
 
 // --- Zod schema pro konkrétní Naplánovanou aktivitu (Activity) ---
 export const harmonogramSchema = z

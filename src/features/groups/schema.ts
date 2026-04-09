@@ -3,7 +3,7 @@ import { z } from "zod";
 import {
   CampCategoryEnum,
   GroupCategoryCountItemSchema,
-} from "@/lib/campCategories";
+} from "@/lib/camp-categories";
 
 export { CampCategoryEnum, GroupCategoryCountItemSchema };
 

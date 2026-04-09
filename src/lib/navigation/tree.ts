@@ -1,32 +1,5 @@
-import {
-  LucideCalendar,
-  LucideCalendarRange,
-  LucideLayoutDashboard,
-  LucideMap,
-  LucideStars,
-  type LucideIcon,
-} from "lucide-react";
-
-export interface NavigationItem {
-  title: string;
-  href: string;
-  icon?: LucideIcon;
-  sidebar?: boolean;
-  children?: NavigationItem[];
-}
-
-export interface NavigationBreadcrumbItem {
-  title: string;
-  href: string;
-}
-
-export interface NavigationTermItem {
-  id: string;
-  name: string;
-}
-
-export const TERMS_ROUTE = "/dashboard/terms";
-export const TERM_DETAIL_ROUTE = "/dashboard/terms/[termId]";
+import { NAVIGATION, TERMS_ROUTE } from "./config";
+import type { NavigationBreadcrumbItem, NavigationItem } from "./types";
 
 const PATH_PARAM_REGEXP = /^\[[^/]+\]$/;
 const CATCH_ALL_PARAM_REGEXP = /^\[\.\.\.[^/]+\]$/;
@@ -79,6 +52,7 @@ const findRouteTrail = (
     }
 
     const childTrail = findRouteTrail(pathname, route.children, nextTrail);
+
     if (childTrail) {
       return childTrail;
     }
@@ -86,44 +60,6 @@ const findRouteTrail = (
 
   return null;
 };
-
-export const NAVIGATION: NavigationItem[] = [
-  {
-    title: "Dashboard",
-    href: "/dashboard",
-    icon: LucideLayoutDashboard,
-    children: [],
-  },
-  {
-    title: "Harmonogram",
-    href: "/dashboard/schedule",
-    icon: LucideCalendar,
-    children: [
-      {
-        title: "Aktivity",
-        href: "/dashboard/schedule/activities",
-        icon: LucideStars,
-      },
-      {
-        title: "Lokace",
-        href: "/dashboard/schedule/locations",
-        icon: LucideMap,
-      },
-    ],
-  },
-  {
-    title: "Turnusy",
-    href: TERMS_ROUTE,
-    icon: LucideCalendarRange,
-    children: [
-      {
-        title: "Detail turnusu",
-        href: TERM_DETAIL_ROUTE,
-        sidebar: false,
-      },
-    ],
-  },
-] as const;
 
 export function isRouteMatch(pathname: string, href: string): boolean {
   const normalizedPathname = normalizePathname(pathname);

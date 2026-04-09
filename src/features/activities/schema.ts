@@ -13,7 +13,7 @@
 
 import { ObjectId } from "mongodb";
 import { z } from "zod";
-import { ActivityCategoryEnum } from "@/lib/activityCategories";
+import { ActivityCategoryEnum } from "@/lib/activity-categories";
 
 // Sdilena mnozina kategorii, pouzita napric DB, API i formulary.
 export { ActivityCategoryEnum };

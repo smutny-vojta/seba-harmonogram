@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createTerm, deleteTerm, updateTerm } from "@/features/terms/dal";
 import { TermOperationSchemas } from "@/features/terms/schema";
-import { createDefaultGroupsForTerm } from "@/lib/groupDefaults";
+import { createDefaultGroupsForTerm } from "@/lib/group-defaults";
 import { actionClient } from "@/lib/safe-action";
 
 // AUTH DISABLED (temporary):

@@ -8,4 +8,4 @@
 export {
   ACTIVITY_CATEGORIES,
   ACTIVITY_CATEGORIES_ARRAY,
-} from "@/lib/activityCategories";
+} from "@/lib/activity-categories";

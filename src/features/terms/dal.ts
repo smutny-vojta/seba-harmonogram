@@ -14,7 +14,7 @@ import {
   CAMP_CATEGORIES_ARRAY,
   type CampCategory,
   type GroupCategoryCountItemType,
-} from "@/lib/campCategories";
+} from "@/lib/camp-categories";
 import { db } from "@/lib/db";
 import { mapMongoIdToId } from "@/utils/mongo";
 

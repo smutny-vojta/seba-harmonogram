@@ -10,7 +10,10 @@ Before any edits, gather project context in this order:
 2. Read [docs/README.md](docs/README.md).
 3. Read [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 4. Read [docs/STYLEGUIDE.md](docs/STYLEGUIDE.md).
-5. Read task-relevant feature docs (for auth: [docs/features/auth/IMPLEMENTATION.md](docs/features/auth/IMPLEMENTATION.md)).
+5. Read task-relevant docs:
+  - feature work: [docs/FEATURE_TEMPLATE.md](docs/FEATURE_TEMPLATE.md)
+  - shared work (`src/lib`, `src/utils`): [docs/SHARED_TEMPLATE.md](docs/SHARED_TEMPLATE.md)
+  - auth work: [docs/features/auth/IMPLEMENTATION.md](docs/features/auth/IMPLEMENTATION.md)
 
 Do not start implementation before this sequence is completed.
 
@@ -23,6 +26,7 @@ Do not start implementation before this sequence is completed.
 
 - Follow feature slices under `src/features/<name>/`.
 - Expected feature files: `config.ts`, `schema.ts`, `types.ts`, `dal.ts`, `actions.ts`.
+- For shared modules in `src/lib` and `src/utils`, follow [docs/SHARED_TEMPLATE.md](docs/SHARED_TEMPLATE.md).
 - Only `dal.ts` may query MongoDB.
 - Keep `ObjectId` in DAL; remap `_id` to `id` string when returning read models.
 

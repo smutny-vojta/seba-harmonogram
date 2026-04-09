@@ -1,6 +1,6 @@
 import { type Collection, ObjectId } from "mongodb";
 import { db } from "@/lib/db";
-import { createDefaultGroupsForTerm as createDefaultGroupsForTermShared } from "@/lib/groupDefaults";
+import { createDefaultGroupsForTerm as createDefaultGroupsForTermShared } from "@/lib/group-defaults";
 import { CAMP_CATEGORIES, CAMP_CATEGORIES_ARRAY } from "./config";
 import type {
   GroupCategoryCountItemType,

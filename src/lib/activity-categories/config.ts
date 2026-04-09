@@ -1,5 +1,3 @@
-import { z } from "zod";
-
 export const ACTIVITY_CATEGORIES = {
   sport: {
     name: "Sport",
@@ -50,5 +48,3 @@ export const ACTIVITY_CATEGORIES = {
 export const ACTIVITY_CATEGORIES_ARRAY = Object.keys(
   ACTIVITY_CATEGORIES,
 ) as (keyof typeof ACTIVITY_CATEGORIES)[];
-
-export const ActivityCategoryEnum = z.enum(ACTIVITY_CATEGORIES_ARRAY);

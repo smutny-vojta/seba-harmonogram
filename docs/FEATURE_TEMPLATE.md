@@ -13,6 +13,8 @@ Use this template for business domains such as activities, activityLocations, ha
 
 Do not use this template for core infrastructure modules like auth.
 
+For shared modules in `src/lib` and `src/utils`, use [docs/SHARED_TEMPLATE.md](docs/SHARED_TEMPLATE.md).
+
 ## 1) Target Folder Layout
 
 Create one folder per feature:

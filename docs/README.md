@@ -17,6 +17,7 @@ Podrobná pravidla jsou v dokumentaci níže.
 - Architektura aplikace: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 - Kódovací standardy: [docs/STYLEGUIDE.md](docs/STYLEGUIDE.md)
 - Šablona nové feature: [docs/FEATURE_TEMPLATE.md](docs/FEATURE_TEMPLATE.md)
+- Šablona shared modulů (`lib`/`utils`): [docs/SHARED_TEMPLATE.md](docs/SHARED_TEMPLATE.md)
 - Auth implementační poznámky: [docs/features/auth/IMPLEMENTATION.md](docs/features/auth/IMPLEMENTATION.md)
 - Aktuální backlog: [docs/TODO.md](docs/TODO.md)
 
