@@ -88,7 +88,7 @@ The canonical implementation template for new domain features is in `FEATURE_TEM
 config → schema → types → dal → actions
 ```
 
-Cross-feature imports go from `harmonogram` → `activities` (e.g., reusing `ActivityCategoryEnum`), but never in reverse.
+Cross-feature imports are not allowed inside `src/features`. Shared code must live in `src/lib` or `src/utils`, while composition across multiple features belongs to App Router layer (`src/app`).
 
 ### 1.1 Lib vs Utils Policy
 

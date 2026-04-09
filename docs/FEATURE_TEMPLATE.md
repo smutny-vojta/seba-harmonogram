@@ -50,6 +50,7 @@ Global placement policy:
 Import direction:
 - Files in `src/lib` may import from `src/utils`.
 - Files in `src/utils` must not use internal project imports (`@/...`, relative imports to other app modules).
+- Files in `src/features/<featureName>/` must not import from other features (`@/features/<other>/...`).
 
 Feature placement policy:
 - Feature-specific helpers (used only in one feature) belong in `src/features/<featureName>/utils.ts`.
@@ -235,7 +236,7 @@ Rules:
 
 import { revalidatePath } from "next/cache";
 import { actionClient } from "@/lib/safe-action";
-import { getSessionUncached, hasRole } from "@/features/auth/utils";
+import { getSessionUncached, hasRole } from "@/lib/auth/utils";
 import {
   create<FeatureName>,
   update<FeatureName>,

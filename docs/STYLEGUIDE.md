@@ -118,6 +118,8 @@ Canonical file-by-file template is documented in `FEATURE_TEMPLATE.md`.
 
 **Never** place database queries outside of `dal.ts`. **Never** import `dal.ts` directly in Client Components.
 
+Feature slices must not import from other feature slices (`@/features/<other>/...`). If code is reused by multiple features, move it into `src/lib` or `src/utils` and import it from there.
+
 ## Lib vs Utils
 
 - `src/lib` contains structured reusable modules (library-like, cohesive, broader scope).

@@ -1,13 +1,13 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { createDefaultGroupsForTerm } from "@/features/groups/dal";
 import { createTerm, deleteTerm, updateTerm } from "@/features/terms/dal";
 import { TermOperationSchemas } from "@/features/terms/schema";
+import { createDefaultGroupsForTerm } from "@/lib/groupDefaults";
 import { actionClient } from "@/lib/safe-action";
 
 // AUTH DISABLED (temporary):
-// import { getSessionUncached, hasRole } from "@/features/auth/utils";
+// import { getSessionUncached, hasRole } from "@/lib/auth/utils";
 //
 // async function assertCanMutate() {
 //   const session = await getSessionUncached();

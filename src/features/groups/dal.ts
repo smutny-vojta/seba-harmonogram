@@ -1,6 +1,6 @@
 import { type Collection, ObjectId } from "mongodb";
-import { TermCollection } from "@/features/terms/dal";
 import { db } from "@/lib/db";
+import { createDefaultGroupsForTerm as createDefaultGroupsForTermShared } from "@/lib/groupDefaults";
 import { CAMP_CATEGORIES, CAMP_CATEGORIES_ARRAY } from "./config";
 import type {
   GroupCategoryCountItemType,
@@ -32,6 +32,8 @@ type SetGroupCountResult = {
 };
 
 export const GroupCollection: Collection<GroupType> = db.collection("groups");
+const TermCollection: Collection<{ _id: ObjectId; endsAt: Date }> =
+  db.collection("terms");
 
 function mapGroupToItem(group: GroupType): GroupItemType {
   const { _id, termId, ...rest } = group;
@@ -42,17 +44,6 @@ function mapGroupToItem(group: GroupType): GroupItemType {
     termId: termId.toString(),
     isArchived: Boolean(group.archivedAt),
   };
-}
-
-async function assertTermExists(termId: ObjectId) {
-  const term = await TermCollection.findOne(
-    { _id: termId },
-    { projection: { _id: 1 } },
-  );
-
-  if (!term) {
-    throw new Error("Turnus nebyl nalezen.");
-  }
 }
 
 async function assertTermIsActiveForMutations(termId: ObjectId) {
@@ -245,23 +236,7 @@ export async function decreaseGroupCountForCategory({
 }
 
 export async function createDefaultGroupsForTerm(termId: string) {
-  const termObjectId = toObjectId(termId, "ID turnusu");
-
-  await assertTermExists(termObjectId);
-
-  const results = await Promise.all(
-    CAMP_CATEGORIES_ARRAY.map((campCategory) =>
-      setGroupCountForCategoryInternal({
-        termId: termObjectId,
-        campCategory,
-        count: 1,
-      }),
-    ),
-  );
-
-  return {
-    categoriesInitialized: results.length,
-  };
+  return createDefaultGroupsForTermShared(termId);
 }
 
 export async function archiveExpiredTermGroups(referenceDate = new Date()) {

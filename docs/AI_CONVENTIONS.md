@@ -63,6 +63,8 @@ Do not start implementation before this sequence is completed.
 - Use path aliases (`@/*`, `@features/*`, `@components/*`, `@hooks/*`, `@lib/*`).
 - `src/lib` may import from `src/utils`.
 - `src/utils` must not import internal app modules.
+- Files in `src/features/<name>/` must not import from other feature slices (`@/features/<other>/...`).
+- If logic must be shared across features, move that source into `src/lib` or `src/utils`, then import from there.
 - Keep feature-specific helpers in `src/features/<feature>/utils.ts` unless shared.
 
 ## Localization and errors

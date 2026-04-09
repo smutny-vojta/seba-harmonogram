@@ -3,7 +3,7 @@ import { z } from "zod";
 import {
   CampCategoryEnum,
   GroupCategoryCountItemSchema,
-} from "@/features/groups/schema";
+} from "@/lib/campCategories";
 
 export const TermSchema = z
   .object({

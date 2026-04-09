@@ -1,13 +1,5 @@
 import { type Collection, ObjectId } from "mongodb";
 import {
-  CAMP_CATEGORIES,
-  CAMP_CATEGORIES_ARRAY,
-} from "@/features/groups/config";
-import type {
-  GroupCategoryCountItemType,
-  GroupType,
-} from "@/features/groups/types";
-import {
   getExpectedEndFromStart,
   hasExpectedFixedTimes,
 } from "@/features/terms/time";
@@ -17,6 +9,12 @@ import type {
   TermNavigationType,
   TermType,
 } from "@/features/terms/types";
+import {
+  CAMP_CATEGORIES,
+  CAMP_CATEGORIES_ARRAY,
+  type CampCategory,
+  type GroupCategoryCountItemType,
+} from "@/lib/campCategories";
 import { db } from "@/lib/db";
 import { mapMongoIdToId } from "@/utils/mongo";
 
@@ -27,7 +25,12 @@ type TermDateRange = {
 };
 
 export const TermCollection: Collection<TermType> = db.collection("terms");
-const GroupCollection: Collection<GroupType> = db.collection("groups");
+const GroupCollection: Collection<{
+  _id: ObjectId;
+  termId: ObjectId;
+  campCategory: CampCategory;
+  archivedAt?: Date;
+}> = db.collection("groups");
 
 async function assertNoTermOverlap(
   collection: Collection<TermType>,
@@ -109,7 +112,7 @@ async function getCampCategoryCountsByTermIds(
   const rows = await GroupCollection.aggregate<{
     _id: {
       termId: ObjectId;
-      campCategory: GroupType["campCategory"];
+      campCategory: CampCategory;
     };
     count: number;
   }>([

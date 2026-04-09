@@ -1,8 +1,11 @@
 import { ObjectId } from "mongodb";
 import { z } from "zod";
-import { CAMP_CATEGORIES_ARRAY } from "./config";
+import {
+  CampCategoryEnum,
+  GroupCategoryCountItemSchema,
+} from "@/lib/campCategories";
 
-export const CampCategoryEnum = z.enum(CAMP_CATEGORIES_ARRAY);
+export { CampCategoryEnum, GroupCategoryCountItemSchema };
 
 const GroupSlugSchema = z
   .string()
@@ -45,12 +48,6 @@ export const GroupItemSchema = z.object({
   isArchived: z.boolean(),
   createdAt: z.date(),
   updatedAt: z.date(),
-});
-
-export const GroupCategoryCountItemSchema = z.object({
-  campCategory: CampCategoryEnum,
-  campName: z.string(),
-  count: z.number().int().min(0),
 });
 
 const TermIdSchema = z.object({

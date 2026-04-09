@@ -13,10 +13,10 @@
 
 import { ObjectId } from "mongodb";
 import { z } from "zod";
-import { ACTIVITY_CATEGORIES_ARRAY } from "./config";
+import { ActivityCategoryEnum } from "@/lib/activityCategories";
 
 // Sdilena mnozina kategorii, pouzita napric DB, API i formulary.
-export const ActivityCategoryEnum = z.enum(ACTIVITY_CATEGORIES_ARRAY);
+export { ActivityCategoryEnum };
 
 // Material v aktivite ma nazev a mnozstvi (napr. 2x, 250g, 0,5m).
 export const ActivityMaterialSchema = z.object({

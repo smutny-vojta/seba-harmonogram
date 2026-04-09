@@ -6,14 +6,21 @@
  */
 
 import ActivitiesContent from "@features/activities/components/ActivitiesContent";
-import { listActivityLocations } from "@/features/activityLocations/dal";
 import { listActivities } from "./dal";
 
-export default async function ActivitiesView() {
-  const [activities, locations] = await Promise.all([
-    listActivities(),
-    listActivityLocations(),
-  ]);
+type ActivityLocationOption = {
+  id: string;
+  name: string;
+};
+
+interface ActivitiesViewProps {
+  locations: ActivityLocationOption[];
+}
+
+export default async function ActivitiesView({
+  locations,
+}: ActivitiesViewProps) {
+  const activities = await listActivities();
 
   const locationsById = Object.fromEntries(
     locations.map((location) => [location.id, location.name]),
