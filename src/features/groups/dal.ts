@@ -1,7 +1,7 @@
 import { type Collection, ObjectId } from "mongodb";
 import { TermCollection } from "@/features/terms/dal";
 import { db } from "@/lib/db";
-import { CAMP_CATEGORIES, CAMP_CATEGORIES_ARRAY } from "./consts";
+import { CAMP_CATEGORIES, CAMP_CATEGORIES_ARRAY } from "./config";
 import type {
   GroupCategoryCountItemType,
   GroupItemType,

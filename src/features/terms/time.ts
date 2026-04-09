@@ -4,7 +4,7 @@ import {
   TERM_END_MINUTE,
   TERM_START_HOUR,
   TERM_START_MINUTE,
-} from "@/features/terms/consts";
+} from "@/features/terms/config";
 import { getPragueParts, pragueLocalToUtc } from "@/lib/date-time/prague";
 
 export function getExpectedEndFromStart(startAt: Date): Date {

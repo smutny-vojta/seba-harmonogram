@@ -80,12 +80,12 @@ The canonical implementation template for new domain features is in `FEATURE_TEM
 | `types.ts`    | TypeScript types inferred from Zod schemas via `z.infer<>`                             |
 | `dal.ts`      | Data Access Layer — all MongoDB queries, ID mapping, persistence only                  |
 | `actions.ts`  | Next.js Server Actions — input validation, orchestration, calls DAL, revalidates cache |
-| `consts.ts`   | Domain constants (enums, static arrays)                                                |
+| `config.ts`   | Domain constants (enums, static arrays)                                                |
 | `components/` | (optional) Feature-specific React components                                           |
 
 **Dependency flow within a slice:**
 ```
-consts → schema → types → dal → actions
+config → schema → types → dal → actions
 ```
 
 Cross-feature imports go from `harmonogram` → `activities` (e.g., reusing `ActivityCategoryEnum`), but never in reverse.

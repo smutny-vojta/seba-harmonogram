@@ -81,7 +81,7 @@ Never use `any`. Use `unknown` and narrow with type guards if the shape is truly
 | --------------------- | --------------------- | ------------------------------------------------------------ |
 | React components      | `PascalCase.tsx`      | `AppSidebar.tsx`, `PageTitle.tsx`                            |
 | Non-component modules | `camelCase.ts`        | `dal.ts`, `safe-action.ts`, `auth-client.ts`                 |
-| Feature-slice files   | fixed names           | `schema.ts`, `types.ts`, `dal.ts`, `actions.ts`, `consts.ts` |
+| Feature-slice files   | fixed names           | `schema.ts`, `types.ts`, `dal.ts`, `actions.ts`, `config.ts` |
 | Route segments        | **Czech**, kebab-case | `aktivity/`, `lokace/`                                       |
 | Hook files            | `use-kebab-case.ts`   | `use-mobile.ts`                                              |
 
@@ -108,7 +108,7 @@ Canonical file-by-file template is documented in `FEATURE_TEMPLATE.md`.
 
 ```
 <feature>/
-  consts.ts     # static arrays, string literals, enum values
+  config.ts     # static arrays, string literals, enum values
   schema.ts     # Zod schemas + MongoDB Collection exports
   types.ts      # z.infer<> types only — no logic
   dal.ts        # all DB access — no HTTP, no Next.js API

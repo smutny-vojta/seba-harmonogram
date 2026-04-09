@@ -19,7 +19,7 @@ Create one folder per feature:
 
 ~~~text
 src/features/<featureName>/
-  consts.ts
+  config.ts
   schema.ts
   types.ts
   dal.ts
@@ -38,7 +38,7 @@ src/features/<featureName>/
 Dependency flow inside a feature:
 
 ~~~text
-consts.ts -> schema.ts -> types.ts -> dal.ts -> actions.ts
+config.ts -> schema.ts -> types.ts -> dal.ts -> actions.ts
 ~~~
 
 ## 1.1) Utility Layer Rules
@@ -57,11 +57,11 @@ Feature placement policy:
 - Reusable cross-feature logic must be moved out of feature folders into `src/lib` or `src/utils`.
 
 Quick decision guide:
-- Uses one feature domain model/consts only: feature `utils.ts`.
+- Uses one feature domain model/constants only: feature `utils.ts`.
 - Small generic stateless helper: `src/utils`.
 - Larger reusable module (e.g. date-time conversion library): `src/lib`.
 
-## 2) consts.ts Template
+## 2) config.ts Template
 
 Use for static values only.
 

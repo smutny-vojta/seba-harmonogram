@@ -1,5 +1,5 @@
 /**
- * Soubor: src/features/auth/consts.ts
+ * Soubor: src/features/auth/config.ts
  * Ucel: Konstanty feature "auth" pouzivane napric dalsimi vrstvami.
  * Parametry/Vstupy: Staticke mapy, seznamy a defaultni hodnoty.
  * Pozadavky: Bez vedlejsich efektu; pouze deklarativni data.

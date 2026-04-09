@@ -35,7 +35,7 @@ import {
 import {
   ACTIVITY_CATEGORIES,
   ACTIVITY_CATEGORIES_ARRAY,
-} from "@/features/activities/consts";
+} from "@/features/activities/config";
 import type { ActivityItemType } from "@/features/activities/types";
 import {
   buildMaterialRows,

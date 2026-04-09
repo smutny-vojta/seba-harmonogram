@@ -22,7 +22,7 @@ Do not start implementation before this sequence is completed.
 ## Architecture
 
 - Follow feature slices under `src/features/<name>/`.
-- Expected feature files: `consts.ts`, `schema.ts`, `types.ts`, `dal.ts`, `actions.ts`.
+- Expected feature files: `config.ts`, `schema.ts`, `types.ts`, `dal.ts`, `actions.ts`.
 - Only `dal.ts` may query MongoDB.
 - Keep `ObjectId` in DAL; remap `_id` to `id` string when returning read models.
 

@@ -19,7 +19,7 @@ import {
   decreaseGroupCountAction,
   increaseGroupCountAction,
 } from "@/features/groups/actions";
-import { CAMP_CATEGORIES, MAX_USERS_PER_GROUP } from "@/features/groups/consts";
+import { CAMP_CATEGORIES, MAX_USERS_PER_GROUP } from "@/features/groups/config";
 import type {
   GroupCategoryCountItemType,
   GroupItemType,

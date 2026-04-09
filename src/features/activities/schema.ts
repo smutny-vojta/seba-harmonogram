@@ -13,7 +13,7 @@
 
 import { ObjectId } from "mongodb";
 import { z } from "zod";
-import { ACTIVITY_CATEGORIES_ARRAY } from "./consts";
+import { ACTIVITY_CATEGORIES_ARRAY } from "./config";
 
 // Sdilena mnozina kategorii, pouzita napric DB, API i formulary.
 export const ActivityCategoryEnum = z.enum(ACTIVITY_CATEGORIES_ARRAY);

@@ -12,7 +12,7 @@ import {
 import { LucideMapPin, LucideShapes } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ACTIVITY_CATEGORIES } from "@/features/activities/consts";
+import { ACTIVITY_CATEGORIES } from "@/features/activities/config";
 import type { ActivityItemType } from "../types";
 
 export type ActivityCardMode = "admin" | "user";

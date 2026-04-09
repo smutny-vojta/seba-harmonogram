@@ -1,4 +1,4 @@
-import { ACTIVITY_CATEGORIES_ARRAY } from "@/features/activities/consts";
+import { ACTIVITY_CATEGORIES_ARRAY } from "@/features/activities/config";
 import type {
   ActivityItemType,
   ActivityMaterialType,

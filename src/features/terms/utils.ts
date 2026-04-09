@@ -1,10 +1,10 @@
-import type { NewTermType } from "@/features/terms/types";
 import {
   TERM_END_HOUR,
   TERM_END_MINUTE,
   TERM_START_HOUR,
   TERM_START_MINUTE,
-} from "@/features/terms/consts";
+} from "@/features/terms/config";
+import type { NewTermType } from "@/features/terms/types";
 
 // Helpers used in components/TermsDialogs.tsx
 

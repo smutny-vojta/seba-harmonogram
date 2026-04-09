@@ -2,7 +2,7 @@ import { type Collection, ObjectId } from "mongodb";
 import {
   CAMP_CATEGORIES,
   CAMP_CATEGORIES_ARRAY,
-} from "@/features/groups/consts";
+} from "@/features/groups/config";
 import type {
   GroupCategoryCountItemType,
   GroupType,

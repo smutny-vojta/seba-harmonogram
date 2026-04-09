@@ -1,6 +1,6 @@
 import { ObjectId } from "mongodb";
 import { z } from "zod";
-import { CAMP_CATEGORIES_ARRAY } from "./consts";
+import { CAMP_CATEGORIES_ARRAY } from "./config";
 
 export const CampCategoryEnum = z.enum(CAMP_CATEGORIES_ARRAY);
 

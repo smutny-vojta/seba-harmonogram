@@ -1,5 +1,5 @@
 import { ObjectId } from "mongodb";
-import { CAMP_CATEGORIES } from "./consts";
+import { CAMP_CATEGORIES } from "./config";
 import type { GroupType } from "./types";
 
 export function toObjectId(value: string, label: string): ObjectId {

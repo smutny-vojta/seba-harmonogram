@@ -5,7 +5,7 @@
  * Pozadavky: Seed ma byt idempotentni v ramci zvolene strategie a jasne logovat prubeh.
  */
 
-import { ACTIVITY_CATEGORIES_ARRAY } from "@/features/activities/consts";
+import { ACTIVITY_CATEGORIES_ARRAY } from "@/features/activities/config";
 import { createActivity, pruneActivities } from "@/features/activities/dal";
 import type { NewActivityType } from "@/features/activities/types";
 import { ensureActivitiesSeedPreconditions } from "@/features/activities/utils";

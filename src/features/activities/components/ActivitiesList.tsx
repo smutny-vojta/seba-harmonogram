@@ -25,7 +25,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import { ACTIVITY_CATEGORIES } from "@/features/activities/consts";
+import { ACTIVITY_CATEGORIES } from "@/features/activities/config";
 import type { ActivityItemType } from "@/features/activities/types";
 
 type ActivityLocationOption = {

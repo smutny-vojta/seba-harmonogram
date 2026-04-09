@@ -1,5 +1,5 @@
 /**
- * Soubor: src/features/activities/consts.ts
+ * Soubor: src/features/activities/config.ts
  * Ucel: Konstanty feature "activities" pouzivane napric dalsimi vrstvami.
  * Parametry/Vstupy: Staticke mapy, seznamy a defaultni hodnoty.
  * Pozadavky: Bez vedlejsich efektu; pouze deklarativni data.
