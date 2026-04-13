@@ -4,7 +4,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { listTermsForNavigation } from "@/features/terms/dal";
+import { listTermsForNavigation } from "@/features/terms";
 import { formatPragueDate } from "@/lib/date-time/prague";
 import { getCurrentFixedTerm } from "@/lib/terms";
 

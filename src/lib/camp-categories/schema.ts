@@ -1,8 +1,8 @@
 import { z } from "zod";
-import { CAMP_CATEGORIES_ARRAY } from "./config";
+import { CAMP_CATEGORIES_ARRAY, CAMP_CATEGORY_KINDS } from "./config";
 
 export const CampCategoryEnum = z.enum(CAMP_CATEGORIES_ARRAY);
-export const CampCategoryKindEnum = z.enum(["camp", "office"]);
+export const CampCategoryKindEnum = z.enum(CAMP_CATEGORY_KINDS);
 
 export const CampCategoryItemSchema = z.object({
   id: CampCategoryEnum,

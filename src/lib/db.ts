@@ -1,25 +1,15 @@
-import { loadEnvConfig } from "@next/env";
 import { MongoClient } from "mongodb";
-
-loadEnvConfig(process.cwd());
-
-if (!process.env.DATABASE_URL) {
-  throw new Error("DATABASE_URL is not defined");
-}
-
-if (!process.env.MONGO_DB_NAME) {
-  throw new Error("MONGO_DB_NAME is not defined");
-}
+import { runtimeConfig } from "@/config";
 
 const globalForDb = globalThis as unknown as {
   mongoClient: MongoClient | undefined;
 };
 
 export const client =
-  globalForDb.mongoClient ?? new MongoClient(process.env.DATABASE_URL);
+  globalForDb.mongoClient ?? new MongoClient(runtimeConfig.databaseUrl);
 
-if (process.env.NODE_ENV !== "production") {
+if (runtimeConfig.nodeEnv !== "production") {
   globalForDb.mongoClient = client;
 }
 
-export const db = client.db(process.env.MONGO_DB_NAME);
+export const db = client.db(runtimeConfig.mongoDbName);

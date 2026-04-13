@@ -1,13 +1,20 @@
 import { Suspense } from "react";
 import { PageLoadingSpinner } from "@/components/PageLoadingSpinner";
-import TermAssignedUsersAccessManager from "@/features/auth/components/TermAssignedUsersAccessManager";
-import { listAssignableUsers } from "@/features/auth/dal";
-import TermInstructorsManager from "@/features/groupMemberships/components/TermInstructorsManager";
-import TermProgramManagersManager from "@/features/groupMemberships/components/TermProgramManagersManager";
-import { listMembershipsByTerm } from "@/features/groupMemberships/dal";
-import TermGroupsManager from "@/features/groups/components/TermGroupsManager";
-import { listGroupCountsByTerm, listGroupsByTerm } from "@/features/groups/dal";
-import TermDetailView from "@/features/terms/TermDetailView";
+import {
+  listAssignableUsers,
+  TermAssignedUsersAccessManager,
+} from "@/features/auth";
+import {
+  listMembershipsByTerm,
+  TermInstructorsManager,
+  TermProgramManagersManager,
+} from "@/features/groupMemberships";
+import {
+  listGroupCountsByTerm,
+  listGroupsByTerm,
+  TermGroupsManager,
+} from "@/features/groups";
+import { TermDetailView } from "@/features/terms";
 import { CAMP_CATEGORIES } from "@/lib/camp-categories";
 
 interface GroupDetailPageProps {

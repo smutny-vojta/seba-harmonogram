@@ -5,7 +5,7 @@
  * Pozadavky: Preferovat server rendering a drzet komponentu bez mutacni logiky.
  */
 
-import ActivitiesContent from "@features/activities/components/ActivitiesContent";
+import { ActivitiesContent } from "@/features/activities/components";
 import { listActivities } from "./dal";
 
 type LocationOption = {

@@ -1,11 +1,11 @@
-import { archiveExpiredTermGroups } from "@/features/groups/dal";
-import { env } from "@/lib/env";
+import { runtimeConfig } from "@/config";
+import { archiveExpiredTermGroups } from "@/features/groups";
 
 export const dynamic = "force-dynamic";
 
 function hasValidCronSecret(request: Request): boolean {
-  if (!env.CRON_SECRET) {
-    return env.NODE_ENV !== "production";
+  if (!runtimeConfig.cronSecret) {
+    return runtimeConfig.nodeEnv !== "production";
   }
 
   const headerSecret = request.headers.get("x-cron-secret");
@@ -14,7 +14,10 @@ function hasValidCronSecret(request: Request): boolean {
     ? authorization.slice("Bearer ".length)
     : null;
 
-  return headerSecret === env.CRON_SECRET || bearerSecret === env.CRON_SECRET;
+  return (
+    headerSecret === runtimeConfig.cronSecret ||
+    bearerSecret === runtimeConfig.cronSecret
+  );
 }
 
 export async function GET(request: Request) {

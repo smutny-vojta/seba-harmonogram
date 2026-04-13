@@ -4,19 +4,24 @@ import { useRouter } from "next/navigation";
 import { useAction } from "next-safe-action/hooks";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
   removeGroupMembershipAction,
   upsertGroupMembershipAction,
 } from "@/features/groupMemberships/actions";
+import { AssignedUserBadge } from "@/features/groupMemberships/components";
+import {
+  useAvailableAssignableUsers,
+  useUserById,
+} from "@/features/groupMemberships/hooks";
+import type { AccountState, MembershipRole } from "@/lib/constants";
 
 interface AssignableUserItem {
   id: string;
   name: string;
   phoneNumber: string;
-  accountState: "pending" | "active" | "blocked";
+  accountState: AccountState;
 }
 
 interface GroupItem {
@@ -28,7 +33,7 @@ interface GroupItem {
 interface MembershipItem {
   userId: string;
   groupId: string;
-  role: "instructor" | "programManager" | "headManager";
+  role: MembershipRole;
 }
 
 interface TermInstructorsManagerProps {
@@ -49,10 +54,7 @@ export default function TermInstructorsManager({
     Record<string, string>
   >({});
 
-  const userById = useMemo(
-    () => new Map(assignableUsers.map((user) => [user.id, user])),
-    [assignableUsers],
-  );
+  const userById = useUserById(assignableUsers);
 
   const membershipsByGroupId = useMemo(() => {
     const map = new Map<string, MembershipItem[]>();
@@ -75,13 +77,9 @@ export default function TermInstructorsManager({
     [memberships],
   );
 
-  const availableUsers = useMemo(
-    () =>
-      assignableUsers.filter(
-        (user) =>
-          !occupiedUserIds.has(user.id) && user.accountState !== "blocked",
-      ),
-    [assignableUsers, occupiedUserIds],
+  const availableUsers = useAvailableAssignableUsers(
+    assignableUsers,
+    occupiedUserIds,
   );
 
   const { execute: upsertMembership, isExecuting: isAssigning } = useAction(
@@ -187,26 +185,18 @@ export default function TermInstructorsManager({
               <div className="flex flex-wrap items-center gap-2">
                 {instructors.length > 0 ? (
                   instructors.map((user) => (
-                    <Badge
+                    <AssignedUserBadge
                       key={user.id}
-                      variant="secondary"
-                      className="flex h-8 items-center gap-2 rounded-md px-2"
-                    >
-                      <span className="max-w-56 truncate">{user.name}</span>
-                      <button
-                        type="button"
-                        className="text-muted-foreground hover:text-foreground cursor-pointer text-xs"
-                        disabled={isMutating}
-                        onClick={() => {
-                          removeMembership({
-                            userId: user.id,
-                            termKey,
-                          });
-                        }}
-                      >
-                        Odebrat
-                      </button>
-                    </Badge>
+                      userId={user.id}
+                      userName={user.name}
+                      disabled={isMutating}
+                      onRemove={(userId) => {
+                        removeMembership({
+                          userId,
+                          termKey,
+                        });
+                      }}
+                    />
                   ))
                 ) : (
                   <span className="text-muted-foreground text-sm">

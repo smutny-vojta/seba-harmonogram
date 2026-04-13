@@ -7,9 +7,9 @@
 
 "use client";
 
-import { ActivitiesAddDialog } from "@features/activities/components/ActivitiesDialogs";
 import { LucideLayoutGrid, LucideList } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ActivitiesAddDialog } from "./ActivitiesDialogs";
 
 export type ActivitiesViewMode = "grid" | "list";
 

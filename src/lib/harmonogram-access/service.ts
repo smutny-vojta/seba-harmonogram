@@ -1,10 +1,9 @@
 import type { Collection, ObjectId } from "mongodb";
+import type { MembershipRole } from "@/lib/constants";
 import { db } from "@/lib/db";
 import { getCurrentFixedTerm } from "@/lib/terms";
 
 type HarmonogramAudience = "camp" | "office";
-
-type MembershipRole = "instructor" | "programManager" | "headManager";
 
 type GroupMembershipDocument = {
   _id: ObjectId;

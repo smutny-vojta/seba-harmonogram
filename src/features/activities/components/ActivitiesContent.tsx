@@ -1,12 +1,10 @@
 "use client";
 
-import ActivitiesGrid from "@features/activities/components/ActivitiesGrid";
-import ActivitiesList from "@features/activities/components/ActivitiesList";
-import ActivitiesMenu, {
-  type ActivitiesViewMode,
-} from "@features/activities/components/ActivitiesMenu";
 import { useState } from "react";
 import type { ActivityItemType } from "@/features/activities/types";
+import ActivitiesGrid from "./ActivitiesGrid";
+import ActivitiesList from "./ActivitiesList";
+import ActivitiesMenu, { type ActivitiesViewMode } from "./ActivitiesMenu";
 
 type LocationOption = {
   id: string;

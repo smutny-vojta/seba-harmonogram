@@ -1,5 +1,5 @@
 export const CAMP_CATEGORIES = {
-  "cyber-camp": {
+  cyber: {
     name: "Cyber camp",
     shortCode: "CC",
     kind: "camp",
@@ -14,17 +14,19 @@ export const CAMP_CATEGORIES = {
     shortCode: "MC",
     kind: "camp",
   },
-  "sportovni-tabor": {
+  sport: {
     name: "Sportovní tábor",
     shortCode: "ST",
     kind: "camp",
   },
   kancl: {
     name: "Kancl",
-    shortCode: "KAN",
+    shortCode: "KC",
     kind: "office",
   },
 } as const;
+
+export const CAMP_CATEGORY_KINDS = ["camp", "office"] as const;
 
 export const CAMP_CATEGORIES_ARRAY = Object.keys(CAMP_CATEGORIES) as [
   keyof typeof CAMP_CATEGORIES,

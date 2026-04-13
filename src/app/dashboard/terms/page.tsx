@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { PageLoadingSpinner } from "@/components/PageLoadingSpinner";
-import TermsView from "@/features/terms/TermsView";
+import { TermsView } from "@/features/terms";
 
 export default async function TermsPage() {
   return (

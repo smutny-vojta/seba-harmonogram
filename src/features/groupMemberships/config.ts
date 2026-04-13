@@ -1,5 +1,1 @@
-export const MEMBERSHIP_ROLES = [
-  "instructor",
-  "programManager",
-  "headManager",
-] as const;
+export { MEMBERSHIP_ROLES } from "@/lib/constants";

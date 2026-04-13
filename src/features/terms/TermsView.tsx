@@ -1,6 +1,5 @@
+import { TermsGrid, TermsMenu } from "@/features/terms/components";
 import { listTerms } from "@/features/terms/dal";
-import TermsGrid from "./components/TermsGrid";
-import TermsMenu from "./components/TermsMenu";
 
 export default async function TermsView() {
   const terms = await listTerms();

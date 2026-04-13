@@ -4,19 +4,24 @@ import { useRouter } from "next/navigation";
 import { useAction } from "next-safe-action/hooks";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
   assignProgramManagerToTermAction,
   removeGroupMembershipAction,
 } from "@/features/groupMemberships/actions";
+import { AssignedUserBadge } from "@/features/groupMemberships/components";
+import {
+  useAvailableAssignableUsers,
+  useUserById,
+} from "@/features/groupMemberships/hooks";
+import type { AccountState } from "@/lib/constants";
 
 interface AssignableUserItem {
   id: string;
   name: string;
   phoneNumber: string;
-  accountState: "pending" | "active" | "blocked";
+  accountState: AccountState;
 }
 
 interface TermProgramManagersManagerProps {
@@ -40,10 +45,7 @@ export default function TermProgramManagersManager({
     [occupiedUserIds],
   );
 
-  const userById = useMemo(
-    () => new Map(assignableUsers.map((user) => [user.id, user])),
-    [assignableUsers],
-  );
+  const userById = useUserById(assignableUsers);
 
   const assignedProgramManagers = useMemo(
     () =>
@@ -53,13 +55,9 @@ export default function TermProgramManagersManager({
     [initialProgramManagerUserIds, userById],
   );
 
-  const selectableUsers = useMemo(
-    () =>
-      assignableUsers.filter(
-        (user) =>
-          !occupiedUserIdSet.has(user.id) && user.accountState !== "blocked",
-      ),
-    [assignableUsers, occupiedUserIdSet],
+  const selectableUsers = useAvailableAssignableUsers(
+    assignableUsers,
+    occupiedUserIdSet,
   );
 
   const {
@@ -131,26 +129,18 @@ export default function TermProgramManagersManager({
         <div className="flex flex-wrap items-center gap-2">
           {assignedProgramManagers.length > 0 ? (
             assignedProgramManagers.map((user) => (
-              <Badge
+              <AssignedUserBadge
                 key={user.id}
-                variant="secondary"
-                className="flex h-8 items-center gap-2 rounded-md px-2"
-              >
-                <span className="max-w-56 truncate">{user.name}</span>
-                <button
-                  type="button"
-                  className="text-muted-foreground hover:text-foreground cursor-pointer text-xs"
-                  disabled={isMutating}
-                  onClick={() => {
-                    removeMembership({
-                      userId: user.id,
-                      termKey,
-                    });
-                  }}
-                >
-                  Odebrat
-                </button>
-              </Badge>
+                userId={user.id}
+                userName={user.name}
+                disabled={isMutating}
+                onRemove={(userId) => {
+                  removeMembership({
+                    userId,
+                    termKey,
+                  });
+                }}
+              />
             ))
           ) : (
             <span className="text-muted-foreground text-sm">

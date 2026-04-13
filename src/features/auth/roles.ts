@@ -7,6 +7,11 @@
 
 import { createAccessControl } from "better-auth/plugins";
 import { adminAc } from "better-auth/plugins/organization/access";
+import {
+  MEMBERSHIP_ROLE_LABELS,
+  MEMBERSHIP_ROLES,
+  type MembershipRole,
+} from "@/lib/constants";
 
 export const statement = {
   scheduleEntry: ["create", "read", "update", "delete"],
@@ -14,46 +19,46 @@ export const statement = {
 
 export const ac = createAccessControl(statement);
 
+type AppRoleDefinition = {
+  id: MembershipRole;
+  label: string;
+  acRole: ReturnType<typeof ac.newRole>;
+};
+
 export const APP_ROLES = {
   instructor: {
     id: "instructor",
-    label: "Instruktor",
+    label: MEMBERSHIP_ROLE_LABELS.instructor,
     acRole: ac.newRole({ scheduleEntry: ["read"] }),
   },
   programManager: {
     id: "programManager",
-    label: "Programák",
+    label: MEMBERSHIP_ROLE_LABELS.programManager,
     acRole: ac.newRole({
       scheduleEntry: ["create", "read", "update", "delete"],
     }),
   },
   headManager: {
     id: "headManager",
-    label: "Hlavas",
+    label: MEMBERSHIP_ROLE_LABELS.headManager,
     acRole: ac.newRole({
       scheduleEntry: ["create", "read", "update", "delete"],
       ...adminAc.statements,
     }),
   },
-} as const;
+} as const satisfies Record<MembershipRole, AppRoleDefinition>;
 
 // ---------------------------------------------------------------------------
 // Extrahované formáty
 // ---------------------------------------------------------------------------
 
-export const ROLES = Object.keys(
-  APP_ROLES,
-) as readonly (keyof typeof APP_ROLES)[];
+export const ROLES = MEMBERSHIP_ROLES;
 
-export const ROLE_OBJECTS = {
-  instructor: APP_ROLES.instructor.acRole,
-  programManager: APP_ROLES.programManager.acRole,
-  headManager: APP_ROLES.headManager.acRole,
+export const ROLE_OBJECTS = Object.fromEntries(
+  ROLES.map((role) => [role, APP_ROLES[role].acRole]),
+) as {
+  [Role in MembershipRole]: (typeof APP_ROLES)[Role]["acRole"];
 };
 
 /** Mapa rolí na české názvy pro zobrazení na frontendu */
-export const ROLE_LABELS: Record<string, string> = {
-  instructor: APP_ROLES.instructor.label,
-  programManager: APP_ROLES.programManager.label,
-  headManager: APP_ROLES.headManager.label,
-};
+export const ROLE_LABELS = MEMBERSHIP_ROLE_LABELS;
