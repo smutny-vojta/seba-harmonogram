@@ -1,17 +1,17 @@
 /**
- * Soubor: src/features/activityLocations/components/ActivityLocationsGrid.tsx
- * Ucel: UI komponenta feature "activityLocations".
+ * Soubor: src/features/locations/components/LocationsGrid.tsx
+ * Ucel: UI komponenta feature "locations".
  * Parametry/Vstupy: Props pro vykresleni dat a obsluhu uzivatelskych akci.
  * Pozadavky: Drzet komponentu zamerenou na prezentaci/UX a respektovat feature schema.
  */
 
-import type { ActivityLocationItemType } from "../types";
-import ActivityLocationsCard from "./ActivityLocationsCard";
+import type { LocationItemType } from "../types";
+import LocationsCard from "./LocationsCard";
 
-export default function ActivityLocationsGrid({
+export default function LocationsGrid({
   locations,
 }: {
-  locations: ActivityLocationItemType[];
+  locations: LocationItemType[];
 }) {
   return (
     <div className="grid min-h-0 flex-1 auto-rows-max grid-cols-3 gap-4 overflow-y-auto">
@@ -21,7 +21,7 @@ export default function ActivityLocationsGrid({
         </div>
       )}
       {locations.map((location) => (
-        <ActivityLocationsCard key={location.id} location={location} />
+        <LocationsCard key={location.id} location={location} />
       ))}
     </div>
   );

@@ -1,8 +1,8 @@
 import type {
-  ActivityLocationItemType,
-  ActivityLocationType,
-  NewActivityLocationType,
-} from "@/features/activityLocations/types";
+  LocationItemType,
+  LocationType,
+  NewLocationType,
+} from "@/features/locations/types";
 import { mapMongoIdToId } from "@/utils/mongo";
 import { randomBool } from "@/utils/random";
 
@@ -37,9 +37,7 @@ const LOCATIONS: Record<string, string> = {
   neurceno: "Neurčeno",
 };
 
-export function parseLocationFormData(
-  formData: FormData,
-): NewActivityLocationType {
+export function parseLocationFormData(formData: FormData): NewLocationType {
   return {
     name: String(formData.get("name") ?? "").trim(),
     restrictedAccess: formData.get("restrictedAccess") === "on",
@@ -48,13 +46,11 @@ export function parseLocationFormData(
   };
 }
 
-export function mapActivityLocationToItem(
-  location: ActivityLocationType,
-): ActivityLocationItemType {
+export function mapLocationToItem(location: LocationType): LocationItemType {
   return mapMongoIdToId(location);
 }
 
-export function buildLocationSeedData(): NewActivityLocationType[] {
+export function buildLocationSeedData(): NewLocationType[] {
   return Object.values(LOCATIONS).map((name) => ({
     name,
     indoor: randomBool(),

@@ -5,6 +5,8 @@
  * Pozadavky: Bez runtime logiky; pouze type aliasy a type-only importy.
  */
 
+import type { AccountState } from "./config";
 import type { ROLES } from "./roles";
 
 export type Role = (typeof ROLES)[number];
+export type { AccountState };

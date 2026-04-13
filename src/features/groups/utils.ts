@@ -1,14 +1,5 @@
-import { ObjectId } from "mongodb";
 import { CAMP_CATEGORIES } from "./config";
 import type { GroupType } from "./types";
-
-export function toObjectId(value: string, label: string): ObjectId {
-  if (!ObjectId.isValid(value)) {
-    throw new Error(`${label} je neplatné.`);
-  }
-
-  return new ObjectId(value);
-}
 
 export function createGeneratedGroupSlug(
   campCategory: GroupType["campCategory"],
@@ -38,7 +29,7 @@ export function createGeneratedGroupShortCode(
   campCategory: GroupType["campCategory"],
   index: number,
 ): string {
-  const baseShortCode = CAMP_CATEGORIES[campCategory].shortCodeBase;
+  const baseShortCode = CAMP_CATEGORIES[campCategory].shortCode;
 
   if (index <= 1) {
     return baseShortCode;

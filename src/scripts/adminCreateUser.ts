@@ -4,7 +4,7 @@
 //   const createdUser = await createUser({
 //     name: "Vojtěch Smutný",
 //     phoneNumber: "+420123456789",
-//     role: ["instructor", "programManager", "headProgramManager", "headManager"],
+//     role: ["instructor", "programManager", "headManager"],
 //   });
 
 //   console.log(createdUser);

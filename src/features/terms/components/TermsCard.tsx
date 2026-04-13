@@ -1,13 +1,9 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  TermsDeleteDialog,
-  TermsEditDialog,
-} from "@/features/terms/components/TermsDialogs";
-import type { TermItemType } from "@/features/terms/types";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { TermItemType } from "@/features/terms/types";
 import { formatPragueDate } from "@/lib/date-time/prague";
 
 interface TermsCardProps {
@@ -20,19 +16,13 @@ export default function TermsCard({ term }: TermsCardProps) {
   return (
     <Card
       tabIndex={0}
-      onClick={(event) => {
-        const target = event.target as HTMLElement;
-
-        if (target.closest('[data-stop-navigation="true"]')) {
-          return;
-        }
-
-        router.push(`/dashboard/terms/${term.id}`);
+      onClick={() => {
+        router.push(`/dashboard/groups/${term.id}`);
       }}
       onKeyDown={(event) => {
         if (event.key === "Enter" || event.key === " ") {
           event.preventDefault();
-          router.push(`/dashboard/terms/${term.id}`);
+          router.push(`/dashboard/groups/${term.id}`);
         }
       }}
       className={
@@ -47,14 +37,6 @@ export default function TermsCard({ term }: TermsCardProps) {
           <p className="text-muted-foreground mt-1 text-xs">
             {term.isActive ? "Aktivní" : "Neaktivní"}
           </p>
-        </div>
-        <div className="flex gap-2" data-stop-navigation="true">
-          <div data-stop-navigation="true">
-            <TermsEditDialog term={term} />
-          </div>
-          <div data-stop-navigation="true">
-            <TermsDeleteDialog id={term.id} name={term.name} />
-          </div>
         </div>
       </CardHeader>
       <CardContent className="space-y-3 text-sm">
@@ -79,7 +61,9 @@ export default function TermsCard({ term }: TermsCardProps) {
                 variant={campCategoryCount.count > 0 ? "default" : "secondary"}
                 className="w-6"
               >
-                <span className={`text-xs font-medium ${campCategoryCount.count === 0 ? "text-muted-foreground" : ""}`}>
+                <span
+                  className={`text-xs font-medium ${campCategoryCount.count === 0 ? "text-muted-foreground" : ""}`}
+                >
                   {campCategoryCount.count}
                 </span>
               </Badge>

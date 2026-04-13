@@ -1,6 +1,6 @@
 /**
- * Soubor: src/features/activityLocations/components/ActivityLocationsCard.tsx
- * Ucel: UI komponenta feature "activityLocations".
+ * Soubor: src/features/locations/components/LocationsCard.tsx
+ * Ucel: UI komponenta feature "locations".
  * Parametry/Vstupy: Props pro vykresleni dat a obsluhu uzivatelskych akci.
  * Pozadavky: Drzet komponentu zamerenou na prezentaci/UX a respektovat feature schema.
  */
@@ -8,15 +8,15 @@
 import { LucideMountain, LucideUmbrellaOff } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  ActivityLocationsDeleteDialog,
-  ActivityLocationsEditDialog,
-} from "@/features/activityLocations/components/ActivityLocationsDialogs";
-import type { ActivityLocationItemType } from "../types";
+  LocationsDeleteDialog,
+  LocationsEditDialog,
+} from "@/features/locations/components/LocationsDialogs";
+import type { LocationItemType } from "../types";
 
-export default function ActivityLocationsCard({
+export default function LocationsCard({
   location,
 }: {
-  location: ActivityLocationItemType;
+  location: LocationItemType;
 }) {
   return (
     <Card
@@ -27,11 +27,8 @@ export default function ActivityLocationsCard({
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle className="text-lg font-semibold">{location.name}</CardTitle>
         <div className="flex gap-x-2">
-          <ActivityLocationsEditDialog location={location} />
-          <ActivityLocationsDeleteDialog
-            id={location.id}
-            name={location.name}
-          />
+          <LocationsEditDialog location={location} />
+          <LocationsDeleteDialog id={location.id} name={location.name} />
         </div>
       </CardHeader>
       <CardContent>

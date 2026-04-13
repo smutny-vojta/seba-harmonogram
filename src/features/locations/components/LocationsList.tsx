@@ -14,10 +14,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import {
-  ActivityLocationsDeleteDialog,
-  ActivityLocationsEditDialog,
-} from "@/features/activityLocations/components/ActivityLocationsDialogs";
-import type { ActivityLocationItemType } from "../types";
+  LocationsDeleteDialog,
+  LocationsEditDialog,
+} from "@/features/locations/components/LocationsDialogs";
+import type { LocationItemType } from "../types";
 
 type HeaderFilterOption = {
   value: string;
@@ -71,10 +71,10 @@ function FilterableHeaderMenu({
   );
 }
 
-export default function ActivityLocationsList({
+export default function LocationsList({
   locations,
 }: {
-  locations: ActivityLocationItemType[];
+  locations: LocationItemType[];
 }) {
   const [search, setSearch] = useState("");
   const [accessFilter, setAccessFilter] = useState<AccessFilter>("all");
@@ -121,7 +121,7 @@ export default function ActivityLocationsList({
     [accessFilter, indoorFilter, locations, offsiteFilter, search],
   );
 
-  const columns: Array<ColumnDef<ActivityLocationItemType>> = [
+  const columns: Array<ColumnDef<LocationItemType>> = [
     {
       accessorKey: "name",
       header: "Název",
@@ -206,8 +206,8 @@ export default function ActivityLocationsList({
       header: () => <div className="text-right">Akce</div>,
       cell: ({ row }) => (
         <div className="flex justify-end gap-x-2">
-          <ActivityLocationsEditDialog location={row.original} />
-          <ActivityLocationsDeleteDialog
+          <LocationsEditDialog location={row.original} />
+          <LocationsDeleteDialog
             id={row.original.id}
             name={row.original.name}
           />

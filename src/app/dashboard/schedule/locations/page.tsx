@@ -1,11 +1,11 @@
 import { Suspense } from "react";
 import { PageLoadingSpinner } from "@/components/PageLoadingSpinner";
-import ActivityLocationsView from "@/features/activityLocations/ActivityLocationsView";
+import LocationsView from "@/features/locations/LocationsView";
 
-export default async function ActivityLocationsPage() {
+export default async function LocationsPage() {
   return (
     <Suspense fallback={<PageLoadingSpinner />}>
-      <ActivityLocationsView />
+      <LocationsView />
     </Suspense>
   );
 }

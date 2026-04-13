@@ -14,7 +14,7 @@ export const increaseGroupCountAction = actionClient
     const result = await increaseGroupCountForCategory(parsedInput);
 
     revalidatePath("/dashboard/terms");
-    revalidatePath(`/dashboard/terms/${parsedInput.termId}`);
+    revalidatePath(`/dashboard/terms/${parsedInput.termKey}`);
 
     return result;
   });
@@ -25,7 +25,7 @@ export const decreaseGroupCountAction = actionClient
     const result = await decreaseGroupCountForCategory(parsedInput);
 
     revalidatePath("/dashboard/terms");
-    revalidatePath(`/dashboard/terms/${parsedInput.termId}`);
+    revalidatePath(`/dashboard/terms/${parsedInput.termKey}`);
 
     return result;
   });

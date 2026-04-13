@@ -41,12 +41,24 @@ export const auth = betterAuth({
         type: "string",
         required: true,
       },
-      activeTurnusId: {
+      accountState: {
         type: "string",
         required: false,
       },
-      activeOddilId: {
+      currentTermKey: {
         type: "string",
+        required: false,
+      },
+      currentGroupId: {
+        type: "string",
+        required: false,
+      },
+      currentRole: {
+        type: "string",
+        required: false,
+      },
+      contextUpdatedAt: {
+        type: "date",
         required: false,
       },
     },

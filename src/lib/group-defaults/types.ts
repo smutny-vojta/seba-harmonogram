@@ -3,7 +3,7 @@ import type { CampCategory } from "@/lib/camp-categories";
 
 export type GroupDocument = {
   _id: ObjectId;
-  termId: ObjectId;
+  termKey: string;
   campCategory: CampCategory;
   name: string;
   slug: string;
@@ -13,12 +13,8 @@ export type GroupDocument = {
   updatedAt: Date;
 };
 
-export type TermLookupDocument = {
-  _id: ObjectId;
-};
-
 export type SetGroupCountInternalOptions = {
-  termId: ObjectId;
+  termKey: string;
   campCategory: CampCategory;
   count: number;
 };

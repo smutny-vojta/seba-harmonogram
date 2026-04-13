@@ -4,15 +4,15 @@ import { getTermById } from "@/features/terms/dal";
 import { formatPragueDate } from "@/lib/date-time/prague";
 
 interface TermDetailViewProps {
-  termId: string;
+  termKey: string;
   children?: ReactNode;
 }
 
 export default async function TermDetailView({
-  termId,
+  termKey,
   children,
 }: TermDetailViewProps) {
-  const term = await getTermById(termId);
+  const term = await getTermById(termKey);
 
   if (!term) {
     notFound();

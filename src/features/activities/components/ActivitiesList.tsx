@@ -28,7 +28,7 @@ import { Input } from "@/components/ui/input";
 import { ACTIVITY_CATEGORIES } from "@/features/activities/config";
 import type { ActivityItemType } from "@/features/activities/types";
 
-type ActivityLocationOption = {
+type LocationOption = {
   id: string;
   name: string;
 };
@@ -131,7 +131,7 @@ export default function ActivitiesList({
   locationsById,
 }: {
   activities: ActivityItemType[];
-  locations: ActivityLocationOption[];
+  locations: LocationOption[];
   locationsById: Record<string, string>;
 }) {
   const [search, setSearch] = useState("");

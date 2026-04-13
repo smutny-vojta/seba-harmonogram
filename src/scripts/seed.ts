@@ -1,8 +1,8 @@
 import { stdin as input, stdout as output } from "node:process";
 import { emitKeypressEvents } from "node:readline";
 import { seedActivitiesFeature } from "@/features/activities/seed";
-import { listActivityLocations } from "@/features/activityLocations/dal";
-import { seedActivityLocationsFeature } from "@/features/activityLocations/seed";
+import { listLocations } from "@/features/locations/dal";
+import { seedLocationsFeature } from "@/features/locations/seed";
 import { seedTermsFeature } from "@/features/terms/seed";
 
 type SeedEntityId = "locations" | "activities" | "terms";
@@ -42,7 +42,7 @@ const ENTITIES: SeedEntity[] = [
     label: "Lokace",
     aliases: ["locations", "lokace", "1"],
     run: async (ctx) => {
-      ctx.locationIds = await seedActivityLocationsFeature({
+      ctx.locationIds = await seedLocationsFeature({
         prune: ctx.prune,
       });
     },
@@ -55,7 +55,7 @@ const ENTITIES: SeedEntity[] = [
       const locationIds =
         ctx.locationIds.length > 0
           ? ctx.locationIds
-          : (await listActivityLocations()).map((location) => location.id);
+          : (await listLocations()).map((location) => location.id);
 
       if (locationIds.length === 0) {
         throw new Error(

@@ -43,7 +43,7 @@ import {
   parseActivityFormData,
 } from "@/features/activities/utils";
 
-type ActivityLocationOption = {
+type LocationOption = {
   id: string;
   name: string;
 };
@@ -53,7 +53,7 @@ function ActivityFormFields({
   defaultValues,
   showRequiredMarkers = false,
 }: {
-  locations: ActivityLocationOption[];
+  locations: LocationOption[];
   defaultValues?: Partial<ActivityItemType>;
   showRequiredMarkers?: boolean;
 }) {
@@ -205,7 +205,7 @@ function ActivityFormFields({
 export function ActivitiesAddDialog({
   locations,
 }: {
-  locations: ActivityLocationOption[];
+  locations: LocationOption[];
 }) {
   const formRef = useRef<HTMLFormElement>(null);
   const [open, setOpen] = useState(false);
@@ -268,7 +268,7 @@ export function ActivitiesEditDialog({
   locations,
 }: {
   activity: ActivityItemType;
-  locations: ActivityLocationOption[];
+  locations: LocationOption[];
 }) {
   const [open, setOpen] = useState(false);
 

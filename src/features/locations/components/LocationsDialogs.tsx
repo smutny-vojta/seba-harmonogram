@@ -1,6 +1,6 @@
 /**
- * Soubor: src/features/activityLocations/components/ActivityLocationsDialogs.tsx
- * Ucel: UI komponenta feature "activityLocations".
+ * Soubor: src/features/locations/components/LocationsDialogs.tsx
+ * Ucel: UI komponenta feature "locations".
  * Parametry/Vstupy: Props pro vykresleni dat a obsluhu uzivatelskych akci.
  * Pozadavky: Drzet komponentu zamerenou na prezentaci/UX a respektovat feature schema.
  */
@@ -28,18 +28,18 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { LoadingButton } from "@/components/ui/loading-button";
 import {
-  createActivityLocationAction,
-  deleteActivityLocationAction,
-  updateActivityLocationAction,
-} from "@/features/activityLocations/actions";
-import type { ActivityLocationItemType } from "@/features/activityLocations/types";
-import { parseLocationFormData } from "@/features/activityLocations/utils";
+  createLocationAction,
+  deleteLocationAction,
+  updateLocationAction,
+} from "@/features/locations/actions";
+import type { LocationItemType } from "@/features/locations/types";
+import { parseLocationFormData } from "@/features/locations/utils";
 
 function LocationFormFields({
   defaultValues,
   showRequiredMarkers = false,
 }: {
-  defaultValues?: Partial<ActivityLocationItemType>;
+  defaultValues?: Partial<LocationItemType>;
   showRequiredMarkers?: boolean;
 }) {
   return (
@@ -84,11 +84,11 @@ function LocationFormFields({
   );
 }
 
-export function ActivityLocationsAddDialog() {
+export function LocationsAddDialog() {
   const formRef = useRef<HTMLFormElement>(null);
   const [open, setOpen] = useState(false);
 
-  const { execute, isExecuting } = useAction(createActivityLocationAction, {
+  const { execute, isExecuting } = useAction(createLocationAction, {
     onSuccess: () => {
       toast.success(`Lokace byla úspěšně přidána.`);
       setOpen(false);
@@ -141,14 +141,14 @@ export function ActivityLocationsAddDialog() {
   );
 }
 
-export function ActivityLocationsEditDialog({
+export function LocationsEditDialog({
   location,
 }: {
-  location: ActivityLocationItemType;
+  location: LocationItemType;
 }) {
   const [open, setOpen] = useState(false);
 
-  const { execute, isExecuting } = useAction(updateActivityLocationAction, {
+  const { execute, isExecuting } = useAction(updateLocationAction, {
     onSuccess: () => {
       toast.success(`Lokace "${location.name}" byla úspěšně upravena.`);
       setOpen(false);
@@ -202,7 +202,7 @@ export function ActivityLocationsEditDialog({
   );
 }
 
-export function ActivityLocationsDeleteDialog({
+export function LocationsDeleteDialog({
   id,
   name,
 }: {
@@ -211,7 +211,7 @@ export function ActivityLocationsDeleteDialog({
 }) {
   const [open, setOpen] = useState(false);
 
-  const { execute, isExecuting } = useAction(deleteActivityLocationAction, {
+  const { execute, isExecuting } = useAction(deleteLocationAction, {
     onSuccess: () => {
       toast.success(`Lokalita "${name}" byla úspěšně smazána.`);
       setOpen(false);

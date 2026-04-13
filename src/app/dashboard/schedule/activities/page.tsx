@@ -1,10 +1,10 @@
 import { Suspense } from "react";
 import { PageLoadingSpinner } from "@/components/PageLoadingSpinner";
 import ActivitiesView from "@/features/activities/ActivitiesView";
-import { listActivityLocations } from "@/features/activityLocations/dal";
+import { listLocations } from "@/features/locations/dal";
 
 export default async function ActivitiesPage() {
-  const locations = await listActivityLocations();
+  const locations = await listLocations();
 
   return (
     <Suspense fallback={<PageLoadingSpinner />}>

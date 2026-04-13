@@ -12,12 +12,13 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import {
+  GROUP_DETAIL_ROUTE,
   getBreadcrumbs,
   getPageTitle,
   getTermIdFromPathname,
   isRouteMatch,
-  TERM_DETAIL_ROUTE,
   type NavigationTermItem,
+  TERMS_DETAIL_ROUTE,
 } from "@/lib/navigation";
 
 interface PageHeaderProps {
@@ -30,7 +31,9 @@ export default function PageHeader({ terms }: PageHeaderProps) {
   const activeTerm = termId
     ? terms.find((term) => term.id === termId)
     : undefined;
-  const isTermDetailPage = isRouteMatch(pathname, TERM_DETAIL_ROUTE);
+  const isTermDetailPage =
+    isRouteMatch(pathname, GROUP_DETAIL_ROUTE) ||
+    isRouteMatch(pathname, TERMS_DETAIL_ROUTE);
   const breadcrumbs = getBreadcrumbs(pathname).map((breadcrumb, index, all) => {
     const isLastItem = index === all.length - 1;
 

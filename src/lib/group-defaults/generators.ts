@@ -1,5 +1,5 @@
-import { CAMP_CATEGORIES } from "@/lib/camp-categories";
 import type { CampCategory } from "@/lib/camp-categories";
+import { CAMP_CATEGORIES } from "@/lib/camp-categories";
 
 export function createGeneratedGroupSlug(
   campCategory: CampCategory,
@@ -29,7 +29,7 @@ export function createGeneratedGroupShortCode(
   campCategory: CampCategory,
   index: number,
 ) {
-  const baseShortCode = CAMP_CATEGORIES[campCategory].shortCodeBase;
+  const baseShortCode = CAMP_CATEGORIES[campCategory].shortCode;
 
   if (index <= 1) {
     return baseShortCode;

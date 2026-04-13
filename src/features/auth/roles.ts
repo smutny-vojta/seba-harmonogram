@@ -27,14 +27,6 @@ export const APP_ROLES = {
       scheduleEntry: ["create", "read", "update", "delete"],
     }),
   },
-  headProgramManager: {
-    id: "headProgramManager",
-    label: "Hlavní programák",
-    acRole: ac.newRole({
-      scheduleEntry: ["create", "read", "update", "delete"],
-      ...adminAc.statements,
-    }),
-  },
   headManager: {
     id: "headManager",
     label: "Hlavas",
@@ -56,7 +48,6 @@ export const ROLES = Object.keys(
 export const ROLE_OBJECTS = {
   instructor: APP_ROLES.instructor.acRole,
   programManager: APP_ROLES.programManager.acRole,
-  headProgramManager: APP_ROLES.headProgramManager.acRole,
   headManager: APP_ROLES.headManager.acRole,
 };
 
@@ -64,6 +55,5 @@ export const ROLE_OBJECTS = {
 export const ROLE_LABELS: Record<string, string> = {
   instructor: APP_ROLES.instructor.label,
   programManager: APP_ROLES.programManager.label,
-  headProgramManager: APP_ROLES.headProgramManager.label,
   headManager: APP_ROLES.headManager.label,
 };

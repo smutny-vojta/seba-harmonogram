@@ -1,4 +1,4 @@
-import { NAVIGATION, TERMS_ROUTE } from "./config";
+import { DASHBOARD_ROUTE, GROUPS_ROUTE, NAVIGATION } from "./config";
 import type { NavigationBreadcrumbItem, NavigationItem } from "./types";
 
 const PATH_PARAM_REGEXP = /^\[[^/]+\]$/;
@@ -33,6 +33,50 @@ const routeToRegExp = (href: string) => {
     .join("/");
 
   return new RegExp(`^${pattern}$`);
+};
+
+const isDashboardPath = (pathname: string) => {
+  return (
+    pathname === DASHBOARD_ROUTE || pathname.startsWith(`${DASHBOARD_ROUTE}/`)
+  );
+};
+
+const formatSegmentLabel = (segment: string) => {
+  if (!segment) {
+    return "Stránka";
+  }
+
+  const decodedSegment = decodeURIComponent(segment);
+
+  return decodedSegment.charAt(0).toUpperCase() + decodedSegment.slice(1);
+};
+
+const getDashboardFallbackBreadcrumbs = (
+  pathname: string,
+): NavigationBreadcrumbItem[] => {
+  const normalizedPathname = normalizePathname(pathname);
+
+  if (!isDashboardPath(normalizedPathname)) {
+    return [];
+  }
+
+  const dashboardBreadcrumb: NavigationBreadcrumbItem = {
+    title: "Dashboard",
+    href: DASHBOARD_ROUTE,
+  };
+
+  const segments = normalizedPathname.split("/").filter(Boolean).slice(1);
+
+  if (segments.length === 0) {
+    return [dashboardBreadcrumb];
+  }
+
+  const nestedBreadcrumbs = segments.map((segment, index) => ({
+    title: formatSegmentLabel(segment),
+    href: `${DASHBOARD_ROUTE}/${segments.slice(0, index + 1).join("/")}`,
+  }));
+
+  return [dashboardBreadcrumb, ...nestedBreadcrumbs];
 };
 
 const findRouteTrail = (
@@ -83,16 +127,37 @@ export function isRouteActive(
 }
 
 export function getBreadcrumbs(pathname: string): NavigationBreadcrumbItem[] {
-  const trail = findRouteTrail(normalizePathname(pathname), NAVIGATION);
+  const normalizedPathname = normalizePathname(pathname);
+  const trail = findRouteTrail(normalizedPathname, NAVIGATION);
 
   if (!trail) {
-    return [];
+    return getDashboardFallbackBreadcrumbs(normalizedPathname);
   }
 
-  return trail.map((route) => ({
+  const breadcrumbs = trail.map((route) => ({
     title: route.title,
     href: route.href,
   }));
+
+  if (!isDashboardPath(normalizedPathname)) {
+    return breadcrumbs;
+  }
+
+  const hasDashboardRoot = breadcrumbs.some(
+    (breadcrumb) => breadcrumb.href === DASHBOARD_ROUTE,
+  );
+
+  if (hasDashboardRoot) {
+    return breadcrumbs;
+  }
+
+  return [
+    {
+      title: "Dashboard",
+      href: DASHBOARD_ROUTE,
+    },
+    ...breadcrumbs,
+  ];
 }
 
 export function getTermIdFromPathname(pathname: string): string | null {
@@ -103,11 +168,11 @@ export function getTermIdFromPathname(pathname: string): string | null {
     return null;
   }
 
-  const [dashboardSegment, termsSegment, termIdSegment] = segments;
+  const [dashboardSegment, sectionSegment, termIdSegment] = segments;
 
   if (
     dashboardSegment !== "dashboard" ||
-    termsSegment !== "terms" ||
+    (sectionSegment !== "groups" && sectionSegment !== "terms") ||
     !termIdSegment
   ) {
     return null;
@@ -117,7 +182,7 @@ export function getTermIdFromPathname(pathname: string): string | null {
 }
 
 export function getTermHref(termId: string): string {
-  return `${TERMS_ROUTE}/${termId}`;
+  return `${GROUPS_ROUTE}/${termId}`;
 }
 
 export function getPageTitle(pathname: string): string {

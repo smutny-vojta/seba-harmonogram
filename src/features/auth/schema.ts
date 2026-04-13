@@ -7,6 +7,8 @@
 
 import { ObjectId } from "mongodb";
 import { z } from "zod";
+import { TermKeyEnum } from "@/lib/terms";
+import { ACCOUNT_STATES } from "./config";
 import { ROLES } from "./roles";
 
 // ---------------------------------------------------------------------------
@@ -16,14 +18,16 @@ import { ROLES } from "./roles";
 export const invitationSchema = z.object({
   _id: z.instanceof(ObjectId).optional(),
   token: z.string().length(12, "Token musí mít 12 znaků"),
+  userId: z.string().min(1, "ID uživatele je neplatné"),
+  phoneNumber: z.string().min(8, "Telefonní číslo je neplatné"),
   role: z.enum(ROLES),
-  turnusId: z.instanceof(ObjectId),
-  oddilId: z.instanceof(ObjectId),
+  termKey: TermKeyEnum,
+  groupId: z.instanceof(ObjectId),
   expiresAt: z.date().default(() => new Date(Date.now() + 24 * 60 * 60 * 1000)),
   createdAt: z.date().default(() => new Date()),
-  createdBy: z.instanceof(ObjectId),
+  createdByUserId: z.string().min(1, "ID uživatele je neplatné"),
   usedAt: z.date().optional(),
-  usedBy: z.instanceof(ObjectId).optional(),
+  usedByUserId: z.string().min(1, "ID uživatele je neplatné").optional(),
 });
 
 export type Invitation = z.infer<typeof invitationSchema>;
@@ -34,5 +38,19 @@ export const invitationInsertSchema = invitationSchema.omit({
   expiresAt: true,
   createdAt: true,
   usedAt: true,
-  usedBy: true,
+  usedByUserId: true,
 });
+
+const UserIdSchema = z.object({
+  userId: z.string().min(1, "ID uživatele je neplatné"),
+});
+
+const AccountStateSchema = z.enum(ACCOUNT_STATES);
+
+export const AuthOperationSchemas = {
+  blockUser: UserIdSchema,
+  activateUser: UserIdSchema,
+  setAccountState: UserIdSchema.extend({
+    accountState: AccountStateSchema,
+  }),
+} as const;

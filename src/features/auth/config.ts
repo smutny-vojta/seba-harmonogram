@@ -17,3 +17,6 @@ export const REGEX = {
 } as const;
 
 export const PHONE_PREFIX = "+420";
+
+export const ACCOUNT_STATES = ["pending", "active", "blocked"] as const;
+export type AccountState = (typeof ACCOUNT_STATES)[number];

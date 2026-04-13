@@ -1,6 +1,11 @@
 import { type Collection, ObjectId } from "mongodb";
 import { db } from "@/lib/db";
 import { createDefaultGroupsForTerm as createDefaultGroupsForTermShared } from "@/lib/group-defaults";
+import {
+  assertCampCategoryIsNotOffice,
+  ensureSingleActiveOfficeGroupForTerm,
+} from "@/lib/office-group";
+import { getFixedTermByKey, listFixedTerms } from "@/lib/terms";
 import { CAMP_CATEGORIES, CAMP_CATEGORIES_ARRAY } from "./config";
 import type {
   GroupCategoryCountItemType,
@@ -11,16 +16,15 @@ import {
   createGeneratedGroupName,
   createGeneratedGroupShortCode,
   createGeneratedGroupSlug,
-  toObjectId,
 } from "./utils";
 
 type ListGroupsByTermOptions = {
-  termId: string;
+  termKey: string;
   includeArchived?: boolean;
 };
 
 type SetGroupCountInternalOptions = {
-  termId: ObjectId;
+  termKey: string;
   campCategory: GroupType["campCategory"];
   count: number;
 };
@@ -32,25 +36,20 @@ type SetGroupCountResult = {
 };
 
 export const GroupCollection: Collection<GroupType> = db.collection("groups");
-const TermCollection: Collection<{ _id: ObjectId; endsAt: Date }> =
-  db.collection("terms");
 
 function mapGroupToItem(group: GroupType): GroupItemType {
-  const { _id, termId, ...rest } = group;
+  const { _id, termKey, ...rest } = group;
 
   return {
     ...rest,
     id: _id.toString(),
-    termId: termId.toString(),
+    termKey,
     isArchived: Boolean(group.archivedAt),
   };
 }
 
-async function assertTermIsActiveForMutations(termId: ObjectId) {
-  const term = await TermCollection.findOne(
-    { _id: termId },
-    { projection: { _id: 1, endsAt: 1 } },
-  );
+async function assertTermIsActiveForMutations(termKey: string) {
+  const term = getFixedTermByKey(termKey);
 
   if (!term) {
     throw new Error("Turnus nebyl nalezen.");
@@ -64,21 +63,21 @@ async function assertTermIsActiveForMutations(termId: ObjectId) {
 }
 
 async function getActiveCategoryCount({
-  termId,
+  termKey,
   campCategory,
 }: {
-  termId: ObjectId;
+  termKey: string;
   campCategory: GroupType["campCategory"];
 }) {
   return GroupCollection.countDocuments({
-    termId,
+    termKey,
     campCategory,
     archivedAt: { $exists: false },
   });
 }
 
 async function setGroupCountForCategoryInternal({
-  termId,
+  termKey,
   campCategory,
   count,
 }: SetGroupCountInternalOptions): Promise<SetGroupCountResult> {
@@ -93,14 +92,14 @@ async function setGroupCountForCategoryInternal({
     return {
       updateOne: {
         filter: {
-          termId,
+          termKey,
           campCategory,
           slug,
         },
         update: {
           $setOnInsert: {
             _id: new ObjectId(),
-            termId,
+            termKey,
             campCategory,
             slug,
             createdAt: now,
@@ -124,7 +123,7 @@ async function setGroupCountForCategoryInternal({
   }
 
   const deleteFilter = {
-    termId,
+    termKey,
     campCategory,
     archivedAt: { $exists: false },
     ...(activatedSlugs.length > 0 ? { slug: { $nin: activatedSlugs } } : {}),
@@ -140,13 +139,17 @@ async function setGroupCountForCategoryInternal({
 }
 
 export async function listGroupsByTerm({
-  termId,
+  termKey,
   includeArchived = false,
 }: ListGroupsByTermOptions): Promise<GroupItemType[]> {
-  const termObjectId = toObjectId(termId, "ID turnusu");
+  if (!getFixedTermByKey(termKey)) {
+    throw new Error("Turnus nebyl nalezen.");
+  }
+
+  await ensureSingleActiveOfficeGroupForTerm(termKey);
 
   const groups = await GroupCollection.find({
-    termId: termObjectId,
+    termKey,
     ...(includeArchived ? {} : { archivedAt: { $exists: false } }),
   })
     .sort({ campCategory: 1, slug: 1 })
@@ -156,9 +159,13 @@ export async function listGroupsByTerm({
 }
 
 export async function listGroupCountsByTerm(
-  termId: string,
+  termKey: string,
 ): Promise<GroupCategoryCountItemType[]> {
-  const termObjectId = toObjectId(termId, "ID turnusu");
+  if (!getFixedTermByKey(termKey)) {
+    throw new Error("Turnus nebyl nalezen.");
+  }
+
+  await ensureSingleActiveOfficeGroupForTerm(termKey);
 
   const aggregateCounts = await GroupCollection.aggregate<{
     _id: GroupType["campCategory"];
@@ -166,7 +173,7 @@ export async function listGroupCountsByTerm(
   }>([
     {
       $match: {
-        termId: termObjectId,
+        termKey,
         archivedAt: { $exists: false },
       },
     },
@@ -190,62 +197,59 @@ export async function listGroupCountsByTerm(
 }
 
 export async function increaseGroupCountForCategory({
-  termId,
+  termKey,
   campCategory,
 }: {
-  termId: string;
+  termKey: string;
   campCategory: GroupType["campCategory"];
 }) {
-  const termObjectId = toObjectId(termId, "ID turnusu");
-
-  await assertTermIsActiveForMutations(termObjectId);
+  assertCampCategoryIsNotOffice(campCategory);
+  await assertTermIsActiveForMutations(termKey);
 
   const currentCount = await getActiveCategoryCount({
-    termId: termObjectId,
+    termKey,
     campCategory,
   });
 
   return setGroupCountForCategoryInternal({
-    termId: termObjectId,
+    termKey,
     campCategory,
     count: currentCount + 1,
   });
 }
 
 export async function decreaseGroupCountForCategory({
-  termId,
+  termKey,
   campCategory,
 }: {
-  termId: string;
+  termKey: string;
   campCategory: GroupType["campCategory"];
 }) {
-  const termObjectId = toObjectId(termId, "ID turnusu");
-
-  await assertTermIsActiveForMutations(termObjectId);
+  assertCampCategoryIsNotOffice(campCategory);
+  await assertTermIsActiveForMutations(termKey);
 
   const currentCount = await getActiveCategoryCount({
-    termId: termObjectId,
+    termKey,
     campCategory,
   });
 
   return setGroupCountForCategoryInternal({
-    termId: termObjectId,
+    termKey,
     campCategory,
     count: Math.max(0, currentCount - 1),
   });
 }
 
-export async function createDefaultGroupsForTerm(termId: string) {
-  return createDefaultGroupsForTermShared(termId);
+export async function createDefaultGroupsForTerm(termKey: string) {
+  return createDefaultGroupsForTermShared(termKey);
 }
 
 export async function archiveExpiredTermGroups(referenceDate = new Date()) {
-  const expiredTermIds = await TermCollection.find(
-    { endsAt: { $lt: referenceDate } },
-    { projection: { _id: 1 } },
-  ).toArray();
+  const expiredTermKeys = listFixedTerms()
+    .filter((term) => term.endsAt < referenceDate)
+    .map((term) => term.termKey);
 
-  if (expiredTermIds.length === 0) {
+  if (expiredTermKeys.length === 0) {
     return {
       archivedCount: 0,
       affectedTermCount: 0,
@@ -254,8 +258,8 @@ export async function archiveExpiredTermGroups(referenceDate = new Date()) {
 
   const result = await GroupCollection.updateMany(
     {
-      termId: {
-        $in: expiredTermIds.map((term) => term._id),
+      termKey: {
+        $in: expiredTermKeys,
       },
       archivedAt: {
         $exists: false,
@@ -271,6 +275,6 @@ export async function archiveExpiredTermGroups(referenceDate = new Date()) {
 
   return {
     archivedCount: result.modifiedCount,
-    affectedTermCount: expiredTermIds.length,
+    affectedTermCount: expiredTermKeys.length,
   };
 }

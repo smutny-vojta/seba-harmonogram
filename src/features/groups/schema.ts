@@ -4,6 +4,7 @@ import {
   CampCategoryEnum,
   GroupCategoryCountItemSchema,
 } from "@/lib/camp-categories";
+import { TermKeyEnum } from "@/lib/terms";
 
 export { CampCategoryEnum, GroupCategoryCountItemSchema };
 
@@ -27,7 +28,7 @@ const GroupShortCodeSchema = z
 
 export const GroupSchema = z.object({
   _id: z.instanceof(ObjectId),
-  termId: z.instanceof(ObjectId),
+  termKey: TermKeyEnum,
   campCategory: CampCategoryEnum,
   name: z.string().min(1, "Název oddílu je povinný"),
   slug: GroupSlugSchema,
@@ -39,7 +40,7 @@ export const GroupSchema = z.object({
 
 export const GroupItemSchema = z.object({
   id: z.string(),
-  termId: z.string(),
+  termKey: TermKeyEnum,
   campCategory: CampCategoryEnum,
   name: z.string(),
   slug: GroupSlugSchema,
@@ -50,11 +51,11 @@ export const GroupItemSchema = z.object({
   updatedAt: z.date(),
 });
 
-const TermIdSchema = z.object({
-  termId: z.string().min(24, "ID turnusu je neplatné"),
+const TermKeySchema = z.object({
+  termKey: TermKeyEnum,
 });
 
-const GroupCountAdjustmentSchema = TermIdSchema.extend({
+const GroupCountAdjustmentSchema = TermKeySchema.extend({
   campCategory: CampCategoryEnum,
 });
 

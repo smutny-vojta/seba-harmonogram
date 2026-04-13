@@ -8,13 +8,13 @@
 import ActivitiesContent from "@features/activities/components/ActivitiesContent";
 import { listActivities } from "./dal";
 
-type ActivityLocationOption = {
+type LocationOption = {
   id: string;
   name: string;
 };
 
 interface ActivitiesViewProps {
-  locations: ActivityLocationOption[];
+  locations: LocationOption[];
 }
 
 export default async function ActivitiesView({

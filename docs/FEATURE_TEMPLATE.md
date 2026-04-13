@@ -9,7 +9,7 @@ Pozadavky: Udrzovat aktualni, konkretni a konzistentni s kodem.
 
 This document is the canonical template for every domain CRUD feature in src/features.
 
-Use this template for business domains such as activities, activityLocations, harmonogram, turnus, oddily, and similar.
+Use this template for business domains such as activities, locations, harmonogram, turnus, oddily, and similar.
 
 Do not use this template for core infrastructure modules like auth.
 

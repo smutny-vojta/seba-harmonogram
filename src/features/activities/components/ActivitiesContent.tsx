@@ -8,7 +8,7 @@ import ActivitiesMenu, {
 import { useState } from "react";
 import type { ActivityItemType } from "@/features/activities/types";
 
-type ActivityLocationOption = {
+type LocationOption = {
   id: string;
   name: string;
 };
@@ -19,7 +19,7 @@ export default function ActivitiesContent({
   locationsById,
 }: {
   activities: ActivityItemType[];
-  locations: ActivityLocationOption[];
+  locations: LocationOption[];
   locationsById: Record<string, string>;
 }) {
   const [viewMode, setViewMode] = useState<ActivitiesViewMode>("list");

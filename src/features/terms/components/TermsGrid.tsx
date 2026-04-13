@@ -10,17 +10,22 @@ export default function TermsGrid({ terms }: TermsGridProps) {
     return (
       <div className="text-center">
         <p className="text-muted-foreground text-sm">
-          Zatím tu není žádný turnus. Přidejte první turnus a začněte plánovat.
+          Turnusy pro tento ročník ještě nejsou nakonfigurované v kódu.
         </p>
       </div>
     );
   }
 
   return (
-    <div className="grid min-h-0 flex-1 auto-rows-max gap-4 md:grid-cols-2 xl:grid-cols-3">
-      {terms.map((term) => (
-        <TermsCard key={term.id} term={term} />
-      ))}
+    <div className="space-y-3">
+      <p className="text-muted-foreground text-sm">
+        Kliknutím na turnus otevřete správu oddílů daného turnusu.
+      </p>
+      <div className="grid min-h-0 flex-1 auto-rows-max gap-4 md:grid-cols-2 xl:grid-cols-3">
+        {terms.map((term) => (
+          <TermsCard key={term.id} term={term} />
+        ))}
+      </div>
     </div>
   );
 }

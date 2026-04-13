@@ -27,23 +27,28 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import {
-  NAVIGATION,
-  TERMS_ROUTE,
+  GROUPS_ROUTE,
   getTermHref,
   isRouteActive,
   isRouteMatch,
-  type NavigationTermItem,
+  NAVIGATION,
   type NavigationItem,
+  type NavigationTermItem,
 } from "@/lib/navigation";
 import { cn } from "@/utils/cn";
 
 interface AppSidebarProps {
   terms: NavigationTermItem[];
+  currentTerm: {
+    order: number;
+    name: string;
+    dateRangeLabel: string;
+  } | null;
 }
 
-export function AppSidebar({ terms }: AppSidebarProps) {
+export function AppSidebar({ terms, currentTerm }: AppSidebarProps) {
   const pathname = usePathname();
-  const [termsOpen, setTermsOpen] = useState(pathname.startsWith(TERMS_ROUTE));
+  const [termsOpen, setTermsOpen] = useState(pathname.startsWith(GROUPS_ROUTE));
   const sidebarNavigation = NAVIGATION.filter((page) => page.sidebar !== false);
   const termNavigationItems = useMemo(
     () =>
@@ -52,7 +57,7 @@ export function AppSidebar({ terms }: AppSidebarProps) {
   );
 
   useEffect(() => {
-    if (pathname.startsWith(TERMS_ROUTE)) {
+    if (pathname.startsWith(GROUPS_ROUTE)) {
       setTermsOpen(true);
     }
   }, [pathname]);
@@ -68,7 +73,7 @@ export function AppSidebar({ terms }: AppSidebarProps) {
           <SidebarGroupContent>
             <SidebarMenu className="gap-2">
               {sidebarNavigation.map((page: NavigationItem) =>
-                page.href === TERMS_ROUTE ? (
+                page.href === GROUPS_ROUTE ? (
                   <Collapsible
                     key={page.href}
                     open={termsOpen}
@@ -91,7 +96,7 @@ export function AppSidebar({ terms }: AppSidebarProps) {
                           showOnHover
                         >
                           <LucideChevronRight className="size-4" />
-                          <span className="sr-only">Přepnout turnusy</span>
+                          <span className="sr-only">Přepnout oddíly</span>
                         </SidebarMenuAction>
                       </CollapsibleTrigger>
                       <CollapsibleContent>
@@ -160,12 +165,20 @@ export function AppSidebar({ terms }: AppSidebarProps) {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooterContent />
+      <SidebarFooterContent currentTerm={currentTerm} />
     </Sidebar>
   );
 }
 
-const SidebarFooterContent = () => {
+interface SidebarFooterContentProps {
+  currentTerm: {
+    order: number;
+    name: string;
+    dateRangeLabel: string;
+  } | null;
+}
+
+const SidebarFooterContent = ({ currentTerm }: SidebarFooterContentProps) => {
   const { open } = useSidebar();
 
   return (
@@ -181,7 +194,7 @@ const SidebarFooterContent = () => {
             lineHeight: open ? "24px" : "18px",
           }}
         >
-          2
+          {currentTerm ? currentTerm.order : "-"}
         </div>
         {open && (
           <div className="flex flex-col">
@@ -192,7 +205,7 @@ const SidebarFooterContent = () => {
                 lineHeight: "22px",
               }}
             >
-              2. turnus
+              {currentTerm ? currentTerm.name : "Mimo turnus"}
             </span>
             <span
               className="whitespace-nowrap"
@@ -201,7 +214,9 @@ const SidebarFooterContent = () => {
                 lineHeight: "16px",
               }}
             >
-              10.7. - 19.7.
+              {currentTerm
+                ? currentTerm.dateRangeLabel
+                : "Není aktivní žádný turnus"}
             </span>
           </div>
         )}

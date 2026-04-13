@@ -87,16 +87,16 @@ Never use `any`. Use `unknown` and narrow with type guards if the shape is truly
 
 ### Variables & Functions
 
-| Type                      | Convention                         | Example                                       |
-| ------------------------- | ---------------------------------- | --------------------------------------------- |
-| Functions                 | `camelCase`                        | `createActivity`, `listActivities`            |
-| React components          | `PascalCase`                       | `AppSidebar`, `SidebarFooterContent`          |
-| Arrow function components | `PascalCase` const                 | `const SidebarFooterContent = () => ...`      |
-| Constants (module-level)  | `SCREAMING_SNAKE_CASE`             | `NAVIGATION`, `APP_ROLES`, `ROLE_LABELS`      |
-| Zod schemas               | `PascalCase` + `Schema` suffix     | `ActivitySchema`, `NewActivityLocationSchema` |
-| MongoDB collections       | `PascalCase` + `Collection` suffix | `ActivityCollection`                          |
-| Types from Zod            | `PascalCase` + `Type` suffix       | `ActivityType`, `NewActivityLocationType`     |
-| Enum/string unions        | `PascalCase` + `Enum` suffix       | `ActivityCategoryEnum`                        |
+| Type                      | Convention                         | Example                                   |
+| ------------------------- | ---------------------------------- | ----------------------------------------- |
+| Functions                 | `camelCase`                        | `createActivity`, `listActivities`        |
+| React components          | `PascalCase`                       | `AppSidebar`, `SidebarFooterContent`      |
+| Arrow function components | `PascalCase` const                 | `const SidebarFooterContent = () => ...`  |
+| Constants (module-level)  | `SCREAMING_SNAKE_CASE`             | `NAVIGATION`, `APP_ROLES`, `ROLE_LABELS`  |
+| Zod schemas               | `PascalCase` + `Schema` suffix     | `ActivitySchema`, `NewLocationSchema`     |
+| MongoDB collections       | `PascalCase` + `Collection` suffix | `ActivityCollection`                      |
+| Types from Zod            | `PascalCase` + `Type` suffix       | `ActivityType`, `NewActivityLocationType` |
+| Enum/string unions        | `PascalCase` + `Enum` suffix       | `ActivityCategoryEnum`                    |
 
 ---
 
@@ -139,15 +139,15 @@ Feature slices must not import from other feature slices (`@/features/<other>/..
 
 ```ts
 // ✅ Correct
-export const ActivityLocationSchema = z.object({
+export const LocationSchema = z.object({
   _id: z.instanceof(ObjectId),
   name: z.string().min(1, "Název je povinný"),
   indoor: z.boolean().default(false),
 });
 
-export const NewActivityLocationSchema = ActivityLocationSchema.omit({ _id: true });
+export const NewLocationSchema = LocationSchema.omit({ _id: true });
 
-export type ActivityLocationType = z.infer<typeof ActivityLocationSchema>;
+export type LocationType = z.infer<typeof LocationSchema>;
 ```
 
 ---

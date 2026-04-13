@@ -1,6 +1,6 @@
 /**
- * Soubor: src/features/activityLocations/components/ActivityLocationsMenu.tsx
- * Ucel: UI komponenta feature "activityLocations".
+ * Soubor: src/features/locations/components/LocationsMenu.tsx
+ * Ucel: UI komponenta feature "locations".
  * Parametry/Vstupy: Props pro vykresleni dat a obsluhu uzivatelskych akci.
  * Pozadavky: Drzet komponentu zamerenou na prezentaci/UX a respektovat feature schema.
  */
@@ -9,20 +9,20 @@
 
 import { LucideLayoutGrid, LucideList } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { ActivityLocationsAddDialog } from "@/features/activityLocations/components/ActivityLocationsDialogs";
+import { LocationsAddDialog } from "@/features/locations/components/LocationsDialogs";
 
-export type ActivityLocationsViewMode = "grid" | "list";
+export type LocationsViewMode = "grid" | "list";
 
-export default function ActivityLocationsMenu({
+export default function LocationsMenu({
   viewMode,
   onViewModeChange,
 }: {
-  viewMode: ActivityLocationsViewMode;
-  onViewModeChange: (viewMode: ActivityLocationsViewMode) => void;
+  viewMode: LocationsViewMode;
+  onViewModeChange: (viewMode: LocationsViewMode) => void;
 }) {
   return (
     <div className="flex h-fit shrink-0 flex-wrap items-center justify-between gap-3">
-      <ActivityLocationsAddDialog />
+      <LocationsAddDialog />
       <div className="flex items-center gap-2">
         <Button
           size="sm"
